@@ -76,10 +76,10 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\teler\Desktop\SFML-2.5.1-windows-vc15-32-bit\SFML-2.5.1\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\teler\Desktop\Powder\Powder;C:\Users\teler\Desktop\SFML-2.5.1-windows-vc15-32-bit\SFML-2.5.1\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>C:\Users\teler\Desktop\SFML-2.5.1-windows-vc15-32-bit\SFML-2.5.1\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\teler\Desktop\Powder\Powder;C:\Users\teler\Desktop\SFML-2.5.1-windows-vc15-32-bit\SFML-2.5.1\lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>sfml-graphics-d.lib;sfml-window-d.lib;sfml-system-d.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
