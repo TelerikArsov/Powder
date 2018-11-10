@@ -24,6 +24,9 @@
     <ClCompile Include="BRAN.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="None_Element.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Simulation.h">
@@ -33,6 +36,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="BRAN.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="None_Element.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

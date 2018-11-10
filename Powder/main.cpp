@@ -1,13 +1,16 @@
 #include <SFML/Graphics.hpp>
+#include <iostream>
 #include "Simulation.h"
 #include "BRAN.h"
 
 int main()
 {
-	int WINDOW_HEIGHT = 200, WINDOW_WIDTH = 200;
+	int WINDOW_HEIGHT = 1000, WINDOW_WIDTH = 1000;
 	sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "SFML works!");
-	Simulation gol(WINDOW_HEIGHT / CELLS_Y_COUNT, WINDOW_WIDTH / CELLS_X_COUNT);
-	gol.selected_element = new BRAN();
+	Simulation gol(300, 300, WINDOW_WIDTH, WINDOW_HEIGHT);
+	gol.available_elements.push_back(new BRAN(1));
+	gol.selected_element = gol.available_elements[0];
+	sf::Clock clock;
 	while (window.isOpen())
 	{
 		sf::Event event;
@@ -34,9 +37,11 @@ int main()
 				}
 			}
 		}
-
+		sf::Time elapsed = clock.restart();
+		std::cout << elapsed.asMilliseconds() << std::endl;
 		window.clear();
 		gol.render(&window);
+		gol.tick();
 		window.display();
 	}
 

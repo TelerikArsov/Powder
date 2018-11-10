@@ -11,14 +11,16 @@ int BRAN::update()
 		{
 			if (sim->bounds_check(j, i) && (i - corr_y || j - corr_x)) 
 			{
-				if (sim->elements_grid[i][j] == nullptr)
+				if (sim->gol_grid[i][j] == 0)
 				{
-					int size = sim->get_neighbours(j, i).size();
+					int size = sim->get_gol_neigh_count(j, i);
+					sim->gol_grid[i][j] = 2;
 					if (size == b_rule)
 					{
 						Element* new_cell = new BRAN(*this);
 						new_cell->corr_x = j;
 						new_cell->corr_y = i;
+						new_cell->sim = sim;
 						sim->add_queue.push_back(new_cell);
 					}
 				}
@@ -26,21 +28,25 @@ int BRAN::update()
 		}
 
 	}
-	int neig_count = sim->get_neighbours(corr_x, corr_y, identifier).size();
-	if (neig_count != s_rule && neig_count != s_rule - 1)
+	int neig_count = sim->get_gol_neigh_count(corr_x, corr_y);
+	if (neig_count != 1 && neig_count != 2 && neig_count != 3 && neig_count != 4 && neig_count != 5)
 	{
 		return 1;
 	}
 	return 0;
 }
 
-void BRAN::render(float cell_height, float cell_width, sf::RenderWindow* window)
+void BRAN::render(float cell_height, float cell_width, sf::Vertex* quad)
 {
-	sf::RectangleShape cell;
-	cell.setSize(sf::Vector2f(cell_width, cell_height));
-	cell.setFillColor(states_colors[state]);
-	cell.setPosition(corr_x * cell_width, corr_y * cell_height);
-	window->draw(cell);
+	quad[0].position = sf::Vector2f(corr_x * cell_width, corr_y * cell_height);
+	quad[1].position = sf::Vector2f((corr_x + 1) * cell_width, corr_y * cell_height);
+	quad[2].position = sf::Vector2f((corr_x + 1) * cell_width, (corr_y + 1) * cell_height);
+	quad[3].position = sf::Vector2f(corr_x * cell_width, (corr_y + 1) * cell_height);
+
+	quad[0].color = states_colors[state];
+	quad[1].color = states_colors[state];
+	quad[2].color = states_colors[state];
+	quad[3].color = states_colors[state];
 }
 
 Element* BRAN::clone() const
@@ -48,14 +54,14 @@ Element* BRAN::clone() const
 	return new BRAN(*this);
 }
 
-BRAN::BRAN() :
-	state(1)
+BRAN::BRAN(int id)
 {
-	identifier = "GOL_BRAN";
+	identifier = id;
 	name = "BRAN";
 	description = "Brians brain rules set for game of life";
 	color;
 	menu_section = 1;
+	state = 1;
 }
 
 BRAN::BRAN(const BRAN& rhs)

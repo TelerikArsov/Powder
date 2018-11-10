@@ -3,27 +3,30 @@
 #include <vector>
 #include <list>
 #include <string>
+#include "None_Element.h"
 
-#define CELLS_X_COUNT 10
-#define CELLS_Y_COUNT 10
 
 class Simulation 
 {
 public:
 	float cell_height, cell_width;
+	int cells_x_count, cells_y_count;
 	int elements_count;
 	Element* selected_element;
-	Element* elements_grid[CELLS_X_COUNT][CELLS_Y_COUNT];
+	std::vector<std::vector<Element*>> elements_grid;
+	std::vector<std::vector<int>> gol_grid;
 	std::list<Element*> active_elements;
+	std::vector<Element*> available_elements;
 	std::list<Element*> add_queue;
 	std::list<Element*> remove_queue;
 	bool pause = true;
 	bool draw_grid;
 	void tick();
 	void render(sf::RenderWindow* window);
-	std::vector<Element*> get_neighbours(int corr_x, int corr_y, std::string type = "");
+	std::vector<Element*> get_neighbours(int corr_x, int corr_y, int type = -1);
+	int get_gol_neigh_count(int corr_x, int corr_y);
 	bool bounds_check(int corr_x, int corr_y);
-	bool spawn_mouse(float mouse_x, float mouse_y);
-	Simulation(float cell_height, float cell_width);
+	bool spawn_mouse(int mouse_x, int mouse_y);
+	Simulation(int cells_x_count, int cells_y_count, int window_width, int window_height);
 	~Simulation();
 };
