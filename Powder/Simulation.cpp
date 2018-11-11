@@ -29,12 +29,14 @@ void Simulation::tick()
 	while (add_it != add_queue.end())
 	{
 		active_elements.push_back(*add_it);
+		//elements_grid[(*add_it)->corr_y][(*add_it)->corr_x];
 		elements_grid[(*add_it)->corr_y][(*add_it)->corr_x] = *add_it;
 		add_it = add_queue.erase(add_it);
 	}
 	std::list<Element*>::iterator rem_it = remove_queue.begin();
 	while (rem_it != remove_queue.end())
 	{
+		//elements_grid[(*rem_it)->corr_y][(*rem_it)->corr_x];
 		elements_grid[(*rem_it)->corr_y][(*rem_it)->corr_x] = new None_Element();
 		rem_it = remove_queue.erase(rem_it);
 	}

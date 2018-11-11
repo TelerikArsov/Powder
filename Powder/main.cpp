@@ -1,14 +1,14 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include "Simulation.h"
-#include "BRAN.h"
+#include "GOL.h"
 
 int main()
 {
 	int WINDOW_HEIGHT = 1000, WINDOW_WIDTH = 1000;
 	sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "SFML works!");
-	Simulation gol(300, 300, WINDOW_WIDTH, WINDOW_HEIGHT);
-	gol.available_elements.push_back(new BRAN(1));
+	Simulation gol(350, 350, WINDOW_WIDTH, WINDOW_HEIGHT);
+	gol.available_elements.push_back(new GOL(1, 1, "WALL", "S23/B3"));
 	gol.selected_element = gol.available_elements[0];
 	sf::Clock clock;
 	while (window.isOpen())

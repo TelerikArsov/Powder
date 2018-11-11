@@ -1,7 +1,52 @@
-#include "BRAN.h"
+#include "GOL.h"
 #include "Simulation.h"
 
-int BRAN::update() 
+void GOL::process_rules()
+{
+	for (auto& r : rules)
+	{
+		for (bool& vl : r)
+		{
+			vl = false;
+		}
+	}
+	if (rule_string != "")
+	{
+		unsigned type = D;
+		for (char c : rule_string) 
+		{
+			if (c == 'B' || c == 'b')
+			{
+				type = B;
+			}
+			else if (c == 'S' || c == 's')
+			{
+				type = S;
+			}
+			else if (c == '\\' || c == '/')
+			{
+				++type %= 3;
+			}
+			else if (c >= '0' || c < '9')
+			{
+				if (type == D)
+				{
+					if (c - '0' == 0)
+					{
+						continue;
+					}
+					rules[type][c - '0' - 1] = true;
+				}
+				else
+				{
+					rules[type][c - '0'] = true;
+				}
+			}
+		}
+	}
+}
+
+int GOL::update() 
 {
 	if (state == 0)
 		return 1;
@@ -15,9 +60,9 @@ int BRAN::update()
 				{
 					int size = sim->get_gol_neigh_count(j, i);
 					sim->gol_grid[i][j] = 2;
-					if (size == b_rule)
+					if (rules[B][size])
 					{
-						Element* new_cell = new BRAN(*this);
+						Element* new_cell = new GOL(*this);
 						new_cell->corr_x = j;
 						new_cell->corr_y = i;
 						new_cell->sim = sim;
@@ -28,15 +73,14 @@ int BRAN::update()
 		}
 
 	}
-	int neig_count = sim->get_gol_neigh_count(corr_x, corr_y);
-	if (neig_count != 1 && neig_count != 2 && neig_count != 3 && neig_count != 4 && neig_count != 5)
+	if (!rules[S][sim->get_gol_neigh_count(corr_x, corr_y)])
 	{
 		return 1;
 	}
 	return 0;
 }
 
-void BRAN::render(float cell_height, float cell_width, sf::Vertex* quad)
+void GOL::render(float cell_height, float cell_width, sf::Vertex* quad)
 {
 	quad[0].position = sf::Vector2f(corr_x * cell_width, corr_y * cell_height);
 	quad[1].position = sf::Vector2f((corr_x + 1) * cell_width, corr_y * cell_height);
@@ -49,22 +93,23 @@ void BRAN::render(float cell_height, float cell_width, sf::Vertex* quad)
 	quad[3].color = states_colors[state];
 }
 
-Element* BRAN::clone() const
+Element* GOL::clone() const
 {
-	return new BRAN(*this);
+	return new GOL(*this);
 }
 
-BRAN::BRAN(int id)
+GOL::GOL(int id, int state, std::string name, std::string rules_s)
 {
 	identifier = id;
-	name = "BRAN";
+	this->name = name;
 	description = "Brians brain rules set for game of life";
-	color;
 	menu_section = 1;
-	state = 1;
+	this->state = state;
+	rule_string = rules_s;
+	process_rules();
 }
 
-BRAN::BRAN(const BRAN& rhs)
+GOL::GOL(const GOL& rhs)
 {
 	identifier = rhs.identifier;
 	name = rhs.name;
@@ -80,8 +125,10 @@ BRAN::BRAN(const BRAN& rhs)
 	temperature = rhs.temperature;
 	meltable = rhs.meltable;
 	state = rhs.state;
+	rule_string = rhs.rule_string;
+	process_rules();
 }
 
-BRAN::~BRAN()
+GOL::~GOL()
 {
 }

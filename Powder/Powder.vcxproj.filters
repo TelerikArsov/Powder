@@ -21,10 +21,10 @@
     <ClCompile Include="Simulation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="BRAN.cpp">
+    <ClCompile Include="None_Element.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="None_Element.cpp">
+    <ClCompile Include="GOL.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -35,10 +35,10 @@
     <ClInclude Include="Element.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BRAN.h">
+    <ClInclude Include="None_Element.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="None_Element.h">
+    <ClInclude Include="GOL.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -2,7 +2,6 @@
 #include "Element.h"
 #include <vector>
 #include <list>
-#include <string>
 #include "None_Element.h"
 
 
