@@ -7,9 +7,9 @@ int main()
 {
 	int WINDOW_HEIGHT = 1000, WINDOW_WIDTH = 1000;
 	sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "SFML works!");
-	Simulation gol(350, 350, WINDOW_WIDTH, WINDOW_HEIGHT);
-	gol.available_elements.push_back(new GOL(1, 1, "WALL", "S23/B3"));
-	gol.selected_element = gol.available_elements[0];
+	Simulation gol(10, 10, WINDOW_WIDTH, WINDOW_HEIGHT);
+	gol.available_elements.push_back(new GOL(0, 1, "WALL", "s1/b1"));
+	gol.selected_element = gol.available_elements[0]->identifier;
 	sf::Clock clock;
 	while (window.isOpen())
 	{
@@ -38,7 +38,7 @@ int main()
 			}
 		}
 		sf::Time elapsed = clock.restart();
-		std::cout << elapsed.asMilliseconds() << std::endl;
+		//std::cout << elapsed.asMilliseconds() << std::endl;
 		window.clear();
 		gol.render(&window);
 		gol.tick();

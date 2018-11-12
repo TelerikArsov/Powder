@@ -1,7 +1,6 @@
 #include "None_Element.h"
 
 
-
 int None_Element::update()
 {
 	return 0;
@@ -18,6 +17,7 @@ Element * None_Element::clone() const
 
 None_Element::None_Element()
 {
+	identifier = -1;
 }
 
 

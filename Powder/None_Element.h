@@ -1,5 +1,6 @@
 #pragma once
 #include "Element.h"
+
 class None_Element :
 	public Element
 {

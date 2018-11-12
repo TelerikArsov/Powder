@@ -62,11 +62,7 @@ int GOL::update()
 					sim->gol_grid[i][j] = 2;
 					if (rules[B][size])
 					{
-						Element* new_cell = new GOL(*this);
-						new_cell->corr_x = j;
-						new_cell->corr_y = i;
-						new_cell->sim = sim;
-						sim->add_queue.push_back(new_cell);
+						sim->create_element(identifier, false, false, j, i, rule_string);
 					}
 				}
 			}
