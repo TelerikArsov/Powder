@@ -42,23 +42,74 @@ void Simulation::tick()
 
 void Simulation::render(sf::RenderWindow* window)
 {
+	sf::VertexArray cells_vertices(sf::Quads, active_elements.size() * 4);
 	if (active_elements.size() > 0)
 	{
-		sf::VertexArray vertices;
-		vertices.setPrimitiveType(sf::Quads);
 		int quad_i = 0;
-		vertices.resize(active_elements.size() * 4);
 		for (auto &el : active_elements)
 		{
-			el->render(cell_height, cell_width, &vertices[quad_i * 4]);
+			el->render(cell_height, cell_width, &cells_vertices[quad_i * 4]);
 			quad_i++;
 		}
-		window->draw(vertices);
+		
 	}
+	window->draw(cells_vertices);
 	/*if (draw_grid)
 	{
 		for ()
 	}*/
+}
+
+void Simulation::circle_spawn_area()
+{
+	int x = spawn_width - 1;
+	int y = 0;
+	int dx = 1;
+	int dy = 1;
+	int i;
+	int err = dx - (spawn_width << 1);
+	while (x >= y)
+	{
+		eight_fold_push(x, y, spawn_outline);
+		eight_fold_push(x, y, spawn_area);
+		for (i = x - 1; i > y; i--)
+		{
+			eight_fold_push(i, y, spawn_area);
+		}
+		if (i - 1 > 0)
+		{
+			four_fold_push(i - 1, y, spawn_area);
+		}
+		if (err <= 0)
+		{
+			y++;
+			err += dy;
+			dy += 2;
+		}
+
+		if (err > 0)
+		{
+			x--;
+			dx += 2;
+			err += dx - (spawn_width << 1);
+		}
+	}
+	spawn_area.push_back(std::make_pair(0, 0));
+
+}
+
+void Simulation::eight_fold_push(int x, int y, std::vector<points> &c) 
+{
+	four_fold_push(x, y, c);
+	four_fold_push(y, x, c);
+}
+
+void Simulation::four_fold_push(int x, int y, std::vector<points> &c)
+{
+	c.push_back(std::make_pair(x, y));
+	c.push_back(std::make_pair(-x, y));
+	c.push_back(std::make_pair(-x, -y));
+	c.push_back(std::make_pair(x, -y));
 }
 
 int Simulation::get_gol_neigh_count(int corr_x, int corr_y)
@@ -132,7 +183,7 @@ int Simulation::create_element(int id, bool fm, bool ata, int x, int y, std::str
 	
 }
 
-bool Simulation::spawn_mouse(int mouse_x, int mouse_y)
+bool Simulation::spawn_mouse()
 {
 	int mouse_cell_x = static_cast<float>(mouse_x) / cell_width;
 	int mouse_cell_y = static_cast<float>(mouse_y) / cell_height;
