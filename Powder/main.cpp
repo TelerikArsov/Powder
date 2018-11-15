@@ -7,8 +7,8 @@ int main()
 {
 	int WINDOW_HEIGHT = 1000, WINDOW_WIDTH = 1000;
 	sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "SFML works!");
-	Simulation gol(30, 30, WINDOW_WIDTH, WINDOW_HEIGHT);
-	gol.available_elements.push_back(new GOL(0, 1, "WALL", "s1/b1"));
+	Simulation gol(100, 100, WINDOW_WIDTH, WINDOW_HEIGHT);
+	gol.available_elements.push_back(new GOL(0, 1, "WALL", "s12345/b3"));
 	gol.selected_element = gol.available_elements[0]->identifier;
 	sf::Clock clock;
 	while (window.isOpen())
@@ -22,6 +22,22 @@ int main()
 			{
 				gol.mouse_x = event.mouseMove.x;
 				gol.mouse_y = event.mouseMove.y;
+			}
+			if (event.type == sf::Event::MouseWheelScrolled)
+			{
+				if (event.mouseWheelScroll.delta > 0)
+				{
+					gol.spawn_radius++;
+					gol.spawn_height++;
+					gol.spawn_width++;
+					gol.circle_create_area();
+				}else if (event.mouseWheelScroll.delta < 0)
+				{
+					gol.spawn_radius > 0 ? gol.spawn_radius-- : 0;
+					gol.spawn_height > 0 ? gol.spawn_height-- : 0;
+					gol.spawn_width > 0 ? gol.spawn_width-- : 0;
+					gol.circle_create_area();
+				}
 			}
 			if (event.type == sf::Event::MouseButtonPressed)
 			{
@@ -39,10 +55,6 @@ int main()
 				if (event.key.code == sf::Keyboard::A)
 				{
 					gol.tick();
-				}
-				if (event.key.code == sf::Keyboard::B)
-				{
-					gol.circle_spawn_area();
 				}
 			}
 		}

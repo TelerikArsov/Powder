@@ -53,6 +53,25 @@ void Simulation::render(sf::RenderWindow* window)
 		}
 		
 	}
+	for (auto &off : spawn_outline) 
+	{
+		sf::Vertex quad[4];
+		int mouse_cell_x = static_cast<float>(mouse_x) / cell_width;
+		int mouse_cell_y = static_cast<float>(mouse_y) / cell_height;
+		int x = (mouse_cell_x + off.first);
+		int y = (mouse_cell_y + off.second);
+		quad[0].position = sf::Vector2f(x * cell_width, y * cell_height);
+		quad[1].position = sf::Vector2f((x + 1) * cell_width, y * cell_height);
+		quad[2].position = sf::Vector2f((x + 1) * cell_width, (y + 1) * cell_height);
+		quad[3].position = sf::Vector2f(x * cell_width, (y + 1) * cell_height);
+
+		quad[0].color = sf::Color(192, 192, 192);
+		quad[1].color = sf::Color(192, 192, 192);
+		quad[2].color = sf::Color(192, 192, 192);
+		quad[3].color = sf::Color(192, 192, 192);
+		for(int i = 0; i < 4; i++)
+			cells_vertices.append(quad[i]);
+	}
 	window->draw(cells_vertices);
 	/*if (draw_grid)
 	{
@@ -60,38 +79,49 @@ void Simulation::render(sf::RenderWindow* window)
 	}*/
 }
 
-void Simulation::circle_spawn_area()
+void Simulation::circle_create_area()
 {
-	int x = spawn_width - 1;
-	int y = 0;
-	int dx = 1;
-	int dy = 1;
-	int i;
-	int err = dx - (spawn_width << 1);
-	while (x >= y)
+	spawn_area.clear();
+	spawn_outline.clear();
+	int x = 0;
+	int y = spawn_radius;
+	int dx = 0;
+	int dy = -2 * spawn_radius;
+	int i = y;
+	int err = 1 - spawn_radius;
+	four_fold_push(x, y, spawn_outline);
+	four_fold_push(x, y, spawn_area);
+	for (i = y - 1; i > x; i--)
 	{
-		eight_fold_push(x, y, spawn_outline);
-		eight_fold_push(x, y, spawn_area);
-		for (i = x - 1; i > y; i--)
+		four_fold_push(x, i, spawn_area);
+	}
+	while (x < y)
+	{
+		x++;
+		if (err >= 0)
 		{
-			eight_fold_push(i, y, spawn_area);
+			y--;
+			err += 2 * (x - y) + 1;
 		}
-		if (i - 1 > 0)
-		{
-			four_fold_push(i - 1, y, spawn_area);
+		else {
+			err += 2 * x + 1;
 		}
-		if (err <= 0)
+		if (x < y)
 		{
-			y++;
-			err += dy;
-			dy += 2;
+			eight_fold_push(x, y, spawn_outline);
+			eight_fold_push(x, y, spawn_area);
 		}
-
-		if (err > 0)
+		else if (x == y)
 		{
-			x--;
-			dx += 2;
-			err += dx - (spawn_width << 1);
+			sym_x_equal_y(x, y, spawn_outline);
+			sym_x_equal_y(x, y, spawn_area);
+		}
+		for (i = y - 1; i > x; i--) {
+			eight_fold_push(x, i, spawn_area);
+		}
+		if (i == x)
+		{
+			sym_x_equal_y(x, i, spawn_area);
 		}
 	}
 	spawn_area.push_back(std::make_pair(0, 0));
@@ -100,17 +130,32 @@ void Simulation::circle_spawn_area()
 
 void Simulation::eight_fold_push(int x, int y, std::vector<points> &c) 
 {
-	four_fold_push(x, y, c);
-	four_fold_push(y, x, c);
+	c.push_back(std::make_pair(x, y));
+	c.push_back(std::make_pair(-x, y));
+	c.push_back(std::make_pair(x, -y));
+	c.push_back(std::make_pair(-x, -y));
+	c.push_back(std::make_pair(y, x));
+	c.push_back(std::make_pair(-y, x));
+	c.push_back(std::make_pair(y, -x));
+	c.push_back(std::make_pair(-y, -x));
 }
 
 void Simulation::four_fold_push(int x, int y, std::vector<points> &c)
 {
 	c.push_back(std::make_pair(x, y));
-	c.push_back(std::make_pair(-x, y));
-	c.push_back(std::make_pair(-x, -y));
 	c.push_back(std::make_pair(x, -y));
+	c.push_back(std::make_pair(y, x));
+	c.push_back(std::make_pair(-y, x));
 }
+
+void Simulation::sym_x_equal_y(int x, int y, std::vector<points> &c)
+{
+	c.push_back(std::make_pair(x, y));
+	c.push_back(std::make_pair(x, -y));
+	c.push_back(std::make_pair(-x, -y));
+	c.push_back(std::make_pair(-x, y));
+}
+
 
 int Simulation::get_gol_neigh_count(int corr_x, int corr_y)
 {
@@ -139,7 +184,7 @@ bool Simulation::bounds_check(int corr_x, int corr_y)
 
 int Simulation::create_element(int id, bool fm, bool ata, int x, int y, std::string vars)
 {
-	if (elements_grid[y][x]->identifier == -1)
+	if (bounds_check(x, y) && elements_grid[y][x]->identifier == -1)
 	{
 		Element* new_element;
 		//if creating from mouse
@@ -187,7 +232,11 @@ bool Simulation::spawn_mouse()
 {
 	int mouse_cell_x = static_cast<float>(mouse_x) / cell_width;
 	int mouse_cell_y = static_cast<float>(mouse_y) / cell_height;
-	return create_element(selected_element, true, true, mouse_cell_x, mouse_cell_y);
+	for (auto &off : spawn_area)
+	{
+		create_element(selected_element, true, true, mouse_cell_x + off.first, mouse_cell_y + off.second);
+	}
+	return true;
 }
 
 Simulation::Simulation(int cells_x_count, int cells_y_count, int window_width, int window_height) :
@@ -207,6 +256,7 @@ Simulation::Simulation(int cells_x_count, int cells_y_count, int window_width, i
 	this->cells_y_count = cells_y_count;
 	this->cell_width = static_cast<float>(window_width) / cells_x_count;
 	this->cell_height = static_cast<float>(window_height) / cells_y_count;
+	circle_create_area();
 }
 
 Simulation::~Simulation()
