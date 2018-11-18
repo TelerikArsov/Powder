@@ -2,9 +2,9 @@
 #include <algorithm>
 #include <GOL.h>
 
-void Simulation::tick()
+void Simulation::tick(bool bypass_pause)
 {
-	if (pause)
+	if (paused && !bypass_pause)
 		return;
 	for (int i = 0; i < cells_y_count; i++)
 	{
@@ -32,12 +32,6 @@ void Simulation::tick()
 	{
 		active_elements.push_back(*add_it);
 	}
-	/*std::list<Element*>::iterator rem_it = remove_queue.begin();
-	while (rem_it != remove_queue.end())
-	{
-		elements_grid[(*rem_it)->corr_y][(*rem_it)->corr_x] = new None_Element();
-		rem_it = remove_queue.erase(rem_it);
-	}*/
 }
 
 void Simulation::render(sf::RenderWindow* window)
@@ -228,7 +222,7 @@ int Simulation::create_element(int id, bool fm, bool ata, int x, int y, std::str
 	
 }
 
-bool Simulation::spawn_mouse()
+void Simulation::spawn_mouse()
 {
 	int mouse_cell_x = static_cast<float>(mouse_x) / cell_width;
 	int mouse_cell_y = static_cast<float>(mouse_y) / cell_height;
@@ -236,7 +230,35 @@ bool Simulation::spawn_mouse()
 	{
 		create_element(selected_element, true, true, mouse_cell_x + off.first, mouse_cell_y + off.second);
 	}
-	return true;
+}
+
+void Simulation::pause()
+{
+	paused = !paused;
+}
+
+void Simulation::set_mouse_cor(int x, int y)
+{
+	mouse_x = x;
+	mouse_y = y;
+}
+
+void Simulation::resize_spawn(int d)
+{
+	if (d > 0)
+	{
+		spawn_radius++;
+		spawn_height++;
+		spawn_width++;
+		circle_create_area();
+	}
+	else if (d < 0)
+	{
+		spawn_radius > 0 ? spawn_radius-- : 0;
+		spawn_height > 0 ? spawn_height-- : 0;
+		spawn_width > 0 ? spawn_width-- : 0;
+		circle_create_area();
+	}
 }
 
 Simulation::Simulation(int cells_x_count, int cells_y_count, int window_width, int window_height) :
