@@ -12,7 +12,7 @@ void GOL::process_rules()
 	}
 	if (rule_string != "")
 	{
-		unsigned type = D;
+		unsigned type = B;
 		for (char c : rule_string) 
 		{
 			if (c == 'B' || c == 'b')
@@ -46,10 +46,10 @@ void GOL::process_rules()
 	}
 }
 
-int GOL::update() 
+bool GOL::update() 
 {
 	if (state == 0)
-		return 1;
+		return true;
 	for(int i = corr_y - 1; i < corr_y + 2; i++)
 	{
 		for (int j = corr_x - 1; j < corr_x + 2; j++)
@@ -71,9 +71,9 @@ int GOL::update()
 	}
 	if (!rules[S][sim->get_gol_neigh_count(corr_x, corr_y)])
 	{
-		return 1;
+		return true;
 	}
-	return 0;
+	return false;
 }
 
 void GOL::render(float cell_height, float cell_width, sf::Vertex* quad)

@@ -5,7 +5,7 @@ class None_Element :
 	public Element
 {
 public:
-	int update();
+	bool update();
 	void render(float cell_height, float cell_width, sf::Vertex* quad);
 	Element* clone() const;
 	None_Element();

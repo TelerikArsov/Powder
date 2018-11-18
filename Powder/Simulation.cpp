@@ -18,7 +18,6 @@ void Simulation::tick(bool bypass_pause)
 		if ((*i)->update()) 
 		{
 			int x = (*i)->corr_x, y = (*i)->corr_y;
-			//remove_queue.push_back(*i);
 			i = active_elements.erase(i);
 			delete elements_grid[y][x];
 			elements_grid[y][x] = new None_Element();
@@ -47,6 +46,7 @@ void Simulation::render(sf::RenderWindow* window)
 		}
 		
 	}
+	// Only the outline is rendered
 	for (auto &off : spawn_outline) 
 	{
 		sf::Vertex quad[4];
@@ -110,9 +110,11 @@ void Simulation::circle_create_area()
 			sym_x_equal_y(x, y, spawn_outline);
 			sym_x_equal_y(x, y, spawn_area);
 		}
+		// The insides of the circle is filled
 		for (i = y - 1; i > x; i--) {
 			eight_fold_push(x, i, spawn_area);
 		}
+		// The diagonals
 		if (i == x)
 		{
 			sym_x_equal_y(x, i, spawn_area);
@@ -154,12 +156,15 @@ void Simulation::sym_x_equal_y(int x, int y, std::vector<points> &c)
 int Simulation::get_gol_neigh_count(int corr_x, int corr_y)
 {
 	int count = 0;
+	// Moore neighborhood is used
 	for (int i = -1 + corr_y; i < 2 + corr_y; i++)
 	{
 		for (int j = -1 + corr_x; j < 2 + corr_x; j++)
 		{
+			// Only 1 in the gol_grid is considered alive
 			if (bounds_check(j, i) && gol_grid[i][j] == 1)
 			{
+				// ignoring self
 				if (i != corr_y || j != corr_x)
 				{
 					count++;
@@ -178,13 +183,16 @@ bool Simulation::bounds_check(int corr_x, int corr_y)
 
 int Simulation::create_element(int id, bool fm, bool ata, int x, int y, std::string vars)
 {
+	// If the element at the position is None_Element (id == -1)
 	if (bounds_check(x, y) && elements_grid[y][x]->identifier == -1)
 	{
 		Element* new_element;
-		//if creating from mouse
+		// if creating from mouse
 		// 1 from mouse 0 anything else
 		if (fm == 1)
 		{
+			// Probably should be a function to find element by its id
+			// from the available_elements
 			new_element = available_elements[selected_element]->clone();
 		}
 		else
@@ -283,5 +291,18 @@ Simulation::Simulation(int cells_x_count, int cells_y_count, int window_width, i
 
 Simulation::~Simulation()
 {
-
+	for (auto& row : elements_grid)
+	{
+		for (auto& el : row)
+		{
+			delete el;
+		}
+		row.clear();
+	}
+	elements_grid.clear();
+	for (auto& el : available_elements)
+	{
+		delete el;
+	}
+	available_elements.clear();
 }

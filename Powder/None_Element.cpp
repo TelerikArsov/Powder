@@ -1,7 +1,7 @@
 #include "None_Element.h"
 
 
-int None_Element::update()
+bool None_Element::update()
 {
 	return 0;
 }
