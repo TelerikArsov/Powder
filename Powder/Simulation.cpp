@@ -47,7 +47,7 @@ void Simulation::render(sf::RenderWindow* window)
 		
 	}
 	// Only the outline is rendered
-	for (auto &off : spawn_outline) 
+	for (auto &off : brushes[selected_brush]->get_outline()) 
 	{
 		sf::Vertex quad[4];
 		int mouse_cell_x = static_cast<float>(mouse_x) / cell_width;
@@ -73,84 +73,6 @@ void Simulation::render(sf::RenderWindow* window)
 	}*/
 }
 
-void Simulation::circle_create_area()
-{
-	spawn_area.clear();
-	spawn_outline.clear();
-	int x = 0;
-	int y = spawn_radius;
-	int dx = 0;
-	int dy = -2 * spawn_radius;
-	int i = y;
-	int err = 1 - spawn_radius;
-	four_fold_push(x, y, spawn_outline);
-	four_fold_push(x, y, spawn_area);
-	for (i = y - 1; i > x; i--)
-	{
-		four_fold_push(x, i, spawn_area);
-	}
-	while (x < y)
-	{
-		x++;
-		if (err >= 0)
-		{
-			y--;
-			err += 2 * (x - y) + 1;
-		}
-		else {
-			err += 2 * x + 1;
-		}
-		if (x < y)
-		{
-			eight_fold_push(x, y, spawn_outline);
-			eight_fold_push(x, y, spawn_area);
-		}
-		else if (x == y)
-		{
-			sym_x_equal_y(x, y, spawn_outline);
-			sym_x_equal_y(x, y, spawn_area);
-		}
-		// The insides of the circle is filled
-		for (i = y - 1; i > x; i--) {
-			eight_fold_push(x, i, spawn_area);
-		}
-		// The diagonals
-		if (i == x)
-		{
-			sym_x_equal_y(x, i, spawn_area);
-		}
-	}
-	spawn_area.push_back(std::make_pair(0, 0));
-
-}
-
-void Simulation::eight_fold_push(int x, int y, std::vector<points> &c) 
-{
-	c.push_back(std::make_pair(x, y));
-	c.push_back(std::make_pair(-x, y));
-	c.push_back(std::make_pair(x, -y));
-	c.push_back(std::make_pair(-x, -y));
-	c.push_back(std::make_pair(y, x));
-	c.push_back(std::make_pair(-y, x));
-	c.push_back(std::make_pair(y, -x));
-	c.push_back(std::make_pair(-y, -x));
-}
-
-void Simulation::four_fold_push(int x, int y, std::vector<points> &c)
-{
-	c.push_back(std::make_pair(x, y));
-	c.push_back(std::make_pair(x, -y));
-	c.push_back(std::make_pair(y, x));
-	c.push_back(std::make_pair(-y, x));
-}
-
-void Simulation::sym_x_equal_y(int x, int y, std::vector<points> &c)
-{
-	c.push_back(std::make_pair(x, y));
-	c.push_back(std::make_pair(x, -y));
-	c.push_back(std::make_pair(-x, -y));
-	c.push_back(std::make_pair(-x, y));
-}
 
 
 int Simulation::get_gol_neigh_count(int corr_x, int corr_y)
@@ -234,7 +156,7 @@ void Simulation::spawn_mouse()
 {
 	int mouse_cell_x = static_cast<float>(mouse_x) / cell_width;
 	int mouse_cell_y = static_cast<float>(mouse_y) / cell_height;
-	for (auto &off : spawn_area)
+	for (auto &off : brushes[selected_brush]->get_area())
 	{
 		create_element(selected_element, true, true, mouse_cell_x + off.first, mouse_cell_y + off.second);
 	}
@@ -251,22 +173,9 @@ void Simulation::set_mouse_cor(int x, int y)
 	mouse_y = y;
 }
 
-void Simulation::resize_spawn(int d)
+void Simulation::resize_brush(int d)
 {
-	if (d > 0)
-	{
-		spawn_radius++;
-		spawn_height++;
-		spawn_width++;
-		circle_create_area();
-	}
-	else if (d < 0)
-	{
-		spawn_radius > 0 ? spawn_radius-- : 0;
-		spawn_height > 0 ? spawn_height-- : 0;
-		spawn_width > 0 ? spawn_width-- : 0;
-		circle_create_area();
-	}
+	brushes[selected_brush]->change_size(d);
 }
 
 Simulation::Simulation(int cells_x_count, int cells_y_count, int window_width, int window_height) :
@@ -286,7 +195,6 @@ Simulation::Simulation(int cells_x_count, int cells_y_count, int window_width, i
 	this->cells_y_count = cells_y_count;
 	this->cell_width = static_cast<float>(window_width) / cells_x_count;
 	this->cell_height = static_cast<float>(window_height) / cells_y_count;
-	circle_create_area();
 }
 
 Simulation::~Simulation()

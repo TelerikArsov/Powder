@@ -2,13 +2,18 @@
 #include <iostream>
 #include "Simulation.h"
 #include "GOL.h"
+#include "CircleBrush.h"
+#include "SquareBrush.h"
 
 int main()
 {
 	int WINDOW_HEIGHT = 1000, WINDOW_WIDTH = 1000;
 	sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "SFML works!");
-	Simulation gol(300, 300, WINDOW_WIDTH, WINDOW_HEIGHT);
+	Simulation gol(20, 20, WINDOW_WIDTH, WINDOW_HEIGHT);
 	gol.available_elements.push_back(new GOL(0, 1, "WALL", "s12345/b3"));
+	gol.brushes.push_back(new CircleBrush());
+	gol.brushes.push_back(new SquareBrush());
+	gol.selected_brush = 0;
 	gol.selected_element = gol.available_elements[0]->identifier;
 	sf::Clock clock;
 	while (window.isOpen())
@@ -24,7 +29,7 @@ int main()
 			}
 			if (event.type == sf::Event::MouseWheelScrolled)
 			{
-				gol.resize_spawn(event.mouseWheelScroll.delta);
+				gol.resize_brush(event.mouseWheelScroll.delta);
 			}
 			if (event.type == sf::Event::MouseButtonPressed)
 			{

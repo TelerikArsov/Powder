@@ -3,11 +3,11 @@
 #include <vector>
 #include <list>
 #include "None_Element.h"
+#include "Brush.h"
 
 
 class Simulation 
 {
-	using points = std::pair<int, int>;
 public:
 	// the dimensions of each cell
 	float cell_height, cell_width;		
@@ -15,7 +15,9 @@ public:
 	// Not yet used
 	int elements_count; 
 	// The identifier of the current selected element
-	int selected_element; 
+	int selected_element;
+	int selected_brush;
+	std::vector<Brush* > brushes;
 	std::vector<std::vector<Element* >> elements_grid;
 	// Used for GoL simulation
 	// 1 is alive 0 is dead, anything else varies
@@ -45,9 +47,6 @@ public:
 	// int x, y = the position of the element in the grid
 	// string vars = any bonus information that might be needed in the creation of the element 
 	int create_element(int id, bool from_mouse, bool add_to_active, int x, int y, std::string vars = "");
-	// Create the circle spawn area
-	// Bresenhams circle algorithm is used for the creation of the outline of the circle
-	void circle_create_area();
 	// Gets all the alive neighbours of a cell
 	// with position x and y
 	// Uses the gol_grid
@@ -65,26 +64,13 @@ public:
 	// If d < 0 the spawn area decrease
 	// Based on the currently used spawn area type the creation method is called
 	// Spanw area types include circle, square, triangle NOTE: currently only cirlce is implemented 
-	void resize_spawn(int d);
+	void resize_brush(int d);
 	// int window_width, int window_height = the dimensions of the window 
 	// where the simulation will be rendered
 	Simulation(int cells_x_count, int cells_y_count, int window_width, int window_height);
 	~Simulation();
 private:
-	//used to determine the area in which elements will be spawned 
-	// width and height are used for square and triangle types of spawn areas
 	int spawn_width = 1, spawn_height = 1, spawn_radius = 1;
 	int mouse_x = 0, mouse_y = 0;
-	// spawn arrea consists of offests and not grid cordinates
-	// the offsets are used against the position of the mouse
-	// E.G (1, -1)
-	std::vector<points> spawn_area;
-	// The outline of the spawn area
-	// Used mainly in the rendering
-	std::vector<points> spawn_outline;
 	bool paused = true;
-	// Used in the spawn area creation
-	void eight_fold_push(int x, int y, std::vector<points> &container);
-	void four_fold_push(int x, int y, std::vector<points> &c);
-	void sym_x_equal_y(int x, int y, std::vector<points> &c);
 };

@@ -123,16 +123,22 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Brush.cpp" />
+    <ClCompile Include="CircleBrush.cpp" />
     <ClCompile Include="GOL.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="None_Element.cpp" />
     <ClCompile Include="Simulation.cpp" />
+    <ClCompile Include="SquareBrush.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Brush.h" />
+    <ClInclude Include="CircleBrush.h" />
     <ClInclude Include="GOL.h" />
     <ClInclude Include="Element.h" />
     <ClInclude Include="None_Element.h" />
     <ClInclude Include="Simulation.h" />
+    <ClInclude Include="SquareBrush.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
