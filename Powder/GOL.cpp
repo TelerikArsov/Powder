@@ -50,11 +50,11 @@ bool GOL::update()
 {
 	if (state == 0)
 		return true;
-	for(int i = corr_y - 1; i < corr_y + 2; i++)
+	for(int i = y - 1; i < y + 2; i++)
 	{
-		for (int j = corr_x - 1; j < corr_x + 2; j++)
+		for (int j = x - 1; j < x + 2; j++)
 		{
-			if (sim->bounds_check(j, i) && (i - corr_y || j - corr_x)) 
+			if (sim->bounds_check(j, i) && (i - y || j - x)) 
 			{
 				if (sim->gol_grid[i][j] == 0)
 				{
@@ -69,7 +69,7 @@ bool GOL::update()
 		}
 
 	}
-	if (!rules[S][sim->get_gol_neigh_count(corr_x, corr_y)])
+	if (!rules[S][sim->get_gol_neigh_count(x, y)])
 	{
 		return true;
 	}
@@ -78,10 +78,10 @@ bool GOL::update()
 
 void GOL::render(float cell_height, float cell_width, sf::Vertex* quad)
 {
-	quad[0].position = sf::Vector2f(corr_x * cell_width, corr_y * cell_height);
-	quad[1].position = sf::Vector2f((corr_x + 1) * cell_width, corr_y * cell_height);
-	quad[2].position = sf::Vector2f((corr_x + 1) * cell_width, (corr_y + 1) * cell_height);
-	quad[3].position = sf::Vector2f(corr_x * cell_width, (corr_y + 1) * cell_height);
+	quad[0].position = sf::Vector2f(x * cell_width, y * cell_height);
+	quad[1].position = sf::Vector2f((x + 1) * cell_width, y * cell_height);
+	quad[2].position = sf::Vector2f((x + 1) * cell_width, (y + 1) * cell_height);
+	quad[3].position = sf::Vector2f(x * cell_width, (y + 1) * cell_height);
 
 	quad[0].color = states_colors[state];
 	quad[1].color = states_colors[state];
@@ -115,8 +115,8 @@ GOL::GOL(const GOL& rhs)
 	menu_id = rhs.menu_id;
 	menu_section = rhs.menu_section;
 	endurance = rhs.endurance;
-	corr_x = rhs.corr_x;
-	corr_y = rhs.corr_y;
+	x = rhs.x;
+	y = rhs.y;
 	weight = rhs.weight;
 	temperature = rhs.temperature;
 	meltable = rhs.meltable;

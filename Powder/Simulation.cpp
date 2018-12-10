@@ -17,7 +17,7 @@ void Simulation::tick(bool bypass_pause)
 	{
 		if ((*i)->update()) 
 		{
-			int x = (*i)->corr_x, y = (*i)->corr_y;
+			int x = (*i)->x, y = (*i)->y;
 			i = active_elements.erase(i);
 			delete elements_grid[y][x];
 			elements_grid[y][x] = new None_Element();
@@ -132,8 +132,8 @@ int Simulation::create_element(int id, bool fm, bool ata, int x, int y, std::str
 				}
 			}
 		}
-		new_element->corr_x = x;
-		new_element->corr_y = y;
+		new_element->x = x;
+		new_element->y = y;
 		new_element->sim = this;
 		if (ata)
 		{
