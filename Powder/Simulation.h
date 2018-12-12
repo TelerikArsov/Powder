@@ -17,6 +17,7 @@ public:
 	// The identifier of the current selected element
 	int selected_element;
 	int selected_brush;
+	int mouse_x = 0, mouse_y = 0;
 	std::vector<Brush* > brushes;
 	std::vector<std::vector<Element* >> elements_grid;
 	// Used for GoL simulation
@@ -47,6 +48,7 @@ public:
 	// int x, y = the position of the element in the grid
 	// string vars = any bonus information that might be needed in the creation of the element 
 	int create_element(int id, bool from_mouse, bool add_to_active, int x, int y, std::string vars = "");
+	void swap_elements(int x1, int y1, int x2, int y2);
 	// Gets all the alive neighbours of a cell
 	// with position x and y
 	// Uses the gol_grid
@@ -71,6 +73,5 @@ public:
 	~Simulation();
 private:
 	int spawn_width = 1, spawn_height = 1, spawn_radius = 1;
-	int mouse_x = 0, mouse_y = 0;
 	bool paused = true;
 };

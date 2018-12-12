@@ -89,7 +89,7 @@ void GOL::render(float cell_height, float cell_width, sf::Vertex* quad)
 	quad[3].color = states_colors[state];
 }
 
-Element* GOL::clone() const
+Element * GOL::clone() const
 {
 	return new GOL(*this);
 }

@@ -23,9 +23,9 @@ public:
 	enum { B = 0, S = 1, D = 2 };
 	// Processes the rule string and fills the rules array
 	void process_rules();
-	bool update();
-	void render(float, float, sf::Vertex* quad);
-	Element* clone() const;
+	bool update() override;
+	void render(float, float, sf::Vertex* quad) override;
+	Element* clone() const override;
 	GOL(int, int, std::string, std::string);
 	GOL(const GOL& rhs);
 	~GOL();

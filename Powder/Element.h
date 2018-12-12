@@ -21,7 +21,7 @@ public:
 	float weight = 100;	   // Not yet used
 	float temperature = 0;
 	bool meltable = 0;
-	int state = 0;
+	int state = 0; // 0 - liquid 1 - solid 2 - gas 
 	Element* low_pressure_transition;		// To which element the current element 
 	Element* high_pressure_transition;		// will transfrom, based on the current
 	Element* low_temperature_transition;	// physical state of the element

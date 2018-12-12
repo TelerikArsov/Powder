@@ -2,6 +2,7 @@
 #include <iostream>
 #include "Simulation.h"
 #include "GOL.h"
+#include "Sand.h"
 #include "CircleBrush.h"
 #include "SquareBrush.h"
 
@@ -11,13 +12,15 @@ int main()
 	sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "SFML works!");
 	Simulation gol(20, 20, WINDOW_WIDTH, WINDOW_HEIGHT);
 	gol.available_elements.push_back(new GOL(0, 1, "WALL", "s012345"));
+	gol.available_elements.push_back(new Sand());
 	gol.brushes.push_back(new CircleBrush());
 	gol.brushes.push_back(new SquareBrush());
 	gol.selected_brush = 0;
-	gol.selected_element = gol.available_elements[0]->identifier;
+	gol.selected_element = gol.available_elements[1]->identifier;
 	sf::Clock clock;
+	bool mouse_left_hold = false;
 	while (window.isOpen())
-	{
+	{ 
 		sf::Event event;
 		while (window.pollEvent(event))
 		{
@@ -35,11 +38,26 @@ int main()
 			{
 				if (event.mouseButton.button == sf::Mouse::Left)
 				{
-					gol.spawn_mouse();
+					mouse_left_hold = true;
+				}
+			}
+			if (event.type == sf::Event::MouseButtonReleased)
+			{
+				if (event.mouseButton.button == sf::Mouse::Left)
+				{
+					mouse_left_hold = false;
 				}
 			}
 			if (event.type == sf::Event::KeyPressed)
 			{
+				if (event.key.code == sf::Keyboard::Q) 
+				{
+					gol.selected_element = 0;
+				}
+				if (event.key.code == sf::Keyboard::E)
+				{
+					gol.selected_element = 1;
+				}
 				if (event.key.code == sf::Keyboard::Escape)
 				{
 					gol.pause();
@@ -48,6 +66,22 @@ int main()
 				{
 					gol.tick(true);
 				}
+				if (event.key.code == sf::Keyboard::S) 
+				{
+					int x = static_cast<float>(gol.mouse_x) / gol.cell_width;
+					int y = static_cast<float>(gol.mouse_y) / gol.cell_height;
+					for (auto el : gol.active_elements)
+					{
+						if (el->identifier == 1) 
+						{
+							el->move(x, y);
+						}
+					}
+				}
+			}
+			if (mouse_left_hold)
+			{
+				gol.spawn_mouse();
 			}
 		}
 		sf::Time elapsed = clock.restart();

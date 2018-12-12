@@ -152,6 +152,14 @@ int Simulation::create_element(int id, bool fm, bool ata, int x, int y, std::str
 	
 }
 
+void Simulation::swap_elements(int x1, int y1, int x2, int y2)
+{
+	//Prob will add more stuff then just this but for now...
+	Element * tmp = elements_grid[y2][x2];
+	elements_grid[y2][x2] = elements_grid[y1][x1];
+	elements_grid[y1][x1] = tmp;
+}
+
 void Simulation::spawn_mouse()
 {
 	int mouse_cell_x = static_cast<float>(mouse_x) / cell_width;
