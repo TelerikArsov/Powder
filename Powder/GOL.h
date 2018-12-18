@@ -26,7 +26,7 @@ public:
 	bool update() override;
 	void render(float, float, sf::Vertex* quad) override;
 	Element* clone() const override;
-	GOL(int, int, std::string, std::string);
+	GOL(int, std::string, std::string);
 	GOL(const GOL& rhs);
 	~GOL();
 };

@@ -1,8 +1,8 @@
 #pragma once
 #include "Element.h"
+#include "ElementsIds.h"
 #include <vector>
 #include <list>
-#include "None_Element.h"
 #include "Brush.h"
 
 
@@ -26,8 +26,6 @@ public:
 	std::vector<std::vector<int>> gol_grid;
 	// All currently active elements inside the element grid
 	std::list<Element*> active_elements;
-	// All the available elements that can be spawned
-	std::vector<Element*> available_elements;
 	// Elements that need to be added to the active list
 	std::list<Element*> add_queue; 
 	bool draw_grid = false;
@@ -49,6 +47,7 @@ public:
 	// string vars = any bonus information that might be needed in the creation of the element 
 	int create_element(int id, bool from_mouse, bool add_to_active, int x, int y, std::string vars = "");
 	void swap_elements(int x1, int y1, int x2, int y2);
+	void init_col_rules();
 	// Gets all the alive neighbours of a cell
 	// with position x and y
 	// Uses the gol_grid
@@ -67,11 +66,16 @@ public:
 	// Based on the currently used spawn area type the creation method is called
 	// Spanw area types include circle, square, triangle NOTE: currently only cirlce is implemented 
 	void resize_brush(int d);
+	bool available_add(Element*);
 	// int window_width, int window_height = the dimensions of the window 
 	// where the simulation will be rendered
 	Simulation(int cells_x_count, int cells_y_count, int window_width, int window_height);
 	~Simulation();
+	//TODO something something encapsulation, most of the public properties should be here anyways
 private:
+	// All the available elements that can be spawned
+	std::vector<int> collision_rules;
+	std::vector<Element*> available_elements;
 	int spawn_width = 1, spawn_height = 1, spawn_radius = 1;
 	bool paused = true;
 };

@@ -136,12 +136,18 @@
   <ItemGroup>
     <ClInclude Include="Brush.h" />
     <ClInclude Include="CircleBrush.h" />
+    <ClInclude Include="Elements.h" />
+    <ClInclude Include="ElementsIds.h" />
     <ClInclude Include="GOL.h" />
     <ClInclude Include="Element.h" />
     <ClInclude Include="None_Element.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="Sand.h" />
     <ClInclude Include="Simulation.h" />
     <ClInclude Include="SquareBrush.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Powder.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

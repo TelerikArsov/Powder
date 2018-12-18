@@ -52,7 +52,7 @@ bool Element::move(int xD, int yD)
 				if (e + eprev < ddx)  // bottom square also
 				{
 					// if there is no collision we update the elements real coordinates
-					if (sim->elements_grid[yO - yStep][xO]->identifier != -1) //todo function that evals the collision
+					if (sim->elements_grid[yO - yStep][xO]->identifier != 0) //todo function that evals the collision
 					{
 						status = false;
 						break;
@@ -66,7 +66,7 @@ bool Element::move(int xD, int yD)
 				}
 				else if (e + eprev > ddx) // left corner
 				{
-					if (sim->elements_grid[yO][xO - xStep]->identifier != -1)
+					if (sim->elements_grid[yO][xO - xStep]->identifier != 0)
 					{
 						status = false;
 						break;
@@ -83,7 +83,7 @@ bool Element::move(int xD, int yD)
 					// TODO
 				}
 			}
-			if (sim->elements_grid[yO][xO]->identifier != -1)
+			if (sim->elements_grid[yO][xO]->identifier != 0)
 			{
 				status = false;
 				break;
@@ -111,7 +111,7 @@ bool Element::move(int xD, int yD)
 				e -= ddy;
 				if (e + eprev < ddy)
 				{
-					if (sim->elements_grid[yO][xO - xStep]->identifier != -1)
+					if (sim->elements_grid[yO][xO - xStep]->identifier != 0)
 					{
 						status = false;
 						break;
@@ -125,7 +125,7 @@ bool Element::move(int xD, int yD)
 				}
 				else if (e + eprev > ddy)
 				{
-					if (sim->elements_grid[yO - yStep][xO]->identifier != -1)
+					if (sim->elements_grid[yO - yStep][xO]->identifier != 0)
 					{
 						status = false;
 						break;
@@ -141,7 +141,7 @@ bool Element::move(int xD, int yD)
 				{
 				}
 			}
-			if (sim->elements_grid[yO][xO]->identifier != -1)
+			if (sim->elements_grid[yO][xO]->identifier != 0)
 			{
 				status = false;
 				break;

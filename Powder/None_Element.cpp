@@ -17,7 +17,7 @@ Element * None_Element::clone() const
 
 None_Element::None_Element()
 {
-	identifier = -1;
+	identifier = 0;
 }
 
 

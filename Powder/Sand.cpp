@@ -26,7 +26,7 @@ Element * Sand::clone() const
 
 Sand::Sand()
 {
-	identifier = 1; // TODO make enum
+	identifier = 2; // TODO make enum
 	name = "Sand";
 	description = "Sand";
 	menu_section = 2;

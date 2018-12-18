@@ -1,6 +1,7 @@
 #include "Simulation.h"
 #include <algorithm>
-#include <GOL.h>
+#include "GOL.h"
+#include "None_Element.h"
 
 void Simulation::tick(bool bypass_pause)
 {
@@ -10,7 +11,7 @@ void Simulation::tick(bool bypass_pause)
 	{
 		for (int j = 0; j < cells_x_count; j++)
 		{
-			gol_grid[i][j] = elements_grid[i][j]->identifier != -1 ? elements_grid[i][j]->state : 0;
+			gol_grid[i][j] = elements_grid[i][j]->identifier != 0 ? elements_grid[i][j]->state : 0;
 		}
 	}
 	for(auto i = active_elements.begin(); i != active_elements.end();)
@@ -105,8 +106,9 @@ bool Simulation::bounds_check(int corr_x, int corr_y)
 
 int Simulation::create_element(int id, bool fm, bool ata, int x, int y, std::string vars)
 {
-	// If the element at the position is None_Element (id == -1)
-	if (bounds_check(x, y) && elements_grid[y][x]->identifier == -1)
+	id--;
+	// If the element at the position is None_Element (id == 0)
+	if (bounds_check(x, y) && elements_grid[y][x]->identifier == 0)
 	{
 		Element* new_element;
 		// if creating from mouse
@@ -123,7 +125,7 @@ int Simulation::create_element(int id, bool fm, bool ata, int x, int y, std::str
 			// TO DO: enum with all the elements in it
 			// to be more readable
 			// GOL 
-			if (id == 0)
+			if (id == 1)
 			{
 				if(vars != "")
 				{ 
@@ -152,12 +154,37 @@ int Simulation::create_element(int id, bool fm, bool ata, int x, int y, std::str
 	
 }
 
+bool Simulation::available_add(Element * tba)
+{
+	for (auto el : available_elements) 
+	{
+		if (tba->identifier != GOL_ID && tba->identifier == el->identifier)
+		{
+			return false;
+		}
+	}
+	available_elements.push_back(tba);
+	return true;
+}
+
 void Simulation::swap_elements(int x1, int y1, int x2, int y2)
 {
 	//Prob will add more stuff then just this but for now...
 	Element * tmp = elements_grid[y2][x2];
 	elements_grid[y2][x2] = elements_grid[y1][x1];
 	elements_grid[y1][x1] = tmp;
+}
+
+void Simulation::init_col_rules()
+{
+	int size = available_elements.size() + 1;
+	collision_rules.assign((size) * (size), 0);
+	collision_rules.shrink_to_fit();
+	for (int i = 1; i < size; i++)
+	{
+		collision_rules[i * size] = available_elements[i - 1]->identifier;
+		collision_rules[i] = available_elements[i - 1]->identifier;
+	}
 }
 
 void Simulation::spawn_mouse()

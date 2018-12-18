@@ -1,8 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include "Simulation.h"
-#include "GOL.h"
-#include "Sand.h"
+#include "Elements.h"
 #include "CircleBrush.h"
 #include "SquareBrush.h"
 
@@ -11,12 +10,12 @@ int main()
 	int WINDOW_HEIGHT = 1000, WINDOW_WIDTH = 1000;
 	sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "SFML works!");
 	Simulation gol(20, 20, WINDOW_WIDTH, WINDOW_HEIGHT);
-	gol.available_elements.push_back(new GOL(0, 1, "WALL", "s012345"));
-	gol.available_elements.push_back(new Sand());
+	gol.available_add(new GOL(1, "WALL", "s12345/b3"));
+	gol.available_add(new Sand());
 	gol.brushes.push_back(new CircleBrush());
 	gol.brushes.push_back(new SquareBrush());
-	gol.selected_brush = 0;
-	gol.selected_element = gol.available_elements[1]->identifier;
+	gol.selected_brush = 1;
+	gol.selected_element = 1;
 	sf::Clock clock;
 	bool mouse_left_hold = false;
 	while (window.isOpen())
@@ -72,7 +71,7 @@ int main()
 					int y = static_cast<float>(gol.mouse_y) / gol.cell_height;
 					for (auto el : gol.active_elements)
 					{
-						if (el->identifier == 1) 
+						if (el->identifier == 2) 
 						{
 							el->move(x, y);
 						}

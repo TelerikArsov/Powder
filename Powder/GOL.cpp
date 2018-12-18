@@ -94,9 +94,9 @@ Element * GOL::clone() const
 	return new GOL(*this);
 }
 
-GOL::GOL(int id, int state, std::string name, std::string rules_s)
+GOL::GOL(int state, std::string name, std::string rules_s)
 {
-	identifier = id;
+	identifier = 1;
 	this->name = name;
 	description = "Brians brain rules set for game of life";
 	menu_section = 1;
