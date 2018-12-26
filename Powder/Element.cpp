@@ -37,27 +37,27 @@ bool Element::move(int xD, int yD)
 	int ddx = 2 * dx; // double for more precision
 	int ddy = 2 * dy;
 	// we check if the slope is in the 1st 4th 5th and 8th octant
-	if (ddx >= ddy) 
-	{  
+	if (ddx >= ddy)
+	{
 		eprev = dx;
 		e = dx;
-		for (int i = 0; i < dx; i++) 
+		for (int i = 0; i < dx; i++)
 		{
 			xO += xStep;
 			e += ddy;
-			if (e > ddx) 
+			if (e > ddx)
 			{
 				yO += yStep;
 				e -= ddx;
 				if (e + eprev < ddx)  // bottom square also
 				{
 					// if there is no collision we update the elements real coordinates
-					if (sim->elements_grid[yO - yStep][xO]->identifier != 0) //todo function that evals the collision
+					if (sim->get_from_grid(xO, yO - yStep)->identifier != EL_NONE) //todo function that evals the collision
 					{
 						status = false;
 						break;
 					}
-					else 
+					else
 					{
 						sim->swap_elements(x, y, xO, yO - yStep);
 						x = xO;
@@ -66,7 +66,7 @@ bool Element::move(int xD, int yD)
 				}
 				else if (e + eprev > ddx) // left corner
 				{
-					if (sim->elements_grid[yO][xO - xStep]->identifier != 0)
+					if (sim->get_from_grid(xO - xStep, yO)->identifier != EL_NONE)
 					{
 						status = false;
 						break;
@@ -79,16 +79,16 @@ bool Element::move(int xD, int yD)
 					}
 				}
 				else //the corner case
-				{  
+				{
 					// TODO
 				}
 			}
-			if (sim->elements_grid[yO][xO]->identifier != 0)
+			if (sim->get_from_grid(xO, yO)->identifier != EL_NONE)
 			{
 				status = false;
 				break;
 			}
-			else 
+			else
 			{
 				sim->swap_elements(x, y, xO, yO);
 				x = xO;
@@ -98,10 +98,10 @@ bool Element::move(int xD, int yD)
 		}
 	}
 	else // if its in the other 4 octants
-	{  
+	{
 		eprev = dy;
 		e = dy;
-		for (int i = 0; i < dy; i++) 
+		for (int i = 0; i < dy; i++)
 		{
 			yO += yStep;
 			e += ddx;
@@ -111,7 +111,7 @@ bool Element::move(int xD, int yD)
 				e -= ddy;
 				if (e + eprev < ddy)
 				{
-					if (sim->elements_grid[yO][xO - xStep]->identifier != 0)
+					if (sim->get_from_grid(xO - xStep, yO)->identifier != EL_NONE)
 					{
 						status = false;
 						break;
@@ -125,7 +125,7 @@ bool Element::move(int xD, int yD)
 				}
 				else if (e + eprev > ddy)
 				{
-					if (sim->elements_grid[yO - yStep][xO]->identifier != 0)
+					if (sim->get_from_grid(xO, yO - yStep)->identifier != EL_NONE)
 					{
 						status = false;
 						break;
@@ -137,11 +137,11 @@ bool Element::move(int xD, int yD)
 						y = yO - yStep;
 					}
 				}
-				else 
+				else
 				{
 				}
 			}
-			if (sim->elements_grid[yO][xO]->identifier != 0)
+			if (sim->get_from_grid(xO, yO)->identifier != EL_NONE)
 			{
 				status = false;
 				break;

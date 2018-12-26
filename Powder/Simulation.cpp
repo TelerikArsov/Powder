@@ -3,6 +3,40 @@
 #include "GOL.h"
 #include "None_Element.h"
 
+std::vector<std::vector<Element*>> Simulation::get_element_grid() const
+{
+	return elements_grid;
+}
+
+Element * Simulation::get_from_grid(int x, int y) const
+{
+	return elements_grid[y][x];
+}
+
+int Simulation::get_from_gol(int x, int y) const
+{
+	return gol_grid[y][x];
+}
+
+void Simulation::set_gol_el(int x, int y, int val)
+{
+	gol_grid[y][x] = val;
+}
+
+Element * Simulation::find_by_id(int id)
+{
+	Element * match = nullptr;
+	for (auto el : available_elements)
+	{
+		if (el->identifier == id) 
+		{
+			match = el;
+			break;
+		}
+	}
+	return match;
+}
+
 void Simulation::tick(bool bypass_pause)
 {
 	if (paused && !bypass_pause)
@@ -11,7 +45,7 @@ void Simulation::tick(bool bypass_pause)
 	{
 		for (int j = 0; j < cells_x_count; j++)
 		{
-			gol_grid[i][j] = elements_grid[i][j]->identifier != 0 ? elements_grid[i][j]->state : 0;
+			gol_grid[i][j] = elements_grid[i][j]->identifier != EL_NONE ? elements_grid[i][j]->state : 0;
 		}
 	}
 	for(auto i = active_elements.begin(); i != active_elements.end();)
@@ -75,8 +109,7 @@ void Simulation::render(sf::RenderWindow* window)
 }
 
 
-
-int Simulation::get_gol_neigh_count(int corr_x, int corr_y)
+int Simulation::get_gol_neigh_count(int corr_x, int corr_y) const
 {
 	int count = 0;
 	// Moore neighborhood is used
@@ -99,33 +132,37 @@ int Simulation::get_gol_neigh_count(int corr_x, int corr_y)
 }
 
 
-bool Simulation::bounds_check(int corr_x, int corr_y) 
+bool Simulation::bounds_check(int corr_x, int corr_y) const
 {
 	return (corr_x >= 0 && corr_x < cells_x_count) && (corr_y >= 0 && corr_y < cells_y_count);
 }
 
 int Simulation::create_element(int id, bool fm, bool ata, int x, int y, std::string vars)
 {
-	id--;
 	// If the element at the position is None_Element (id == 0)
-	if (bounds_check(x, y) && elements_grid[y][x]->identifier == 0)
+	if (bounds_check(x, y) && elements_grid[y][x]->identifier == EL_NONE)
 	{
 		Element* new_element;
+		Element* tmp;
 		// if creating from mouse
 		// 1 from mouse 0 anything else
 		if (fm == 1)
-		{
-			// Probably should be a function to find element by its id
-			// from the available_elements
-			new_element = available_elements[selected_element]->clone();
+		{ 
+			tmp = find_by_id(selected_element);
+			if (tmp)
+				new_element = tmp->clone();
+			else
+				return -1;
 		}
 		else
 		{
-			new_element = available_elements[id]->clone();
-			// TO DO: enum with all the elements in it
-			// to be more readable
+			tmp = find_by_id(id);
+			if (tmp)
+				new_element = tmp->clone();
+			else
+				return -1;
 			// GOL 
-			if (id == 1)
+			if (id == EL_GOL)
 			{
 				if(vars != "")
 				{ 
@@ -148,22 +185,29 @@ int Simulation::create_element(int id, bool fm, bool ata, int x, int y, std::str
 		delete elements_grid[y][x];
 		elements_grid[y][x] = new_element;
 		elements_count++;
-
+		return 1;
 	}
 	return -1;
 	
 }
 
-bool Simulation::available_add(Element * tba)
+bool Simulation::add_element(Element * tba)
 {
 	for (auto el : available_elements) 
 	{
-		if (tba->identifier != GOL_ID && tba->identifier == el->identifier)
+		if (tba->identifier != EL_GOL && tba->identifier == el->identifier)
 		{
 			return false;
 		}
 	}
 	available_elements.push_back(tba);
+	return true;
+}
+
+bool Simulation::add_brush(Brush * tba)
+{
+	//for now its gonna be this, might add some more functionality later
+	brushes.push_back(tba);
 	return true;
 }
 
@@ -178,16 +222,9 @@ void Simulation::swap_elements(int x1, int y1, int x2, int y2)
 void Simulation::init_col_rules()
 {
 	int size = available_elements.size() + 1;
-	collision_rules.assign((size) * (size), 0);
-	collision_rules.shrink_to_fit();
-	for (int i = 1; i < size; i++)
-	{
-		collision_rules[i * size] = available_elements[i - 1]->identifier;
-		collision_rules[i] = available_elements[i - 1]->identifier;
-	}
 }
 
-void Simulation::spawn_mouse()
+void Simulation::spawn_at_mouse()
 {
 	int mouse_cell_x = static_cast<float>(mouse_x) / cell_width;
 	int mouse_cell_y = static_cast<float>(mouse_y) / cell_height;

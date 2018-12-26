@@ -56,10 +56,10 @@ bool GOL::update()
 		{
 			if (sim->bounds_check(j, i) && (i - y || j - x)) 
 			{
-				if (sim->gol_grid[i][j] == 0)
+				if (sim->get_from_gol(j, i) == 0)
 				{
 					int size = sim->get_gol_neigh_count(j, i);
-					sim->gol_grid[i][j] = 2;
+					sim->set_gol_el(j, i, 2);
 					if (rules[B][size])
 					{
 						sim->create_element(identifier, false, false, j, i, rule_string);
