@@ -70,7 +70,7 @@ public:
 	//TODO something something encapsulation, most of the public properties should be here anyways
 private:
 	// the dimensions of each cell
-	float cell_height, cell_width;
+	double cell_height, cell_width;
 	int cells_x_count, cells_y_count;
 	// Not yet used
 	int elements_count;

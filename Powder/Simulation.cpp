@@ -85,8 +85,8 @@ void Simulation::render(sf::RenderWindow* window)
 	for (auto &off : brushes[selected_brush]->get_outline()) 
 	{
 		sf::Vertex quad[4];
-		int mouse_cell_x = static_cast<float>(mouse_x) / cell_width;
-		int mouse_cell_y = static_cast<float>(mouse_y) / cell_height;
+		int mouse_cell_x = static_cast<int>(mouse_x / cell_width);
+		int mouse_cell_y = static_cast<int>(mouse_y / cell_height);
 		int x = (mouse_cell_x + off.first);
 		int y = (mouse_cell_y + off.second);
 		quad[0].position = sf::Vector2f(x * cell_width, y * cell_height);
@@ -226,8 +226,8 @@ void Simulation::init_col_rules()
 
 void Simulation::spawn_at_mouse()
 {
-	int mouse_cell_x = static_cast<float>(mouse_x) / cell_width;
-	int mouse_cell_y = static_cast<float>(mouse_y) / cell_height;
+	int mouse_cell_x = static_cast<int>(mouse_x / cell_width);
+	int mouse_cell_y = static_cast<int>(mouse_y / cell_height);
 	for (auto &off : brushes[selected_brush]->get_area())
 	{
 		create_element(selected_element, true, true, mouse_cell_x + off.first, mouse_cell_y + off.second);
@@ -265,8 +265,8 @@ Simulation::Simulation(int cells_x_count, int cells_y_count, int window_width, i
 	}
 	this->cells_x_count = cells_x_count;
 	this->cells_y_count = cells_y_count;
-	this->cell_width = static_cast<float>(window_width) / cells_x_count;
-	this->cell_height = static_cast<float>(window_height) / cells_y_count;
+	this->cell_width = window_width / static_cast<double>(cells_x_count);
+	this->cell_height = window_height / static_cast<double>(cells_y_count);
 }
 
 Simulation::~Simulation()
