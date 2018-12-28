@@ -8,11 +8,6 @@ bool Element::move(Vector dest)
 	int yD = dest.y;
 	if (x == xD && y == yD)
 		return status;
-	if (!sim->bounds_check(xD, yD))
-	{
-		status = false;
-		return status;
-	}
 	int xStep, yStep;
 	int xO = x, yO = y;
 	int dx = xD - xO;
@@ -53,8 +48,13 @@ bool Element::move(Vector dest)
 				e -= ddx;
 				if (e + eprev < ddx)  // bottom square also
 				{
+					if (!sim->bounds_check(xO, yO - yStep))
+					{
+						status = false;
+						break;
+					}
 					// if there is no collision we update the elements real coordinates
-					if (sim->get_from_grid(xO, yO - yStep)->identifier != EL_NONE) //todo function that evals the collision
+					else if (sim->get_from_grid(xO, yO - yStep)->identifier != EL_NONE) //todo function that evals the collision
 					{
 						status = false;
 						break;
@@ -68,7 +68,12 @@ bool Element::move(Vector dest)
 				}
 				else if (e + eprev > ddx) // left corner
 				{
-					if (sim->get_from_grid(xO - xStep, yO)->identifier != EL_NONE)
+					if (!sim->bounds_check(xO - xStep, yO))
+					{
+						status = false;
+						break;
+					}
+					else if (sim->get_from_grid(xO - xStep, yO)->identifier != EL_NONE)
 					{
 						status = false;
 						break;
@@ -85,7 +90,12 @@ bool Element::move(Vector dest)
 					// TODO
 				}
 			}
-			if (sim->get_from_grid(xO, yO)->identifier != EL_NONE)
+			if (!sim->bounds_check(xO, yO))
+			{
+				status = false;
+				break;
+			}
+			else if (sim->get_from_grid(xO, yO)->identifier != EL_NONE)
 			{
 				status = false;
 				break;
@@ -113,7 +123,12 @@ bool Element::move(Vector dest)
 				e -= ddy;
 				if (e + eprev < ddy)
 				{
-					if (sim->get_from_grid(xO - xStep, yO)->identifier != EL_NONE)
+					if (!sim->bounds_check(xO - xStep, yO))
+					{
+						status = false;
+						break;
+					}
+					else if (sim->get_from_grid(xO - xStep, yO)->identifier != EL_NONE)
 					{
 						status = false;
 						break;
@@ -127,7 +142,12 @@ bool Element::move(Vector dest)
 				}
 				else if (e + eprev > ddy)
 				{
-					if (sim->get_from_grid(xO, yO - yStep)->identifier != EL_NONE)
+					if (!sim->bounds_check(xO, yO - yStep))
+					{
+						status = false;
+						break;
+					}
+					else if (sim->get_from_grid(xO, yO - yStep)->identifier != EL_NONE)
 					{
 						status = false;
 						break;
@@ -143,7 +163,12 @@ bool Element::move(Vector dest)
 				{
 				}
 			}
-			if (sim->get_from_grid(xO, yO)->identifier != EL_NONE)
+			if (!sim->bounds_check(xO, yO))
+			{
+				status = false;
+				break;
+			}
+			else if (sim->get_from_grid(xO, yO)->identifier != EL_NONE)
 			{
 				status = false;
 				break;

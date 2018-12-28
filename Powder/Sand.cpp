@@ -38,6 +38,7 @@ Sand::Sand()
 	menu_section = 2;
 	state = 1;
 	color = sf::Color::Yellow;
+	weight = 10;
 }
 
 Sand::Sand(const Sand& rhs)
