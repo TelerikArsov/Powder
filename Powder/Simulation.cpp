@@ -2,6 +2,7 @@
 #include <algorithm>
 #include "GOL.h"
 #include "None_Element.h"
+#include "Vector.h"
 
 std::vector<std::vector<Element*>> Simulation::get_element_grid() const
 {
@@ -37,7 +38,7 @@ Element * Simulation::find_by_id(int id)
 	return match;
 }
 
-void Simulation::tick(bool bypass_pause)
+void Simulation::tick(bool bypass_pause, double dt)
 {
 	if (paused && !bypass_pause)
 		return;
@@ -50,7 +51,7 @@ void Simulation::tick(bool bypass_pause)
 	}
 	for(auto i = active_elements.begin(); i != active_elements.end();)
 	{
-		if ((*i)->update()) 
+		if ((*i)->update(dt)) 
 		{
 			int x = (*i)->x, y = (*i)->y;
 			i = active_elements.erase(i);
@@ -255,6 +256,8 @@ Simulation::Simulation(int cells_x_count, int cells_y_count, int window_width, i
 	draw_grid(false),
 	gol_grid(cells_y_count, std::vector<int>(cells_x_count, 0))
 {
+	gd = Vector(0, -1);
+	gd *= g;
 	for (int i = 0; i < cells_y_count; i++)
 	{
 		elements_grid.push_back(std::vector<Element*>());

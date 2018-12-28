@@ -5,6 +5,7 @@
 #include <list>
 #include "Brush.h"
 
+class Vector;
 
 class Simulation 
 {
@@ -12,6 +13,11 @@ public:
 	// The identifier of the current selected element
 	int selected_element;
 	int selected_brush;
+	// Should be in another class that makes a gravity map, but for now
+	// this would do
+	// the base gravity vector
+	Vector gd;
+	const double g = 9.8;
 	std::vector < std::vector<Element *>> get_element_grid() const;
 	Element * get_from_grid(int x, int y) const;
 	int get_from_gol(int x, int y) const;
@@ -21,7 +27,7 @@ public:
 	// Loops over all the active elements and calls their update method.
 	// If the update method returns true, then the elements is deleted.
 	// Adds any newly created elements to the active list.
-	void tick(bool bypass_pause = false);
+	void tick(bool bypass_pause = false, double dt = 1);
 	// Loops over all the active elements and calls their render method.
 	// Renders the grid(NOT YET IMPLEMENTED) and the outline of the spawn area
 	void render(sf::RenderWindow* window);

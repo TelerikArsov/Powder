@@ -1,7 +1,7 @@
 #include "None_Element.h"
 
 
-bool None_Element::update()
+bool None_Element::update(double dt)
 {
 	return 0;
 }

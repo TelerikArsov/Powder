@@ -1,6 +1,8 @@
 #pragma once
 #include <string>
 #include <SFML/Graphics.hpp>
+#include "ElementsIds.h"
+#include "Vector.h"
 
 class Simulation;
 
@@ -17,6 +19,7 @@ public:
 	int endurance = 0; //
 	int x = 0; // Current position in the grid of elements
 	int y = 0; //
+	Vector velocity;
 	float air_drag = 0.9f; // Physical properties
 	float weight = 100;	   // Not yet used
 	float temperature = 0;
@@ -31,9 +34,9 @@ public:
 	// this function uses a modified version of bresenhams line algorithm
 	// return true if there is no collision TODO probably should return
 	// the x and y of the cell where collision occurred
-	bool move(int xDestination, int yDestination);
+	bool move(Vector dest);
 
-	virtual bool update() = 0;
+	virtual bool update(double dt) = 0;
 	virtual void render(float cell_height, float cell_width, sf::Vertex* quad) = 0;
 	virtual Element* clone() const = 0;
 	virtual ~Element() {};

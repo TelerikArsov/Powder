@@ -4,7 +4,7 @@ class Sand :
 	public Element
 {
 public:
-	bool update() override;
+	bool update(double dt) override;
 	void render(float, float, sf::Vertex* quad) override;
 	Element* clone() const override;
 	Sand();

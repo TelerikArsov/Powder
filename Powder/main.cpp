@@ -4,20 +4,25 @@
 #include "Elements.h"
 #include "CircleBrush.h"
 #include "SquareBrush.h"
+#include "Vector.h"
 
 int main()
 {
 	int WINDOW_HEIGHT = 1000, WINDOW_WIDTH = 1000;
 	sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "SFML works!");
-	Simulation gol(20, 20, WINDOW_WIDTH, WINDOW_HEIGHT);
+	Simulation gol(100, 100, WINDOW_WIDTH, WINDOW_HEIGHT);
 	gol.add_element(new GOL(1, "WALL", "s12345/b3"));
 	gol.add_element(new Sand());
 	gol.add_brush(new CircleBrush());
 	gol.add_brush(new SquareBrush());
 	gol.selected_brush = 0;
-	gol.selected_element = EL_GOL;
+	gol.selected_element = EL_SAND;
 	sf::Clock clock;
 	bool mouse_left_hold = false;
+	Vector d(2, 3);
+	Vector w(4, 5);
+	Vector s(d);
+	s = Vector::Cross(d, w);
 	while (window.isOpen())
 	{ 
 		sf::Event event;
@@ -89,7 +94,7 @@ int main()
 		std::cout << 1.f / elapsed.asSeconds() << std::endl;
 		window.clear();
 		gol.render(&window);
-		gol.tick();
+		gol.tick(false, 1);
 		window.display();
 	}
 

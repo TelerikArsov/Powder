@@ -1,9 +1,11 @@
 #include "Element.h"
 #include "Simulation.h"
 //TODO implement an element to test this function properly
-bool Element::move(int xD, int yD)
+bool Element::move(Vector dest)
 {
 	bool status = true;
+	int xD = dest.x;
+	int yD = dest.y;
 	if (x == xD && y == yD)
 		return status;
 	if (!sim->bounds_check(xD, yD))

@@ -132,6 +132,7 @@
     <ClCompile Include="Sand.cpp" />
     <ClCompile Include="Simulation.cpp" />
     <ClCompile Include="SquareBrush.cpp" />
+    <ClCompile Include="Vector.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Brush.h" />
@@ -145,6 +146,7 @@
     <ClInclude Include="Sand.h" />
     <ClInclude Include="Simulation.h" />
     <ClInclude Include="SquareBrush.h" />
+    <ClInclude Include="Vector.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Powder.rc" />

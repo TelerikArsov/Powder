@@ -1,8 +1,14 @@
 #include "Sand.h"
+#include "Simulation.h"
 
-
-bool Sand::update() 
+bool Sand::update(double dt) 
 {
+	Vector a;
+	a = sim->gd / weight;
+	a.y = -a.y;
+	velocity += (a * dt);
+	Vector vPos(x, y);
+	move(vPos + velocity * dt);
 	return false;
 }
 
@@ -19,14 +25,14 @@ void Sand::render(float cell_height, float cell_width, sf::Vertex * quad)
 	quad[3].color =	color;
 }
 
-Element * Sand::clone() const
+Element* Sand::clone() const
 {
 	return new Sand(*this);
 }
 
 Sand::Sand()
 {
-	identifier = 2; // TODO make enum
+	identifier = EL_SAND; // TODO make enum
 	name = "Sand";
 	description = "Sand";
 	menu_section = 2;

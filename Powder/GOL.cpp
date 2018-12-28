@@ -46,7 +46,7 @@ void GOL::process_rules()
 	}
 }
 
-bool GOL::update() 
+bool GOL::update(double dt) 
 {
 	if (state == 0)
 		return true;

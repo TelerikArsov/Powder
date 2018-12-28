@@ -5,8 +5,8 @@ class None_Element :
 	public Element
 {
 public:
-	bool update();
-	void render(float cell_height, float cell_width, sf::Vertex* quad);
+	bool update(double dt) override;
+	void render(float cell_height, float cell_width, sf::Vertex* quad) override;
 	Element* clone() const;
 	None_Element();
 	~None_Element();
