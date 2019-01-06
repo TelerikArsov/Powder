@@ -45,6 +45,13 @@ void Vector::Reverse()
 	z = -z;
 }
 
+void Vector::Zero()
+{
+	x = 0;
+	y = 0;
+	z = 0;
+}
+
 Vector& Vector::operator+=(const Vector& u)
 {
 	x += u.x;

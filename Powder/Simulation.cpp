@@ -172,8 +172,7 @@ int Simulation::create_element(int id, bool fm, bool ata, int x, int y, std::str
 				}
 			}
 		}
-		new_element->x = x;
-		new_element->y = y;
+		new_element->set_pos(x, y);
 		new_element->sim = this;
 		if (ata)
 		{
@@ -256,8 +255,8 @@ Simulation::Simulation(int cells_x_count, int cells_y_count, int window_width, i
 	draw_grid(false),
 	gol_grid(cells_y_count, std::vector<int>(cells_x_count, 0))
 {
-	gd = Vector(0, -1);
-	gd *= g;
+	base_g = Vector(0, -1);
+	base_g *= g;
 	for (int i = 0; i < cells_y_count; i++)
 	{
 		elements_grid.push_back(std::vector<Element*>());

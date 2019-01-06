@@ -3,12 +3,9 @@
 
 bool Sand::update(double dt) 
 {
-	Vector a;
-	a = sim->gd / weight;
-	a.y = -a.y;
-	velocity += (a * dt);
-	Vector vPos(x, y);
-	move(vPos + velocity * dt);
+	update_velocity(dt);
+	pos += velocity * dt;
+	move(pos);
 	return false;
 }
 
@@ -30,7 +27,7 @@ Element* Sand::clone() const
 	return new Sand(*this);
 }
 
-Sand::Sand()
+Sand::Sand(Simulation& sim)
 {
 	identifier = EL_SAND; // TODO make enum
 	name = "Sand";
@@ -38,7 +35,9 @@ Sand::Sand()
 	menu_section = 2;
 	state = 1;
 	color = sf::Color::Yellow;
-	weight = 10;
+	mass = 1;
+	this->sim = &sim;
+	calc_term_vel();
 }
 
 Sand::Sand(const Sand& rhs)
@@ -47,13 +46,15 @@ Sand::Sand(const Sand& rhs)
 	name = rhs.name;
 	description = rhs.description;
 	color = rhs.color;
-	air_drag = rhs.air_drag;
+	drag_coef = rhs.drag_coef;
 	menu_id = rhs.menu_id;
 	menu_section = rhs.menu_section;
 	endurance = rhs.endurance;
 	x = rhs.x;
 	y = rhs.y;
-	weight = rhs.weight;
+	mass = rhs.mass;
+	terminal_vel = rhs.terminal_vel;
+	terminal_vel_v = rhs.terminal_vel_v;
 	temperature = rhs.temperature;
 	meltable = rhs.meltable;
 	state = rhs.state;

@@ -19,10 +19,14 @@ public:
 	int endurance = 0; //
 	int x = 0; // Current position in the grid of elements
 	int y = 0; //
+	Vector pos = Vector(0, 0);
 	Vector velocity;
-	float air_drag = 0.9f; // Physical properties
-	float weight = 100;	   // Not yet used
-	float temperature = 0;
+	Vector terminal_vel_v;
+	double terminal_vel;
+	Vector forces;
+	double drag_coef = 1.05;
+	double mass = 100;	   // Not yet used
+	double temperature = 0;
 	bool meltable = 0;
 	int state = 0; // 0 - liquid 1 - solid 2 - gas 
 	Element* low_pressure_transition;		// To which element the current element 
@@ -35,7 +39,10 @@ public:
 	// return true if there is no collision TODO probably should return
 	// the x and y of the cell where collision occurred
 	bool move(Vector dest);
-
+	void calc_loads();
+	void update_velocity(double dt);
+	void calc_term_vel();
+	void set_pos(int x, int y);
 	virtual bool update(double dt) = 0;
 	virtual void render(float cell_height, float cell_width, sf::Vertex* quad) = 0;
 	virtual Element* clone() const = 0;

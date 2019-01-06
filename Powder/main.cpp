@@ -10,21 +10,20 @@ int main()
 {
 	int WINDOW_HEIGHT = 1000, WINDOW_WIDTH = 1000;
 	sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "SFML works!");
-	Simulation gol(100, 100, WINDOW_WIDTH, WINDOW_HEIGHT);
+	Simulation gol(367, 367, WINDOW_WIDTH, WINDOW_HEIGHT);
 	gol.add_element(new GOL(1, "WALL", "s12345/b3"));
-	gol.add_element(new Sand());
+	gol.add_element(new Sand(gol));
 	gol.add_brush(new CircleBrush());
 	gol.add_brush(new SquareBrush());
 	gol.selected_brush = 0;
 	gol.selected_element = EL_SAND;
 	sf::Clock clock;
+	const double max_fps = 60;
+	double elapsed = 0.0f;
 	bool mouse_left_hold = false;
-	Vector d(2, 3);
-	Vector w(4, 5);
-	Vector s(d);
-	s = Vector::Cross(d, w);
+	window.setFramerateLimit(max_fps);
 	while (window.isOpen())
-	{ 
+	{
 		sf::Event event;
 		while (window.pollEvent(event))
 		{
@@ -54,7 +53,7 @@ int main()
 			}
 			if (event.type == sf::Event::KeyPressed)
 			{
-				/*if (event.key.code == sf::Keyboard::Q) 
+				/*if (event.key.code == sf::Keyboard::Q)
 				{
 					gol.selected_element = 0;
 				}
@@ -71,13 +70,13 @@ int main()
 					gol.tick(true);
 				}
 				/*
-				if (event.key.code == sf::Keyboard::S) 
+				if (event.key.code == sf::Keyboard::S)
 				{
 					int x = static_cast<float>(gol.mouse_x) / gol.cell_width;
 					int y = static_cast<float>(gol.mouse_y) / gol.cell_height;
 					for (auto el : gol.active_elements)
 					{
-						if (el->identifier == 2) 
+						if (el->identifier == 2)
 						{
 							el->move(x, y);
 						}
@@ -90,11 +89,11 @@ int main()
 				gol.spawn_at_mouse();
 			}
 		}
-		sf::Time elapsed = clock.restart();
-		std::cout << 1.f / elapsed.asSeconds() << std::endl;
+		elapsed = clock.restart().asSeconds();
+		std::cout << 1 / elapsed << std::endl;
+		gol.tick(false, 1);
 		window.clear();
 		gol.render(&window);
-		gol.tick(false, 1);
 		window.display();
 	}
 

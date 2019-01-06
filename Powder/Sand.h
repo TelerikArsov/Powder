@@ -7,7 +7,7 @@ public:
 	bool update(double dt) override;
 	void render(float, float, sf::Vertex* quad) override;
 	Element* clone() const override;
-	Sand();
+	Sand(Simulation& sim);
 	Sand(const Sand& rhs);
 	~Sand();
 };

@@ -111,13 +111,13 @@ GOL::GOL(const GOL& rhs)
 	name = rhs.name;
 	description = rhs.description;
 	color = rhs.color;
-	air_drag = rhs.air_drag;
+	drag_coef = rhs.drag_coef;
 	menu_id = rhs.menu_id;
 	menu_section = rhs.menu_section;
 	endurance = rhs.endurance;
 	x = rhs.x;
 	y = rhs.y;
-	weight = rhs.weight;
+	mass = rhs.mass;
 	temperature = rhs.temperature;
 	meltable = rhs.meltable;
 	state = rhs.state;

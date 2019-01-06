@@ -9,8 +9,9 @@ public:
 	double Magnitude() const; 
 	static Vector Cross(const Vector& u, const Vector& v);
 	double TripleScalarProduct(const Vector& u, const Vector& v, const Vector& w) const;
-	void  Normalize();     
-	void  Reverse();
+	void Normalize();     
+	void Reverse();
+	void Zero();
 	Vector& operator+=(const Vector& u);     
 	Vector& operator-=(const Vector& u);  
 	Vector& operator=(const Vector& u);

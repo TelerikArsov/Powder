@@ -1,5 +1,6 @@
 #include "Element.h"
 #include "Simulation.h"
+#include <math.h>
 //TODO implement an element to test this function properly
 bool Element::move(Vector dest)
 {
@@ -62,8 +63,7 @@ bool Element::move(Vector dest)
 					else
 					{
 						sim->swap_elements(x, y, xO, yO - yStep);
-						x = xO;
-						y = yO - yStep;
+						set_pos(xO, yO - yStep);
 					}
 				}
 				else if (e + eprev > ddx) // left corner
@@ -81,8 +81,7 @@ bool Element::move(Vector dest)
 					else
 					{
 						sim->swap_elements(x, y, xO - xStep, yO);
-						x = xO - xStep;
-						y = yO;
+						set_pos(xO - xStep, yO);
 					}
 				}
 				else //the corner case
@@ -103,8 +102,7 @@ bool Element::move(Vector dest)
 			else
 			{
 				sim->swap_elements(x, y, xO, yO);
-				x = xO;
-				y = yO;
+				set_pos(xO, yO);
 			}
 			eprev = e;
 		}
@@ -136,8 +134,7 @@ bool Element::move(Vector dest)
 					else
 					{
 						sim->swap_elements(x, y, xO - xStep, yO);
-						x = xO - xStep;
-						y = yO;
+						set_pos(xO - xStep,	y);
 					}
 				}
 				else if (e + eprev > ddy)
@@ -155,8 +152,7 @@ bool Element::move(Vector dest)
 					else
 					{
 						sim->swap_elements(x, y, xO, yO - yStep);
-						x = xO;
-						y = yO - yStep;
+						set_pos(xO, yO - yStep);
 					}
 				}
 				else
@@ -176,11 +172,58 @@ bool Element::move(Vector dest)
 			else
 			{
 				sim->swap_elements(x, y, xO, yO);
-				y = yO;
-				x = xO;
+				set_pos(xO, yO);
 			}
 			eprev = e;
 		}
 	}
 	return status;
+}
+
+void Element::calc_loads()
+{
+	forces.Zero();
+	forces += sim->base_g;
+	Vector air_drag;
+	double speed = velocity.Magnitude();
+	air_drag = -velocity;
+	// our y in the grid increases downwards
+	// as opposed to the upward increase in the normal cartesian grid
+	// and the velocity y is the one we use not the normal cartesian
+	air_drag.y = -air_drag.y;
+	air_drag.Normalize();
+	air_drag *= 0.5 * sim->air_density * speed * speed * 
+		(1) * drag_coef;
+	//forces += air_drag;
+}
+
+void Element::update_velocity(double dt)
+{
+	calc_loads();
+	Vector a;
+	a = forces / mass;
+	// our y in the grid increases downwards
+	// as opposed to the upward increase in the normal cartesian grid
+	a.y = -a.y;
+	velocity += (a * dt);
+	if (abs(velocity.Magnitude()) > terminal_vel)
+	{
+		velocity = terminal_vel_v;
+	}
+}
+
+void Element::calc_term_vel() 
+{
+	terminal_vel_v = 2 * sim->base_g * mass / sim->air_density * 1 * drag_coef;
+	terminal_vel_v.x = sqrt(abs(terminal_vel_v.x));
+	terminal_vel_v.y = sqrt(abs(terminal_vel_v.y));
+	terminal_vel = terminal_vel_v.Magnitude();
+}
+
+void Element::set_pos(int x, int y)
+{
+	this->x = x;
+	this->y = y;
+	pos.x = x;
+	pos.y = y;
 }

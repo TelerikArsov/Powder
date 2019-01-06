@@ -10,14 +10,20 @@ class Vector;
 class Simulation 
 {
 public:
+	// the dimensions of each cell
+	double cell_height, cell_width;
+	// for air at 15 C
+	double air_density = 1.23; 
 	// The identifier of the current selected element
+	// TODO: move to private make a method to check if the selected element is 
+	// present in the available_elements array
 	int selected_element;
 	int selected_brush;
 	// Should be in another class that makes a gravity map, but for now
 	// this would do
 	// the base gravity vector
-	Vector gd;
-	const double g = 9.8;
+	Vector base_g;
+	double g = 9.8;
 	std::vector < std::vector<Element *>> get_element_grid() const;
 	Element * get_from_grid(int x, int y) const;
 	int get_from_gol(int x, int y) const;
@@ -75,8 +81,6 @@ public:
 	~Simulation();
 	//TODO something something encapsulation, most of the public properties should be here anyways
 private:
-	// the dimensions of each cell
-	double cell_height, cell_width;
 	int cells_x_count, cells_y_count;
 	// Not yet used
 	int elements_count;
