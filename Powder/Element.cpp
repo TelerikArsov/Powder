@@ -2,13 +2,13 @@
 #include "Simulation.h"
 #include <math.h>
 //TODO implement an element to test this function properly
-bool Element::move(Vector dest)
+Element* Element::move(Vector dest)
 {
-	bool status = true;
+	Element* collided_elem = this;
 	int xD = dest.x;
 	int yD = dest.y;
 	if (x == xD && y == yD)
-		return status;
+		return collided_elem;
 	int xStep, yStep;
 	int xO = x, yO = y;
 	int dx = xD - xO;
@@ -51,37 +51,45 @@ bool Element::move(Vector dest)
 				{
 					if (!sim->bounds_check(xO, yO - yStep))
 					{
-						status = false;
+						ground_coll.x = xO;
+						ground_coll.y = yO - yStep;
+						collision = true;
 						break;
 					}
+					collided_elem = sim->get_from_grid(xO, yO - yStep);
 					// if there is no collision we update the elements real coordinates
-					else if (sim->get_from_grid(xO, yO - yStep)->identifier != EL_NONE) //todo function that evals the collision
+					if (collided_elem->identifier != EL_NONE) //todo function that evals the collision
 					{
-						status = false;
+						collision = true;
 						break;
 					}
 					else
 					{
 						sim->swap_elements(x, y, xO, yO - yStep);
 						set_pos(xO, yO - yStep);
+						collided_elem = this;
 					}
 				}
 				else if (e + eprev > ddx) // left corner
 				{
 					if (!sim->bounds_check(xO - xStep, yO))
 					{
-						status = false;
+						ground_coll.x = xO - xStep;
+						ground_coll.y = yO;
+						collision = true;
 						break;
 					}
-					else if (sim->get_from_grid(xO - xStep, yO)->identifier != EL_NONE)
+					collided_elem = sim->get_from_grid(xO - xStep, yO);
+					if (collided_elem->identifier != EL_NONE)
 					{
-						status = false;
+						collision = true;
 						break;
 					}
 					else
 					{
 						sim->swap_elements(x, y, xO - xStep, yO);
 						set_pos(xO - xStep, yO);
+						collided_elem = this;
 					}
 				}
 				else //the corner case
@@ -91,18 +99,22 @@ bool Element::move(Vector dest)
 			}
 			if (!sim->bounds_check(xO, yO))
 			{
-				status = false;
+				ground_coll.x = xO;
+				ground_coll.y = yO;
+				collision = true;
 				break;
 			}
-			else if (sim->get_from_grid(xO, yO)->identifier != EL_NONE)
+			collided_elem = sim->get_from_grid(xO, yO);
+			if (collided_elem->identifier != EL_NONE)
 			{
-				status = false;
+				collision = true;
 				break;
 			}
 			else
 			{
 				sim->swap_elements(x, y, xO, yO);
 				set_pos(xO, yO);
+				collided_elem = this;
 			}
 			eprev = e;
 		}
@@ -123,36 +135,44 @@ bool Element::move(Vector dest)
 				{
 					if (!sim->bounds_check(xO - xStep, yO))
 					{
-						status = false;
+						ground_coll.x = xO - xStep;
+						ground_coll.y = yO;
+						collision = true;
 						break;
 					}
-					else if (sim->get_from_grid(xO - xStep, yO)->identifier != EL_NONE)
+					collided_elem = sim->get_from_grid(xO - xStep, yO);
+					if (collided_elem->identifier != EL_NONE)
 					{
-						status = false;
+						collision = true;
 						break;
 					}
 					else
 					{
 						sim->swap_elements(x, y, xO - xStep, yO);
 						set_pos(xO - xStep,	y);
+						collided_elem = this;
 					}
 				}
 				else if (e + eprev > ddy)
 				{
 					if (!sim->bounds_check(xO, yO - yStep))
 					{
-						status = false;
+						ground_coll.x = xO;
+						ground_coll.y = yO - yStep;
+						collision = true;
 						break;
 					}
-					else if (sim->get_from_grid(xO, yO - yStep)->identifier != EL_NONE)
+					collided_elem = sim->get_from_grid(xO, yO - yStep);
+					if (collided_elem->identifier != EL_NONE)
 					{
-						status = false;
+						collision = true;
 						break;
 					}
 					else
 					{
 						sim->swap_elements(x, y, xO, yO - yStep);
 						set_pos(xO, yO - yStep);
+						collided_elem = this;
 					}
 				}
 				else
@@ -161,40 +181,53 @@ bool Element::move(Vector dest)
 			}
 			if (!sim->bounds_check(xO, yO))
 			{
-				status = false;
+				ground_coll.x = xO;
+				ground_coll.y = yO;
+				collision = true;
 				break;
 			}
-			else if (sim->get_from_grid(xO, yO)->identifier != EL_NONE)
+			collided_elem = sim->get_from_grid(xO, yO);
+			if (collided_elem->identifier != EL_NONE)
 			{
-				status = false;
+				collision = true;
 				break;
 			}
 			else
 			{
 				sim->swap_elements(x, y, xO, yO);
 				set_pos(xO, yO);
+				collided_elem = this;
 			}
 			eprev = e;
 		}
 	}
-	return status;
+	return collided_elem;
 }
 
 void Element::calc_loads()
 {
 	forces.Zero();
-	forces += sim->base_g;
-	Vector air_drag;
-	double speed = velocity.Magnitude();
-	air_drag = -velocity;
-	// our y in the grid increases downwards
-	// as opposed to the upward increase in the normal cartesian grid
-	// and the velocity y is the one we use not the normal cartesian
-	air_drag.y = -air_drag.y;
-	air_drag.Normalize();
-	air_drag *= 0.5 * sim->air_density * speed * speed * 
-		(1) * drag_coef;
-	//forces += air_drag;
+	
+	if (collision)
+	{
+		forces += impact_forces;
+		collision = false;
+	}
+	else
+	{
+		forces += sim->base_g;
+		Vector air_drag;
+		double speed = velocity.Magnitude();
+		air_drag = -velocity;
+		// our y in the grid increases downwards
+		// as opposed to the upward increase in the normal cartesian grid
+		// and the velocity y is the one we use not the normal cartesian
+		air_drag.y = -air_drag.y;
+		air_drag.Normalize();
+		air_drag *= 0.5 * sim->air_density * speed * speed * 
+			(0.5) * drag_coef;
+		forces += air_drag;
+	}
 }
 
 void Element::update_velocity(double dt)
@@ -208,7 +241,8 @@ void Element::update_velocity(double dt)
 	velocity += (a * dt);
 	if (abs(velocity.Magnitude()) > terminal_vel)
 	{
-		velocity = terminal_vel_v;
+		velocity.Normalize();
+		velocity *= terminal_vel;
 	}
 }
 
@@ -226,4 +260,24 @@ void Element::set_pos(int x, int y)
 	this->y = y;
 	pos.x = x;
 	pos.y = y;
+}
+
+void Element::powder_pile()
+{
+	//if(abs(velocity.Magnitude) >)
+}
+
+void Element::calc_impact_forces(Element* collided_elem, bool ground, double dt)
+{
+	impact_forces.Zero();
+	Vector dv = ground ? velocity : velocity - collided_elem->velocity;
+	Vector d = ground ? pos - ground_coll : pos - collided_elem->pos;
+	d.Normalize();
+	double test = -(dv * d) * (restitution + 1);
+	double kg = 1 / mass + (ground ? 0 : 1 / collided_elem->mass);
+	double J = -(dv * d) * (restitution + 1) / (1 / mass + (ground ? 0 : 1 / collided_elem->mass));
+	Vector Fi = d;
+	Fi *= J / dt;
+	Fi.y = -Fi.y;
+	impact_forces += Fi;
 }

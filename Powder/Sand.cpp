@@ -5,7 +5,11 @@ bool Sand::update(double dt)
 {
 	update_velocity(dt);
 	pos += velocity * dt;
-	move(pos);
+	Element * collided_elem = move(pos);
+	if (collision)
+	{
+		calc_impact_forces(collided_elem, collided_elem == this, dt);
+	}
 	return false;
 }
 
@@ -36,6 +40,7 @@ Sand::Sand(Simulation& sim)
 	state = 1;
 	color = sf::Color::Yellow;
 	mass = 1;
+	restitution = 0.3;
 	this->sim = &sim;
 	calc_term_vel();
 }
@@ -53,6 +58,7 @@ Sand::Sand(const Sand& rhs)
 	x = rhs.x;
 	y = rhs.y;
 	mass = rhs.mass;
+	restitution = rhs.restitution;
 	terminal_vel = rhs.terminal_vel;
 	terminal_vel_v = rhs.terminal_vel_v;
 	temperature = rhs.temperature;
