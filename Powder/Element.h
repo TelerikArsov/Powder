@@ -55,12 +55,15 @@ public:
 	void calc_loads();
 	void update_velocity(double dt);
 	void calc_term_vel();
-	void set_pos(int x, int y);
+	void set_pos(int x, int y, bool true_pos);
 	void powder_pile();
 	void calc_impact_forces(Element* collided_elem, bool ground, double dt);
 
 	virtual bool update(double dt) = 0;
-	virtual void render(float cell_height, float cell_width, sf::Vertex* quad) = 0;
+	virtual void render(double cell_height, double cell_width, sf::Vertex* quad) = 0;
 	virtual Element* clone() const = 0;
 	virtual ~Element() {};
+private:
+	Element* move_helper(int xO, int yO, int d, int xStep, int yStep, int de, int dr, bool ytype);
+	Element* do_move(int diff_x, int diff_y);
 };
