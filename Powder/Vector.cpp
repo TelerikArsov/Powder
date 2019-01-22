@@ -8,6 +8,15 @@ double Vector::Magnitude() const
 	return sqrt(x * x + y * y + z * z);
 }
 
+Vector& Vector::Rotate2D(double angle)
+{
+	double xr = x * cos(angle) - y * sin(angle);
+	double yr = y * sin(angle) + y * cos(angle);
+	x = xr;
+	y = yr;
+	return *this;
+}
+
 Vector Vector::Cross(const Vector& u, const Vector& v)
 {
 	return Vector(u.y * v.z - u.z * v.y,
@@ -22,7 +31,7 @@ double Vector::TripleScalarProduct(const Vector & u, const Vector & v, const Vec
 				(u.z * (v.x * w.y - v.y * w.x)));
 }
 
-void Vector::Normalize()
+Vector& Vector::Normalize()
 {
 	double m = Magnitude();
 	if (m <= tol)
@@ -36,20 +45,23 @@ void Vector::Normalize()
 		y = 0.0f;     
 	if (fabs(z) < tol) 
 		z = 0.0f;
+	return *this;
 }
 
-void Vector::Reverse()
+Vector& Vector::Reverse()
 {
 	x = -x;
 	y = -y;
 	z = -z;
+	return *this;
 }
 
-void Vector::Zero()
+Vector& Vector::Zero()
 {
 	x = 0;
 	y = 0;
 	z = 0;
+	return *this;
 }
 
 Vector& Vector::operator+=(const Vector& u)

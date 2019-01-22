@@ -67,6 +67,7 @@ void Simulation::tick(bool bypass_pause, double dt)
 	{
 		active_elements.push_back(*add_it);
 	}
+	gravity.update_grav();
 }
 
 void Simulation::render(sf::RenderWindow* window)
@@ -82,6 +83,37 @@ void Simulation::render(sf::RenderWindow* window)
 		}
 		
 	}
+	sf::VertexArray gravity_grid(sf::Lines, gravity.grid_height * gravity.grid_width * 2);
+	int g_i = 0;
+	/*
+	for (int i = 0; i < gravity.grid_height * gravity.grid_width; i++)
+	{
+		double x1 = i % gravity.grid_width * gravity.cell_size + gravity.cell_size / 2;
+		double y1 = i / gravity.grid_width * gravity.cell_size + gravity.cell_size / 2;
+		double x2 = gravity.grav_grid[i].grav_force.x * gravity.cell_size;
+		double y2 = gravity.grav_grid[i].grav_force.y * gravity.cell_size;
+		
+		gravity_grid[g_i] = sf::Vector2f(x1 * cell_width, y1 * cell_height);
+		gravity_grid[g_i + 1] = sf::Vector2f((x2 + x1) * cell_width, (y2 + y1) * cell_height);
+		g_i += 2;
+	}
+	for (int i = 0; i < gravity.grid_height - 1; i++)
+	{
+		sf::Vertex line[2];
+		line[0] = sf::Vector2f(0, (i + 1) * gravity.cell_size * cell_height);
+		line[1] = sf::Vector2f(1000, (i + 1) * gravity.cell_size * cell_height);
+		for (int i = 0; i < 2; i++)
+			gravity_grid.append(line[i]);
+	}
+	for (int i = 0; i < gravity.grid_width - 1; i++)
+	{
+		sf::Vertex line[2];
+		line[0] = sf::Vector2f((i + 1) * gravity.cell_size * cell_width, 0);
+		line[1] = sf::Vector2f((i + 1) * gravity.cell_size * cell_width, 1000);
+		for (int i = 0; i < 2; i++)
+			gravity_grid.append(line[i]);
+	}
+	*/
 	// Only the outline is rendered
 	for (auto &off : brushes[selected_brush]->get_outline()) 
 	{
@@ -103,6 +135,7 @@ void Simulation::render(sf::RenderWindow* window)
 			cells_vertices.append(quad[i]);
 	}
 	window->draw(cells_vertices);
+	window->draw(gravity_grid);
 	/*if (draw_grid)
 	{
 		for ()
@@ -172,7 +205,7 @@ int Simulation::create_element(int id, bool fm, bool ata, int x, int y, std::str
 				}
 			}
 		}
-		new_element->set_pos(x, y);
+		new_element->set_pos(x, y, true);
 		new_element->sim = this;
 		if (ata)
 		{
@@ -185,6 +218,7 @@ int Simulation::create_element(int id, bool fm, bool ata, int x, int y, std::str
 		delete elements_grid[y][x];
 		elements_grid[y][x] = new_element;
 		elements_count++;
+		gravity.update_mass(new_element->mass, x, y, -1, -1);
 		return 1;
 	}
 	return -1;
@@ -245,7 +279,7 @@ void Simulation::set_mouse_cor(int x, int y)
 	mouse_y = y;
 }
 
-void Simulation::resize_brush(int d)
+void Simulation::resize_brush(float d)
 {
 	brushes[selected_brush]->change_size(d);
 }
@@ -257,6 +291,7 @@ Simulation::Simulation(int cells_x_count, int cells_y_count, int window_width, i
 {
 	base_g = Vector(0, -1);
 	base_g *= g;
+	gravity = Gravity(10000, 100, 16, cells_x_count, cells_y_count);
 	for (int i = 0; i < cells_y_count; i++)
 	{
 		elements_grid.push_back(std::vector<Element*>());

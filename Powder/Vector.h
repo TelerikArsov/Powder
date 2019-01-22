@@ -6,12 +6,13 @@ public:
 	double x;     
 	double y;     
 	double z;   
-	double Magnitude() const; 
+	double Magnitude() const;
+	Vector& Rotate2D(double angle);
 	static Vector Cross(const Vector& u, const Vector& v);
 	double TripleScalarProduct(const Vector& u, const Vector& v, const Vector& w) const;
-	void Normalize();     
-	void Reverse();
-	void Zero();
+	Vector& Normalize();     
+	Vector& Reverse();
+	Vector& Zero();
 	Vector& operator+=(const Vector& u);     
 	Vector& operator-=(const Vector& u);  
 	Vector& operator=(const Vector& u);

@@ -133,6 +133,7 @@ void Element::calc_loads()
 	{*/
 		collision = false;
 		forces += sim->base_g;
+		forces += sim->gravity.get_force(x, y, mass);
 		Vector air_drag;
 		double speed = velocity.Magnitude();
 		air_drag = -velocity;

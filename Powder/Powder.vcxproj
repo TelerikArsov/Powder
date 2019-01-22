@@ -127,6 +127,7 @@
     <ClCompile Include="CircleBrush.cpp" />
     <ClCompile Include="Element.cpp" />
     <ClCompile Include="GOL.cpp" />
+    <ClCompile Include="Gravity.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="None_Element.cpp" />
     <ClCompile Include="Sand.cpp" />
@@ -141,6 +142,7 @@
     <ClInclude Include="ElementsIds.h" />
     <ClInclude Include="GOL.h" />
     <ClInclude Include="Element.h" />
+    <ClInclude Include="Gravity.h" />
     <ClInclude Include="None_Element.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Sand.h" />

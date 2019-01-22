@@ -4,6 +4,7 @@
 #include <vector>
 #include <list>
 #include "Brush.h"
+#include "Gravity.h"
 
 class Vector;
 
@@ -23,12 +24,13 @@ public:
 	// this would do
 	// the base gravity vector
 	Vector base_g;
+	Gravity gravity;
 	double g = 9.8;
 	std::vector < std::vector<Element *>> get_element_grid() const;
-	Element * get_from_grid(int x, int y) const;
+	Element* get_from_grid(int x, int y) const;
 	int get_from_gol(int x, int y) const;
 	void set_gol_el(int x, int y, int val);
-	Element * find_by_id(int id);
+	Element* find_by_id(int id);
 	// Updates the gol grid.
 	// Loops over all the active elements and calls their update method.
 	// If the update method returns true, then the elements is deleted.
@@ -72,7 +74,7 @@ public:
 	// If d < 0 the spawn area decrease
 	// Based on the currently used spawn area type the creation method is called
 	// Spanw area types include circle, square, triangle NOTE: currently only cirlce is implemented 
-	void resize_brush(int d);
+	void resize_brush(float d);
 	bool add_element(Element*);
 	bool add_brush(Brush *);
 	// int window_width, int window_height = the dimensions of the window 
