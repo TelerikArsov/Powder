@@ -10,15 +10,15 @@ int main()
 {
 	int WINDOW_HEIGHT = 1000, WINDOW_WIDTH = 1000;
 	sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "SFML works!");
-	Simulation gol(367, 367, WINDOW_WIDTH, WINDOW_HEIGHT);
-	gol.add_element(new GOL(1, "WALL", "s12345/b3"));
+	Simulation gol(368, 368, WINDOW_WIDTH, WINDOW_HEIGHT);
+	gol.add_element(new GOL(1, "WALL", "s012345678"));
 	gol.add_element(new Sand(gol));
 	gol.add_brush(new CircleBrush());
 	gol.add_brush(new SquareBrush());
 	gol.selected_brush = 0;
 	gol.selected_element = EL_SAND;
 	sf::Clock clock;
-	const double max_fps = 60;
+	const unsigned int max_fps = 60;
 	double elapsed = 0.0f;
 	bool mouse_left_hold = false;
 	window.setFramerateLimit(max_fps);
@@ -53,21 +53,21 @@ int main()
 			}
 			if (event.type == sf::Event::KeyPressed)
 			{
-				/*if (event.key.code == sf::Keyboard::Q)
+				if (event.key.code == sf::Keyboard::Q)
 				{
-					gol.selected_element = 0;
+					gol.selected_element = EL_SAND;
 				}
 				if (event.key.code == sf::Keyboard::E)
 				{
-					gol.selected_element = 1;
-				}*/
+					gol.selected_element = EL_GOL;
+				}
 				if (event.key.code == sf::Keyboard::Escape)
 				{
 					gol.pause();
 				}
 				if (event.key.code == sf::Keyboard::A)
 				{
-					gol.tick(true);
+					gol.tick(true, 1);
 				}
 				/*
 				if (event.key.code == sf::Keyboard::S)

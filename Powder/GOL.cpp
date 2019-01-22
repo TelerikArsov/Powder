@@ -76,7 +76,7 @@ bool GOL::update(double dt)
 	return false;
 }
 
-void GOL::render(float cell_height, float cell_width, sf::Vertex* quad)
+void GOL::render(double cell_height, double cell_width, sf::Vertex* quad)
 {
 	quad[0].position = sf::Vector2f(x * cell_width, y * cell_height);
 	quad[1].position = sf::Vector2f((x + 1) * cell_width, y * cell_height);

@@ -6,7 +6,7 @@ bool None_Element::update(double dt)
 	return 0;
 }
 
-void None_Element::render(float cell_height, float cell_width, sf::Vertex * quad)
+void None_Element::render(double cell_height, double cell_width, sf::Vertex * quad)
 {
 }
 

@@ -6,7 +6,7 @@ class None_Element :
 {
 public:
 	bool update(double dt) override;
-	void render(float cell_height, float cell_width, sf::Vertex* quad) override;
+	void render(double cell_height, double cell_width, sf::Vertex* quad) override;
 	Element* clone() const;
 	None_Element();
 	~None_Element();

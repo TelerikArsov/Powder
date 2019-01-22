@@ -5,7 +5,7 @@ class Sand :
 {
 public:
 	bool update(double dt) override;
-	void render(float, float, sf::Vertex* quad) override;
+	void render(double, double, sf::Vertex* quad) override;
 	Element* clone() const override;
 	Sand(Simulation& sim);
 	Sand(const Sand& rhs);

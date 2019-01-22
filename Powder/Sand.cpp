@@ -4,8 +4,7 @@
 bool Sand::update(double dt) 
 {
 	update_velocity(dt);
-	pos += velocity * dt;
-	Element * collided_elem = move(pos);
+	Element * collided_elem = move(pos + velocity * dt);
 	if (collision)
 	{
 		calc_impact_forces(collided_elem, collided_elem == this, dt);
@@ -13,7 +12,7 @@ bool Sand::update(double dt)
 	return false;
 }
 
-void Sand::render(float cell_height, float cell_width, sf::Vertex * quad)
+void Sand::render(double cell_height, double cell_width, sf::Vertex * quad)
 {
 	quad[0].position = sf::Vector2f(x * cell_width, y * cell_height);
 	quad[1].position = sf::Vector2f((x + 1) * cell_width, y * cell_height);
@@ -40,7 +39,7 @@ Sand::Sand(Simulation& sim)
 	state = 1;
 	color = sf::Color::Yellow;
 	mass = 1;
-	restitution = 0.3;
+	restitution = 0.1;
 	this->sim = &sim;
 	calc_term_vel();
 }
