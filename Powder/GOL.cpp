@@ -103,6 +103,7 @@ GOL::GOL(int state, std::string name, std::string rules_s)
 	this->state = state;
 	rule_string = rules_s;
 	process_rules();
+	mass = 100000;
 }
 
 GOL::GOL(const GOL& rhs)

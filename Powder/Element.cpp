@@ -44,7 +44,7 @@ Element* Element::move(Vector dest)
 	{
 		coll_el = move_helper(x, y, dy, xStep, yStep, ddy, ddx, true);
 	}
-	sim->gravity.update_mass(mass, x, y, old_x, old_y);
+	sim->gravity->update_mass(mass, x, y, old_x, old_y);
 	return coll_el;
 }
 
@@ -124,28 +124,20 @@ Element* Element::do_move(int diff_x, int diff_y)
 void Element::calc_loads()
 {
 	forces.Zero();
-	
-	/*if (collision)
-	{
-		forces += impact_forces;
-	}
-	else
-	{*/
-		collision = false;
-		forces += sim->base_g;
-		forces += sim->gravity.get_force(x, y, mass);
-		Vector air_drag;
-		double speed = velocity.Magnitude();
-		air_drag = -velocity;
-		// our y in the grid increases downwards
-		// as opposed to the upward increase in the normal cartesian grid
-		// and the velocity y is the one we use not the normal cartesian
-		air_drag.y = -air_drag.y;
-		air_drag.Normalize();
-		air_drag *= 0.5 * sim->air_density * speed * speed * 
-			(0.5) * drag_coef;
-		forces += air_drag;
-	//}
+	collision = false;
+	forces += sim->gravity->get_force(x, y, mass);
+	/*Vector air_drag;
+	double speed = velocity.Magnitude();
+	air_drag = -velocity;
+	// our y in the grid increases downwards
+	// as opposed to the upward increase in the normal cartesian grid
+	// and the velocity y is the one we use not the normal cartesian
+	air_drag.y = -air_drag.y;
+	air_drag.Normalize();
+	air_drag *= 0.5 * sim->air_density * speed * speed *
+	(0.5) * drag_coef;
+	forces += air_drag;
+	*/
 }
 
 void Element::update_velocity(double dt)
@@ -157,16 +149,17 @@ void Element::update_velocity(double dt)
 	// as opposed to the upward increase in the normal cartesian grid
 	a.y = -a.y;
 	velocity += (a * dt);
-	if (abs(velocity.Magnitude()) > terminal_vel)
+	speed = velocity.Magnitude();
+	/*if (speed > terminal_vel)
 	{
 		velocity.Normalize();
 		velocity *= terminal_vel;
-	}
+	}*/
 }
 
 void Element::calc_term_vel() 
 {
-	terminal_vel_v = 2 * sim->base_g * mass / sim->air_density * 1 * drag_coef;
+	terminal_vel_v = 2 * sim->gravity->base_grav * mass / sim->air_density * 1 * drag_coef;
 	terminal_vel_v.x = sqrt(abs(terminal_vel_v.x));
 	terminal_vel_v.y = sqrt(abs(terminal_vel_v.y));
 	terminal_vel = terminal_vel_v.Magnitude();
@@ -185,19 +178,24 @@ void Element::set_pos(int x, int y, bool true_pos)
 
 void Element::powder_pile()
 {
-	//if(abs(velocity.Magnitude) >)
+	if (speed > pile_threshold)
+	{
+
+	}
 }
 
-void Element::calc_impact_forces(Element* coll_el, bool ground, double dt)
+void Element::apply_impulse(Element* coll_el, double dt)
 {
-	impact_forces.Zero();
-	Vector dv = (ground ? velocity : velocity - coll_el->velocity);
+	bool ground = (coll_el == this);
+	Vector vr = (ground ? velocity : velocity - coll_el->velocity);
 	Vector d = (ground ? pos - ground_coll : pos - coll_el->pos);
 	d.Normalize();
-	double J = -(dv * d) * (restitution + 1) / (1 / mass + (ground ? 0 : 1 / coll_el->mass));
-	Vector Fi = d;
-	Fi *= J / dt;
-	Fi.y = -Fi.y;
-	impact_forces += Fi;
+	double j = (-(1 + restitution) * (vr * d)) 
+		/ ((d * d) * (1 / mass + (ground ? 0 : 1 / coll_el->mass)));
+	velocity += (j * d) / mass;
+	if (!ground)
+	{
+		coll_el->velocity -= (j * d) / coll_el->mass;
+	}
 }
 

@@ -20,10 +20,10 @@ public:
 	int y = 0; //
 	Vector pos = Vector(0, 0);
 	Vector velocity;
+	double speed;
 	Vector terminal_vel_v;
 	double terminal_vel;
 	Vector forces;
-	Vector impact_forces;
 	double drag_coef = 0.6;
 	double mass = 100;	   // Not yet used
 	int endurance = 0;
@@ -57,7 +57,7 @@ public:
 	void calc_term_vel();
 	void set_pos(int x, int y, bool true_pos);
 	void powder_pile();
-	void calc_impact_forces(Element* collided_elem, bool ground, double dt);
+	void apply_impulse(Element* collided_elem, double dt);
 
 	virtual bool update(double dt) = 0;
 	virtual void render(double cell_height, double cell_width, sf::Vertex* quad) = 0;

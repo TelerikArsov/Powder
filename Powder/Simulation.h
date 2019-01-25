@@ -20,12 +20,7 @@ public:
 	// present in the available_elements array
 	int selected_element;
 	int selected_brush;
-	// Should be in another class that makes a gravity map, but for now
-	// this would do
-	// the base gravity vector
-	Vector base_g;
-	Gravity gravity;
-	double g = 9.8;
+	Gravity* gravity;
 	std::vector < std::vector<Element *>> get_element_grid() const;
 	Element* get_from_grid(int x, int y) const;
 	int get_from_gol(int x, int y) const;
@@ -79,7 +74,7 @@ public:
 	bool add_brush(Brush *);
 	// int window_width, int window_height = the dimensions of the window 
 	// where the simulation will be rendered
-	Simulation(int cells_x_count, int cells_y_count, int window_width, int window_height);
+	Simulation(int cells_x_count, int cells_y_count, int window_width, int window_height, double base_g);
 	~Simulation();
 	//TODO something something encapsulation, most of the public properties should be here anyways
 private:
