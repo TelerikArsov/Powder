@@ -9,19 +9,26 @@ std::vector<std::vector<Element*>> Simulation::get_element_grid() const
 	return elements_grid;
 }
 
-Element * Simulation::get_from_grid(int x, int y) const
+Element* Simulation::get_from_grid(int x, int y) const
 {
-	return elements_grid[y][x];
+	Element* res = nullptr;
+	if(bounds_check(x, y))
+		res = elements_grid[y][x];
+	return res;
 }
 
 int Simulation::get_from_gol(int x, int y) const
 {
-	return gol_grid[y][x];
+	int res = -1;
+	if (bounds_check(x, y))
+		res = gol_grid[y][x];
+	return res;
 }
 
 void Simulation::set_gol_el(int x, int y, int val)
 {
-	gol_grid[y][x] = val;
+	if (bounds_check(x, y))
+		gol_grid[y][x] = val;
 }
 
 Element * Simulation::find_by_id(int id)
@@ -83,7 +90,6 @@ void Simulation::render(sf::RenderWindow* window)
 		}
 		
 	}
-	
 	sf::VertexArray gravity_grid(sf::Lines, gravity->grid_height * gravity->grid_width * 2);
 	int g_i = 0;
 	for (int i = 0; i < gravity->grid_height * gravity->grid_width; i++)
@@ -290,7 +296,7 @@ Simulation::Simulation(int cells_x_count, int cells_y_count, int window_width, i
 	draw_grid(false),
 	gol_grid(cells_y_count, std::vector<int>(cells_x_count, 0))
 {
-	gravity = new Gravity(10000, 40, 2, cells_x_count, cells_y_count, base_g, 1E-3);
+	gravity = new Gravity(10000, 25, 8, cells_x_count, cells_y_count, base_g, 1E-3);
 	for (int i = 0; i < cells_y_count; i++)
 	{
 		elements_grid.push_back(std::vector<Element*>());

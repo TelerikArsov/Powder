@@ -56,7 +56,7 @@ public:
 	void update_velocity(double dt);
 	void calc_term_vel();
 	void set_pos(int x, int y, bool true_pos);
-	void powder_pile();
+	bool powder_pile();
 	void apply_impulse(Element* collided_elem, double dt);
 
 	virtual bool update(double dt) = 0;

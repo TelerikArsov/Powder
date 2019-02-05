@@ -8,7 +8,9 @@ public:
 	double z;   
 	double Magnitude() const;
 	Vector& Rotate2D(double angle);
+	Vector PerpendicularCW();
 	static Vector Cross(const Vector& u, const Vector& v);
+	static Vector Normalize(const Vector& u);
 	double TripleScalarProduct(const Vector& u, const Vector& v, const Vector& w) const;
 	Vector& Normalize();     
 	Vector& Reverse();

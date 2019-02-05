@@ -17,11 +17,21 @@ Vector& Vector::Rotate2D(double angle)
 	return *this;
 }
 
+Vector Vector::PerpendicularCW()
+{
+	return Vector(y, -x);
+}
+
 Vector Vector::Cross(const Vector& u, const Vector& v)
 {
 	return Vector(u.y * v.z - u.z * v.y,
 				-u.x * v.z + u.z * v.x,
 				u.x * v.y - u.y * v.x);
+}
+
+Vector Vector::Normalize(const Vector& u)
+{
+	return Vector(u.x, u.y, u.z).Normalize();
 }
 
 double Vector::TripleScalarProduct(const Vector & u, const Vector & v, const Vector & w) const

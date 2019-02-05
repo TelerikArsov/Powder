@@ -7,7 +7,9 @@ bool Sand::update(double dt)
 	Element * collided_elem = move(pos + velocity * dt);
 	if (collision)
 	{
-		apply_impulse(collided_elem, dt);
+		powder_pile();
+		//still trying to figur out how to use powder pile and the impulse function together
+		//apply_impulse(collided_elem, dt);
 	}
 	return false;
 }

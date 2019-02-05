@@ -176,12 +176,27 @@ void Element::set_pos(int x, int y, bool true_pos)
 	}
 }
 
-void Element::powder_pile()
+bool Element::powder_pile()
 {
 	if (speed > pile_threshold)
 	{
-
+		Vector vel_norm = Vector::Normalize(velocity);
+		Vector check_pos = vel_norm + pos + vel_norm.PerpendicularCW();
+		Element* res = sim->get_from_grid(check_pos.x, check_pos.y);
+		if (res && res->identifier == EL_NONE)
+		{
+			move(check_pos);
+			return true;
+		}
+		check_pos -= 2 * vel_norm.PerpendicularCW();
+		res = sim->get_from_grid(check_pos.x, check_pos.y);
+		if (res && res->identifier == EL_NONE)
+		{
+			move(check_pos);
+			return true;
+		}
 	}
+	return false;
 }
 
 void Element::apply_impulse(Element* coll_el, double dt)
