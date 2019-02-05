@@ -1,5 +1,6 @@
 #include "Element.h"
 #include "Simulation.h"
+#include "Random.h"
 #include <math.h>
 
 Element* Element::move(Vector dest)
@@ -148,8 +149,7 @@ void Element::update_velocity(double dt)
 	// our y in the grid increases downwards
 	// as opposed to the upward increase in the normal cartesian grid
 	a.y = -a.y;
-	velocity += (a * dt);
-	speed = velocity.Magnitude();
+	add_velocity(a * dt);
 	/*if (speed > terminal_vel)
 	{
 		velocity.Normalize();
@@ -178,23 +178,31 @@ void Element::set_pos(int x, int y, bool true_pos)
 
 bool Element::powder_pile()
 {
+	bool status = false;
 	if (speed > pile_threshold)
 	{
 		Vector vel_norm = Vector::Normalize(velocity);
-		Vector check_pos = vel_norm + pos + vel_norm.PerpendicularCW();
+		Vector check_pos = vel_norm + pos;
+		Vector perp = vel_norm.PerpendicularCW();
 		Element* res = sim->get_from_grid(check_pos.x, check_pos.y);
-		if (res && res->identifier == EL_NONE)
+		if (res && res->identifier != EL_NONE)
 		{
-			move(check_pos);
-			return true;
+			bool side = random.next_bool();
+			status = pile_helper(check_pos + (side ? perp : -perp));
+			if (!status)
+				status = pile_helper(check_pos + (side ? -perp : perp));
 		}
-		check_pos -= 2 * vel_norm.PerpendicularCW();
-		res = sim->get_from_grid(check_pos.x, check_pos.y);
-		if (res && res->identifier == EL_NONE)
-		{
-			move(check_pos);
-			return true;
-		}
+	}
+	return status;
+}
+
+bool Element::pile_helper(Vector check_pos)
+{
+	Element* res = sim->get_from_grid(check_pos.x, check_pos.y);
+	if (res && res->identifier == EL_NONE)
+	{
+		move(check_pos);
+		return true;
 	}
 	return false;
 }
@@ -207,10 +215,16 @@ void Element::apply_impulse(Element* coll_el, double dt)
 	d.Normalize();
 	double j = (-(1 + restitution) * (vr * d)) 
 		/ ((d * d) * (1 / mass + (ground ? 0 : 1 / coll_el->mass)));
-	velocity += (j * d) / mass;
+	add_velocity(j * d / mass);
 	if (!ground)
 	{
 		coll_el->velocity -= (j * d) / coll_el->mass;
 	}
+}
+
+void Element::add_velocity(Vector nvelociry)
+{
+	velocity += nvelociry;
+	speed = velocity.Magnitude();
 }
 

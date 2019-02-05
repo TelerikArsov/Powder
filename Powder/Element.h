@@ -58,7 +58,7 @@ public:
 	void set_pos(int x, int y, bool true_pos);
 	bool powder_pile();
 	void apply_impulse(Element* collided_elem, double dt);
-
+	void add_velocity(Vector nvelociry);
 	virtual bool update(double dt) = 0;
 	virtual void render(double cell_height, double cell_width, sf::Vertex* quad) = 0;
 	virtual Element* clone() const = 0;
@@ -66,4 +66,5 @@ public:
 private:
 	Element* move_helper(int xO, int yO, int d, int xStep, int yStep, int de, int dr, bool ytype);
 	Element* do_move(int diff_x, int diff_y);
+	bool pile_helper(Vector check_pos);
 };
