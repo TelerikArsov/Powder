@@ -54,7 +54,7 @@ bool GOL::update(double dt)
 	{
 		for (int j = x - 1; j < x + 2; j++)
 		{
-			if (sim->bounds_check(j, i) && (i - y || j - x)) 
+			if (i - y || j - x) 
 			{
 				if (sim->get_from_gol(j, i) == 0)
 				{

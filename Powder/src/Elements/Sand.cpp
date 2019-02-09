@@ -4,11 +4,11 @@
 bool Sand::update(double dt) 
 {
 	update_velocity(dt);
-	Element * collided_elem = move(pos + velocity * dt);
+	Element * collided_elem = move(pos + (velocity * dt) * 100);
 	if (collision)
 	{
 		apply_impulse(collided_elem, dt);
-		powder_pile();
+		//powder_pile();
 	}
 	return false;
 }
@@ -39,8 +39,8 @@ Sand::Sand(Simulation& sim)
 	menu_section = 2;
 	state = 1;
 	color = sf::Color::Yellow;
-	mass = 1;
-	restitution = 0.3;
+	mass = 15;
+	restitution = 0.6;
 	this->sim = &sim;
 	calc_term_vel();
 }

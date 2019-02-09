@@ -127,8 +127,7 @@ void Element::calc_loads()
 	forces.Zero();
 	collision = false;
 	forces += sim->gravity->get_force(x, y, mass);
-	/*Vector air_drag;
-	double speed = velocity.Magnitude();
+	Vector air_drag;
 	air_drag = -velocity;
 	// our y in the grid increases downwards
 	// as opposed to the upward increase in the normal cartesian grid
@@ -138,7 +137,6 @@ void Element::calc_loads()
 	air_drag *= 0.5 * sim->air_density * speed * speed *
 	(0.5) * drag_coef;
 	forces += air_drag;
-	*/
 }
 
 void Element::update_velocity(double dt)

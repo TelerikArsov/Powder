@@ -10,7 +10,7 @@ int main()
 {
 	int WINDOW_HEIGHT = 1000, WINDOW_WIDTH = 1000;
 	sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "SFML works!");
-	Simulation gol(92, 92, WINDOW_WIDTH, WINDOW_HEIGHT, 2);
+	Simulation gol(368, 368, WINDOW_WIDTH, WINDOW_HEIGHT, 9.8);
 	gol.add_element(new GOL(1, "WALL", "s012345678"));
 	gol.add_element(new Sand(gol));
 	gol.add_brush(new CircleBrush());
@@ -67,7 +67,7 @@ int main()
 				}
 				if (event.key.code == sf::Keyboard::A)
 				{
-					gol.tick(true, 1 / 10.0);
+					gol.tick(true, 1 / 60.0);
 				}
 				/*
 				if (event.key.code == sf::Keyboard::S)
@@ -90,8 +90,10 @@ int main()
 			}
 		}
 		elapsed = clock.restart().asSeconds();
+		//if(gol.active_elements.size() > 0 && gol.active_elements.front())
+			//std::cout << gol.active_elements.front()->velocity.y << std::endl;
 		std::cout << 1 / elapsed << std::endl;
-		gol.tick(false, 1 / 10.0);
+		gol.tick(false, 1 / 60.0);
 		window.clear();
 		gol.render(&window);
 		window.display();
