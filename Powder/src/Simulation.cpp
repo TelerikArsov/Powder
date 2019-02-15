@@ -1,23 +1,28 @@
 #include "Simulation.h"
 #include <algorithm>
-#include "GOL.h"
-#include "None_Element.h"
+#include "Elements\GOL.h"
+#include "Elements\None_Element.h"
 #include "Vector.h"
 
-std::vector<std::vector<Element*>> Simulation::get_element_grid() const
+Element* Simulation::get_from_grid(double x, double y)
 {
-	return elements_grid;
+	return get_from_grid(static_cast<int>(floor(x)), static_cast<int>(floor(y)));
 }
 
-Element* Simulation::get_from_grid(int x, int y) const
+Element * Simulation::get_from_grid(int x, int y)
 {
 	Element* res = nullptr;
-	if(bounds_check(x, y))
-		res = elements_grid[y][x];
+	if (bounds_check(x, y))
+		res = elements_grid[y * cells_x_count + x];
 	return res;
 }
 
-int Simulation::get_from_gol(int x, int y) const
+int Simulation::get_from_gol(double x, double y)
+{
+	return get_from_gol(static_cast<int>(floor(x)), static_cast<int>(floor(y)));
+}
+
+int Simulation::get_from_gol(int x, int y)
 {
 	int res = -1;
 	if (bounds_check(x, y))
@@ -53,7 +58,8 @@ void Simulation::tick(bool bypass_pause, double dt)
 	{
 		for (int j = 0; j < cells_x_count; j++)
 		{
-			gol_grid[i][j] = elements_grid[i][j]->identifier != EL_NONE ? elements_grid[i][j]->state : 0;
+			int idx = i * cells_x_count + j;
+			gol_grid[i][j] = elements_grid[idx]->identifier != EL_NONE ? elements_grid[idx]->state : 0;
 		}
 	}
 	for(auto i = active_elements.begin(); i != active_elements.end();)
@@ -62,8 +68,9 @@ void Simulation::tick(bool bypass_pause, double dt)
 		{
 			int x = (*i)->x, y = (*i)->y;
 			i = active_elements.erase(i);
-			delete elements_grid[y][x];
-			elements_grid[y][x] = new None_Element();
+			int idx = y * cells_x_count + x;
+			delete elements_grid[idx];
+			elements_grid[idx] = new None_Element();
 		}
 		else 
 		{
@@ -74,7 +81,13 @@ void Simulation::tick(bool bypass_pause, double dt)
 	{
 		active_elements.push_back(*add_it);
 	}
-	gravity->update_grav();
+	if (neut_grav)
+	{
+		//doesnt make much sense for now but if we change the base gravity of the simulation
+		//we gotta update only with the new grav value, prob should be a method in grav class
+		gravity->update_grav(neut_grav);
+	}
+	air->update_air();
 }
 
 void Simulation::render(sf::RenderWindow* window)
@@ -90,38 +103,41 @@ void Simulation::render(sf::RenderWindow* window)
 		}
 		
 	}
-	sf::VertexArray gravity_grid(sf::Lines, gravity->grid_height * gravity->grid_width * 2);
-	int g_i = 0;
-	for (int i = 0; i < gravity->grid_height * gravity->grid_width; i++)
+	if (drav_grav_grid)
 	{
-		double x1 = i % gravity->grid_width * gravity->cell_size + gravity->cell_size / 2;
-		double y1 = i / gravity->grid_width * gravity->cell_size + gravity->cell_size / 2;
-		Vector dir(gravity->grav_grid[i].grav_force.x * gravity->cell_size,
-			gravity->grav_grid[i].grav_force.y * gravity->cell_size);
-		dir.Normalize() *= 4;
-		gravity_grid[g_i] = sf::Vector2f(x1 * cell_width, y1 * cell_height);
-		gravity_grid[g_i + 1] = sf::Vector2f((dir.x + x1) * cell_width, (dir.y + y1) * cell_height);
-		g_i += 2;
+		sf::VertexArray gravity_grid(sf::Lines, air->grid_height * air->grid_width * 2);
+		int g_i = 0;
+		for (int i = 0; i < air->grid_height * air->grid_width; i++)
+		{
+			double x1 = i % air->grid_width * air->cell_size + air->cell_size / 2;
+			double y1 = i / air->grid_width * air->cell_size + air->cell_size / 2;
+			//Vector dir(gravity->grav_grid[i].grav_force.x * gravity->cell_size,
+			//	gravity->grav_grid[i].grav_force.y * gravity->cell_size);
+			Vector dir(air->velocity[i].x * air->cell_size,
+				air->velocity[i].y * air->cell_size);
+			dir.Normalize() *= 4;
+			gravity_grid[g_i] = sf::Vector2f(x1 * cell_width, y1 * cell_height);
+			gravity_grid[g_i + 1] = sf::Vector2f((dir.x + x1) * cell_width, (dir.y + y1) * cell_height);
+			g_i += 2;
+		}
+		for (int i = 0; i < air->grid_height - 1; i++)
+		{
+			sf::Vertex line[2];
+			line[0] = sf::Vector2f(0, (i + 1) * air->cell_size * cell_height);
+			line[1] = sf::Vector2f(1000, (i + 1) * air->cell_size * cell_height);
+			for (int i = 0; i < 2; i++)
+				gravity_grid.append(line[i]);
+		}
+		for (int i = 0; i < air->grid_width - 1; i++)
+		{
+			sf::Vertex line[2];
+			line[0] = sf::Vector2f((i + 1) * air->cell_size * cell_width, 0);
+			line[1] = sf::Vector2f((i + 1) * air->cell_size * cell_width, 1000);
+			for (int i = 0; i < 2; i++)
+				gravity_grid.append(line[i]);
+		}
+		window->draw(gravity_grid);
 	}
-	
-	for (int i = 0; i < gravity->grid_height - 1; i++)
-	{
-		sf::Vertex line[2];
-		line[0] = sf::Vector2f(0, (i + 1) * gravity->cell_size * cell_height);
-		line[1] = sf::Vector2f(1000, (i + 1) * gravity->cell_size * cell_height);
-		for (int i = 0; i < 2; i++)
-			gravity_grid.append(line[i]);
-	}
-	for (int i = 0; i < gravity->grid_width - 1; i++)
-	{
-		sf::Vertex line[2];
-		line[0] = sf::Vector2f((i + 1) * gravity->cell_size * cell_width, 0);
-		line[1] = sf::Vector2f((i + 1) * gravity->cell_size * cell_width, 1000);
-		for (int i = 0; i < 2; i++)
-			gravity_grid.append(line[i]);
-	}
-	/**/
-	window->draw(gravity_grid);
 	// Only the outline is rendered
 	for (auto &off : brushes[selected_brush]->get_outline()) 
 	{
@@ -180,8 +196,9 @@ bool Simulation::bounds_check(int corr_x, int corr_y) const
 
 int Simulation::create_element(int id, bool fm, bool ata, int x, int y, std::string vars)
 {
+	int idx = y * cells_x_count + x;
 	// If the element at the position is None_Element (id == 0)
-	if (bounds_check(x, y) && elements_grid[y][x]->identifier == EL_NONE)
+	if (bounds_check(x, y) && elements_grid[idx]->identifier == EL_NONE)
 	{
 		Element* new_element;
 		Element* tmp;
@@ -222,8 +239,8 @@ int Simulation::create_element(int id, bool fm, bool ata, int x, int y, std::str
 		{
 			add_queue.push_back(new_element);
 		}
-		delete elements_grid[y][x];
-		elements_grid[y][x] = new_element;
+		delete elements_grid[idx];
+		elements_grid[idx] = new_element;
 		elements_count++;
 		gravity->update_mass(new_element->mass, x, y, -1, -1);
 		return 1;
@@ -255,20 +272,17 @@ bool Simulation::add_brush(Brush * tba)
 void Simulation::swap_elements(int x1, int y1, int x2, int y2)
 {
 	//Prob will add more stuff then just this but for now...
-	Element * tmp = elements_grid[y2][x2];
-	elements_grid[y2][x2] = elements_grid[y1][x1];
-	elements_grid[y1][x1] = tmp;
+	int idx1 = y1 * cells_x_count + x1, idx2 = y2 * cells_x_count + x2;
+	Element* tmp = elements_grid[idx2];
+	elements_grid[idx2] = elements_grid[idx1];
+	elements_grid[idx1] = tmp;
+	elements_grid[idx2]->set_pos(x2, y2, true);
+	elements_grid[idx1]->set_pos(x1, y1, true);
 }
 
-void Simulation::init_col_rules()
-{
-	int size = available_elements.size() + 1;
-}
 
 void Simulation::spawn_at_mouse()
 {
-	int mouse_cell_x = static_cast<int>(mouse_x / cell_width);
-	int mouse_cell_y = static_cast<int>(mouse_y / cell_height);
 	for (auto &off : brushes[selected_brush]->get_area())
 	{
 		create_element(selected_element, true, true, mouse_cell_x + off.first, mouse_cell_y + off.second);
@@ -284,11 +298,13 @@ void Simulation::set_mouse_cor(int x, int y)
 {
 	mouse_x = x;
 	mouse_y = y;
+	mouse_cell_x = std::clamp(static_cast<int>(floor(mouse_x / cell_width)), 0, cells_x_count - 1);
+	mouse_cell_y = std::clamp(static_cast<int>(floor(mouse_y / cell_height)), 0, cells_y_count - 1);
 }
 
 void Simulation::resize_brush(float d)
 {
-	brushes[selected_brush]->change_size(d);
+	brushes[selected_brush]->change_size(lrint(d));
 }
 
 Simulation::Simulation(int cells_x_count, int cells_y_count, int window_width, int window_height, double base_g) :
@@ -296,30 +312,26 @@ Simulation::Simulation(int cells_x_count, int cells_y_count, int window_width, i
 	draw_grid(false),
 	gol_grid(cells_y_count, std::vector<int>(cells_x_count, 0))
 {
-	gravity = new Gravity(10000, 25, 8, cells_x_count, cells_y_count, base_g, 1E-3);
 	for (int i = 0; i < cells_y_count; i++)
 	{
-		elements_grid.push_back(std::vector<Element*>());
 		for (int j = 0; j < cells_x_count; j++)
 		{
-			elements_grid[i].push_back(new None_Element());
+			elements_grid.push_back(new None_Element());
 		}
 	}
 	this->cells_x_count = cells_x_count;
 	this->cells_y_count = cells_y_count;
 	this->cell_width = window_width / static_cast<double>(cells_x_count);
 	this->cell_height = window_height / static_cast<double>(cells_y_count);
+	air = new Air(this, 0, 295.15, 4);
+	gravity = new Gravity(this, 10000, 25, 8, base_g, 1E-3);
 }
 
 Simulation::~Simulation()
 {
-	for (auto& row : elements_grid)
+	for (auto& el : elements_grid)
 	{
-		for (auto& el : row)
-		{
-			delete el;
-		}
-		row.clear();
+		delete el;
 	}
 	elements_grid.clear();
 	for (auto& el : available_elements)
@@ -328,4 +340,5 @@ Simulation::~Simulation()
 	}
 	available_elements.clear();
 	delete gravity;
+	delete air;
 }

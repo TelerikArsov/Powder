@@ -12,7 +12,7 @@ public:
 	int identifier = 0;
 	std::string name = "TMP_ELEMENT";	// Will be used in the ui
 	std::string description = "DESC";
-	sf::Color color = sf::Color::Red;	// The main color(Prob should be an array)
+	sf::Color color = sf::Color::Blue;	// The main color
 	Simulation* sim; // pointer to the Simulation the element currently is 
 	int menu_id = 0;		// Will be used in the ui 
 	int menu_section = 0;	//
@@ -21,21 +21,23 @@ public:
 	Vector pos = Vector(0, 0);
 	Vector velocity;
 	double speed;
-	Vector terminal_vel_v;
-	double terminal_vel;
+	bool moved;
 	Vector forces;
 	double drag_coef = 0.6;
-	double mass = 100;	   // Not yet used
+	double mass = 1;
 	int endurance = 0;
 	double restitution = 0.6;
 	// used by powders in the creation of piles
 	// higher values means its harder for pile creation to occure
 	// essentially used as velocity threshold
 	// at which pile creation will happen
-	int pile_threshold = 1; 
+	int pile_threshold = 1;
+	//in kelvins
 	double temperature = 0;
-	bool meltable = 0;
-	int state = 0; // 0 - liquid 1 - powder 2 - solid 3 - gas 
+	double thermal_cond = 0;
+	double specific_heat_cap = 0;
+	bool meltable = false;
+	int state = 0; // 0 - gas 1 - liquid 2 - powder 3 - solid  
 	Element* low_pressure_transition;		// To which element the current element
 	Element* high_pressure_transition;		// will transfrom, based on the current
 	Element* low_temperature_transition;	// physical state of the element
@@ -54,15 +56,23 @@ public:
 	Element* move(Vector dest);
 	void calc_loads();
 	void update_velocity(double dt);
-	void calc_term_vel();
 	void set_pos(int x, int y, bool true_pos);
 	bool powder_pile();
 	void apply_impulse(Element* collided_elem, double dt);
-	void add_velocity(Vector nvelociry);
-	virtual bool update(double dt) = 0;
-	virtual void render(double cell_height, double cell_width, sf::Vertex* quad) = 0;
+	void add_velocity(Vector nvelocity);
+	void add_heat(double heat);
+	virtual bool update(double dt);
+	virtual void render(double cell_height, double cell_width, sf::Vertex* quad);
 	virtual Element* clone() const = 0;
 	virtual ~Element() {};
+protected:
+	Element* collided_elem;
+	std::vector<sf::Color> colors;	// All the possible colors
+	// 0 - block; the element is blocked from moving further
+	// 1 - pass; both elements occupy the same space
+	// 2 - swap; the elements switch places
+	virtual int eval_col(Element* coll);
+	void liquid_move();
 private:
 	Element* move_helper(int xO, int yO, int d, int xStep, int yStep, int de, int dr, bool ytype);
 	Element* do_move(int diff_x, int diff_y);

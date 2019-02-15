@@ -5,6 +5,7 @@
 
 Element* Element::move(Vector dest)
 {
+	collision = false;
 	pos = dest;
 	Element* coll_el = this;
 	int xD = static_cast<int>(std::round(dest.x));
@@ -87,6 +88,7 @@ Element* Element::move_helper(int xO, int yO, int d, int xStep, int yStep, int d
 		if (collision)
 			break;
 		eprev = e;
+		moved = true;
 	}
 	return coll_el;
 }
@@ -105,12 +107,13 @@ Element* Element::do_move(int diff_x, int diff_y)
 	{
 		coll_el = sim->get_from_grid(diff_x, diff_y);
 		// if there is no collision we update the elements real coordinates
-		if (coll_el->identifier != EL_NONE) //todo function that evals the collision
+		int res = eval_col(coll_el);
+		if (res == C_BLOCK)
 		{
 			set_pos(x, y, true);
 			collision = true;
 		}
-		else
+		else if(res == C_SWAP)
 		{
 			sim->swap_elements(x, y, diff_x, diff_y);
 			set_pos(diff_x, diff_y, false);
@@ -122,17 +125,30 @@ Element* Element::do_move(int diff_x, int diff_y)
 }
 
 
+int Element::eval_col(Element* coll_el)
+{
+	if (coll_el->identifier == EL_NONE)
+		return C_SWAP;
+	if (coll_el->state == state)
+		return mass > coll_el->mass ? C_SWAP : C_BLOCK;
+	else
+		return state > coll_el->state ? C_SWAP : C_BLOCK;
+}
+
+
+
 void Element::calc_loads()
 {
 	forces.Zero();
 	collision = false;
+	collided_elem = this;
 	forces += sim->gravity->get_force(x, y, mass);
 	Vector air_drag;
 	air_drag = -velocity;
 	// our y in the grid increases downwards
 	// as opposed to the upward increase in the normal cartesian grid
 	// and the velocity y is the one we use not the normal cartesian
-	air_drag.y = -air_drag.y;
+	air_drag.ReverseY();
 	air_drag.Normalize();
 	air_drag *= 0.5 * sim->air_density * speed * speed *
 	(0.5) * drag_coef;
@@ -146,21 +162,13 @@ void Element::update_velocity(double dt)
 	a = forces / mass;
 	// our y in the grid increases downwards
 	// as opposed to the upward increase in the normal cartesian grid
-	a.y = -a.y;
+	a.ReverseY();
 	add_velocity(a * dt);
 	/*if (speed > terminal_vel)
 	{
 		velocity.Normalize();
 		velocity *= terminal_vel;
 	}*/
-}
-
-void Element::calc_term_vel() 
-{
-	terminal_vel_v = 2 * sim->gravity->base_grav * mass / sim->air_density * 1 * drag_coef;
-	terminal_vel_v.x = sqrt(abs(terminal_vel_v.x));
-	terminal_vel_v.y = sqrt(abs(terminal_vel_v.y));
-	terminal_vel = terminal_vel_v.Magnitude();
 }
 
 void Element::set_pos(int x, int y, bool true_pos)
@@ -177,15 +185,14 @@ void Element::set_pos(int x, int y, bool true_pos)
 bool Element::powder_pile()
 {
 	bool status = false;
-	if (speed > pile_threshold)
+	if (speed > pile_threshold && collided_elem != this)
 	{
-		Vector vel_norm = Vector::Normalize(velocity);
-		Vector check_pos = vel_norm + pos;
-		Vector perp = vel_norm.PerpendicularCW();
-		Element* res = sim->get_from_grid(check_pos.x, check_pos.y);
-		if (res && res->identifier != EL_NONE)
+		Vector dir_to_coll = Vector(collided_elem->x - x, collided_elem->y - y);
+		Vector perp = dir_to_coll.PerpendicularCW();
+		if (!moved)
 		{
 			bool side = random.next_bool();
+			Vector check_pos = Vector(collided_elem->x, collided_elem->y);
 			status = pile_helper(check_pos + (side ? perp : -perp));
 			if (!status)
 				status = pile_helper(check_pos + (side ? -perp : perp));
@@ -200,10 +207,21 @@ bool Element::pile_helper(Vector check_pos)
 	if (res && res->identifier == EL_NONE)
 	{
 		move(check_pos);
-		return true;
+		return !collision;
 	}
 	return false;
 }
+
+void Element::liquid_move()
+{
+	Vector dir_to_coll = Vector(collided_elem->x - x, collided_elem->y - y);
+	Vector perp = dir_to_coll.PerpendicularCW();
+	bool side = random.next_bool();
+	move(pos + (side ? perp : -perp));
+	if (collision)
+		move(pos + (side ? -perp : perp));
+}
+
 
 void Element::apply_impulse(Element* coll_el, double dt)
 {
@@ -216,13 +234,64 @@ void Element::apply_impulse(Element* coll_el, double dt)
 	add_velocity(j * d / mass);
 	if (!ground)
 	{
-		coll_el->velocity -= (j * d) / coll_el->mass;
+		coll_el->add_velocity(-(j * d) / coll_el->mass);
 	}
 }
 
-void Element::add_velocity(Vector nvelociry)
+void Element::add_velocity(Vector nvelocity)
 {
-	velocity += nvelociry;
+	velocity += nvelocity;
 	speed = velocity.Magnitude();
 }
 
+void Element::add_heat(double heat)
+{
+	temperature += (heat / (mass * 1000) / specific_heat_cap);
+}
+
+bool Element::update(double dt)
+{
+	moved = false;
+	update_velocity(dt);
+	collided_elem = move(pos + (velocity * dt) / sim->scale);
+	if (state == ST_POWDER && collision)
+	{
+		apply_impulse(collided_elem, dt);
+		powder_pile();
+	}
+	if (state == ST_LIQUID && collision)
+	{
+		liquid_move();
+	}
+	add_velocity(sim->air->get_force(x, y));
+	for (int i = -1; i < 2; i++)
+	{
+		for (int j = -1; j < 2; j++)
+		{
+			if (i || j)
+			{
+				Element* el = sim->get_from_grid(x + j, y + i);
+				if (el && el->identifier != EL_NONE && el->temperature < temperature)
+				{
+					double heat = thermal_cond * (temperature - el->temperature);
+					el->add_heat(heat);
+					add_heat(-heat);
+				}
+			}
+		}
+	}
+	return false;
+}
+
+void Element::render(double cell_height, double cell_width, sf::Vertex * quad)
+{
+	quad[0].position = sf::Vector2f(x * cell_width, y * cell_height);
+	quad[1].position = sf::Vector2f((x + 1) * cell_width, y * cell_height);
+	quad[2].position = sf::Vector2f((x + 1) * cell_width, (y + 1) * cell_height);
+	quad[3].position = sf::Vector2f(x * cell_width, (y + 1) * cell_height);
+
+	quad[0].color = color;
+	quad[1].color = color;
+	quad[2].color = color;
+	quad[3].color = color;
+}

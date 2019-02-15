@@ -66,6 +66,12 @@ Vector& Vector::Reverse()
 	return *this;
 }
 
+Vector& Vector::ReverseY()
+{
+	y = -y;
+	return *this;
+}
+
 Vector& Vector::Zero()
 {
 	x = 0;

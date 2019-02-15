@@ -5,25 +5,36 @@
 #include <list>
 #include "Brush.h"
 #include "Gravity.h"
+#include "Air.h"
 
 class Vector;
 
 class Simulation 
 {
 public:
+	// Not yet used
+	int elements_count;
+	int mouse_cell_x, mouse_cell_y;
 	// the dimensions of each cell
 	double cell_height, cell_width;
+	int cells_x_count, cells_y_count;
 	// for air at 15 C
 	double air_density = 1.23; 
+	// power of 10, not sure how to make it only a power of 10 
+	double scale = 0.1;
 	// The identifier of the current selected element
 	// TODO: move to private make a method to check if the selected element is 
 	// present in the available_elements array
 	int selected_element;
 	int selected_brush;
 	Gravity* gravity;
-	std::vector < std::vector<Element *>> get_element_grid() const;
-	Element* get_from_grid(int x, int y) const;
-	int get_from_gol(int x, int y) const;
+	Air* air;
+	bool neut_grav = false;
+	bool drav_grav_grid = true;
+	Element* get_from_grid(double x, double y);
+	Element* get_from_grid(int x, int y);
+	int get_from_gol(double x, double y);
+	int get_from_gol(int x, int y);
 	void set_gol_el(int x, int y, int val);
 	Element* find_by_id(int id);
 	// Updates the gol grid.
@@ -44,14 +55,6 @@ public:
 	// string vars = any bonus information that might be needed in the creation of the element 
 	int create_element(int id, bool from_mouse, bool add_to_active, int x, int y, std::string vars = "");
 	void swap_elements(int x1, int y1, int x2, int y2);
-	// creates the collision rules
-	void init_col_rules();
-	// used when the col rules is 3
-	// returns 
-	// 0 - block; the element is blocked from moving further
-	// 1 - pass; both elements occupy the same space
-	// 2 - swap; the elements switch places
-	int eval_col(int x1, int y1, int x2, int y2);
 	// Gets all the alive neighbours of a cell
 	// with position x and y
 	// Uses the gol_grid
@@ -78,21 +81,14 @@ public:
 	~Simulation();
 	//TODO something something encapsulation, most of the public properties should be here anyways
 private:
-	int cells_x_count, cells_y_count;
-	// Not yet used
-	int elements_count;
+
 	int mouse_x = 0, mouse_y = 0;
 	std::vector<Brush* > brushes;
-	std::vector<std::vector<Element* >> elements_grid;
+	std::vector<Element*> elements_grid;
 	// Used for GoL simulation
 	// 1 is alive 0 is dead, anything else varies
 	// of the specific GoL element
-	std::vector<std::vector<int>> gol_grid;
-	// 0 - block; the element is blocked from moving further
-	// 1 - pass; both elements occupy the same space
-	// 2 - swap; the elements switch places
-	// 3 - ambiguous; the eval function needs to detirmine the decision
-	std::vector<std::vector<int>> collision_rules;
+	std::vector<std::vector<int>> gol_grid; 
 	// All the available elements that can be spawned
 	std::vector<Element*> available_elements;
 	// All currently active elements inside the element grid
