@@ -3,6 +3,8 @@
 #include <list>
 #include "Vector.h"
 
+class Simulation;
+
 struct grav_cell {
 	double mass;
 	Vector grav_force;
@@ -15,6 +17,7 @@ struct grav_cell {
 class Gravity
 {
 public:
+	Simulation* sim;
 	double G;
 	double mass_th;
 	int dist_th;
@@ -25,9 +28,9 @@ public:
 	std::vector<grav_cell> grav_grid;
 	std::list<int> active_cells;
 	void update_mass(double mass, int new_x, int new_y, int old_x, int old_y);
-	void update_grav();
+	void update_grav(bool neut_grav);
 	Vector get_force(int x, int y, double mass);
-	Gravity(double mass_threshold, int distance_threshold, int cell_size, int sim_cellx_count, int sim_celly_count, double base_grav, double g);
+	Gravity(Simulation* sim, double mass_threshold, int distance_threshold, int cell_size, double base_g, double g);
 	~Gravity();
 };
 

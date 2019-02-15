@@ -14,6 +14,7 @@ public:
 	double TripleScalarProduct(const Vector& u, const Vector& v, const Vector& w) const;
 	Vector& Normalize();     
 	Vector& Reverse();
+	Vector& ReverseY();
 	Vector& Zero();
 	Vector& operator+=(const Vector& u);     
 	Vector& operator-=(const Vector& u);  
