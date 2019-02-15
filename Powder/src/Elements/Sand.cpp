@@ -1,30 +1,6 @@
 #include "Sand.h"
 #include "Simulation.h"
-
-bool Sand::update(double dt) 
-{
-	update_velocity(dt);
-	Element * collided_elem = move(pos + (velocity * dt) * 100);
-	if (collision)
-	{
-		apply_impulse(collided_elem, dt);
-		//powder_pile();
-	}
-	return false;
-}
-
-void Sand::render(double cell_height, double cell_width, sf::Vertex * quad)
-{
-	quad[0].position = sf::Vector2f(x * cell_width, y * cell_height);
-	quad[1].position = sf::Vector2f((x + 1) * cell_width, y * cell_height);
-	quad[2].position = sf::Vector2f((x + 1) * cell_width, (y + 1) * cell_height);
-	quad[3].position = sf::Vector2f(x * cell_width, (y + 1) * cell_height);
-
-	quad[0].color = color;
-	quad[1].color = color;
-	quad[2].color = color;
-	quad[3].color =	color;
-}
+#include "Random.h"
 
 Element* Sand::clone() const
 {
@@ -33,16 +9,20 @@ Element* Sand::clone() const
 
 Sand::Sand(Simulation& sim)
 {
-	identifier = EL_SAND; // TODO make enum
+	identifier = EL_SAND;
 	name = "Sand";
 	description = "Sand";
 	menu_section = 2;
-	state = 1;
-	color = sf::Color::Yellow;
-	mass = 15;
-	restitution = 0.6;
+	state = ST_POWDER;
+	colors = {sf::Color(237, 201, 175), sf::Color(240, 222, 180)};
+	color = colors[random.between(0, colors.size() - 1)];
+	mass = 5;
+	restitution = 0.1;
+	temperature = 573.15;
+	thermal_cond = 2;
+	specific_heat_cap = 0.8;
 	this->sim = &sim;
-	calc_term_vel();
+	//calc_term_vel();
 }
 
 Sand::Sand(const Sand& rhs)
@@ -50,7 +30,8 @@ Sand::Sand(const Sand& rhs)
 	identifier = rhs.identifier;
 	name = rhs.name;
 	description = rhs.description;
-	color = rhs.color;
+	colors = rhs.colors;
+	color = colors[random.between(0, colors.size() - 1)];
 	drag_coef = rhs.drag_coef;
 	menu_id = rhs.menu_id;
 	menu_section = rhs.menu_section;
@@ -59,8 +40,8 @@ Sand::Sand(const Sand& rhs)
 	y = rhs.y;
 	mass = rhs.mass;
 	restitution = rhs.restitution;
-	terminal_vel = rhs.terminal_vel;
-	terminal_vel_v = rhs.terminal_vel_v;
+	thermal_cond = rhs.thermal_cond;
+	specific_heat_cap = rhs.specific_heat_cap;
 	temperature = rhs.temperature;
 	meltable = rhs.meltable;
 	state = rhs.state;

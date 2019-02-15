@@ -1,13 +1,13 @@
 #pragma once
 #include "Element.h"
-class Sand :
+class Water :
 	public Element
 {
 public:
 	bool update(double dt);
 	Element* clone() const override;
-	Sand(Simulation& sim);
-	Sand(const Sand& rhs);
-	~Sand();
+	Water(Simulation& sim);
+	Water(const Water& rhs);
+	~Water();
 };
 

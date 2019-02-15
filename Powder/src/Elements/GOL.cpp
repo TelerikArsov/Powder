@@ -76,34 +76,21 @@ bool GOL::update(double dt)
 	return false;
 }
 
-void GOL::render(double cell_height, double cell_width, sf::Vertex* quad)
-{
-	quad[0].position = sf::Vector2f(x * cell_width, y * cell_height);
-	quad[1].position = sf::Vector2f((x + 1) * cell_width, y * cell_height);
-	quad[2].position = sf::Vector2f((x + 1) * cell_width, (y + 1) * cell_height);
-	quad[3].position = sf::Vector2f(x * cell_width, (y + 1) * cell_height);
-
-	quad[0].color = states_colors[state];
-	quad[1].color = states_colors[state];
-	quad[2].color = states_colors[state];
-	quad[3].color = states_colors[state];
-}
-
 Element * GOL::clone() const
 {
 	return new GOL(*this);
 }
 
-GOL::GOL(int state, std::string name, std::string rules_s)
+GOL::GOL(std::string name, std::string rules_s)
 {
 	identifier = 1;
 	this->name = name;
 	description = "Brians brain rules set for game of life";
 	menu_section = 1;
-	this->state = state;
+	state = ST_SOLID;
 	rule_string = rules_s;
 	process_rules();
-	mass = 100000;
+	mass = 1;
 }
 
 GOL::GOL(const GOL& rhs)

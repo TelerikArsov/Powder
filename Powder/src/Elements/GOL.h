@@ -24,9 +24,8 @@ public:
 	// Processes the rule string and fills the rules array
 	void process_rules();
 	bool update(double dt) override;
-	void render(double, double, sf::Vertex* quad) override;
 	Element* clone() const override;
-	GOL(int, std::string, std::string);
+	GOL(std::string, std::string);
 	GOL(const GOL& rhs);
 	~GOL();
 };
