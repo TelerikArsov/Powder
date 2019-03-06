@@ -1,6 +1,6 @@
 #include "CircleBrush.h"
 
-
+#define Radius 0
 
 void CircleBrush::change_size(int d)
 {
@@ -41,7 +41,8 @@ void CircleBrush::create_area()
 			y--;
 			err += 2 * (x - y) + 1;
 		}
-		else {
+		else 
+		{
 			err += 2 * x + 1;
 		}
 		if (x < y)
@@ -70,6 +71,8 @@ void CircleBrush::create_area()
 
 CircleBrush::CircleBrush()
 {
+	name = "Circle";
+	description = "Brush in the shape of a circle";
 	//circle has only one size radius
 	sizes.push_back(0);
 	create_area();

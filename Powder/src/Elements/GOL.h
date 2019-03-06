@@ -4,7 +4,6 @@ class GOL :
 	public Element
 {
 public:
-	sf::Color states_colors[2] = { sf::Color::Blue, sf::Color::White };
 	// Rulestring format is as follows
 	// S, B, or D to specify which rule is listed and each rules might be seperated by / or \
 	// example: s../b../d. (rules are not case sensetive, order of rules is irrelevant, as long
@@ -23,7 +22,7 @@ public:
 	enum { B = 0, S = 1, D = 2 };
 	// Processes the rule string and fills the rules array
 	void process_rules();
-	bool update(double dt) override;
+	bool update(float dt) override;
 	Element* clone() const override;
 	GOL(std::string, std::string);
 	GOL(const GOL& rhs);

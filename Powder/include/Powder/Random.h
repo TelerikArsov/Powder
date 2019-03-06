@@ -8,11 +8,12 @@ public:
 	void seed(uint64_t x);
 	uint32_t next_uint32();
 	unsigned int between(unsigned int lower, unsigned int upper);
-	double next_double();
+	float next_float();
 	bool next_bool();
 	Random();
 	~Random();
 private:
+	// seed
 	uint64_t s[2];
 	uint64_t next();
 	static uint32_t next_uint32_temp;

@@ -20,32 +20,32 @@ public:
 	int y = 0; //
 	Vector pos = Vector(0, 0);
 	Vector velocity;
-	double speed;
+	float speed;
 	bool moved;
 	Vector forces;
-	double drag_coef = 0.6;
-	double mass = 1;
+	float drag_coef = 0.6f;
+	float mass = 1;
 	int endurance = 0;
-	double restitution = 0.6;
+	float restitution = 0.6f;
 	// used by powders in the creation of piles
 	// higher values means its harder for pile creation to occure
 	// essentially used as velocity threshold
 	// at which pile creation will happen
 	int pile_threshold = 1;
 	//in kelvins
-	double temperature = 0;
-	double thermal_cond = 0;
-	double specific_heat_cap = 0;
+	float temperature = 0;
+	float thermal_cond = 0;
+	float specific_heat_cap = 0;
 	bool meltable = false;
 	int state = 0; // 0 - gas 1 - liquid 2 - powder 3 - solid  
 	Element* low_pressure_transition;		// To which element the current element
 	Element* high_pressure_transition;		// will transfrom, based on the current
 	Element* low_temperature_transition;	// physical state of the element
 	Element* high_temperature_transition;	//
-	double low_pressure;                    // Number values at which the 
-	double high_pressure;					// transformation will occure
-	double low_temperature;
-	double high_temperature;
+	float low_pressure;                    // Number values at which the 
+	float high_pressure;					// transformation will occure
+	float low_temperature;
+	float high_temperature;
 	Vector ground_coll;
 	bool collision = false;
 	// Moves the element across a line (the start of the line is the 
@@ -55,14 +55,14 @@ public:
 	// the x and y of the cell where collision occurred
 	Element* move(Vector dest);
 	void calc_loads();
-	void update_velocity(double dt);
+	void update_velocity(float dt);
 	void set_pos(int x, int y, bool true_pos);
 	bool powder_pile();
-	void apply_impulse(Element* collided_elem, double dt);
+	void apply_impulse(Element* collided_elem, float dt);
 	void add_velocity(Vector nvelocity);
-	void add_heat(double heat);
-	virtual bool update(double dt);
-	virtual void render(double cell_height, double cell_width, sf::Vertex* quad);
+	void add_heat(float heat);
+	virtual bool update(float dt);
+	virtual void render(float cell_height, float cell_width, sf::Vertex* quad);
 	virtual Element* clone() const = 0;
 	virtual ~Element() {};
 protected:
@@ -74,7 +74,7 @@ protected:
 	virtual int eval_col(Element* coll);
 	void liquid_move();
 private:
-	Element* move_helper(int xO, int yO, int d, int xStep, int yStep, int de, int dr, bool ytype);
-	Element* do_move(int diff_x, int diff_y);
+	void move_helper(int xO, int yO, int d, int xStep, int yStep, int de, int dr, bool ytype, Element*& coll_el);
+	void do_move(int diff_x, int diff_y, Element*& coll_el);
 	bool pile_helper(Vector check_pos);
 };

@@ -76,11 +76,12 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)\lib;$(ProjectDir)\include\Powder;$(ProjectDir)\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\lib\imgui;$(ProjectDir)\lib;$(ProjectDir)\include\Powder;$(ProjectDir)\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(ProjectDir)\lib\SFML\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sfml-graphics-d.lib;sfml-window-d.lib;sfml-system-d.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;sfml-graphics-d.lib;sfml-window-d.lib;sfml-system-d.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -99,13 +100,14 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)\lib;$(ProjectDir)\include\Powder;$(ProjectDir)\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\lib\imgui;$(ProjectDir)\lib;$(ProjectDir)\include\Powder;$(ProjectDir)\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(ProjectDir)\lib\SFML\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sfml-graphics.lib;sfml-window.lib;sfml-system.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;sfml-graphics.lib;sfml-window.lib;sfml-system.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -123,36 +125,43 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Air.cpp" />
-    <ClCompile Include="Brush.cpp" />
-    <ClCompile Include="CircleBrush.cpp" />
-    <ClCompile Include="Element.cpp" />
-    <ClCompile Include="GOL.cpp" />
-    <ClCompile Include="Gravity.cpp" />
+    <ClCompile Include="lib\imgui\imgui-SFML.cpp" />
+    <ClCompile Include="lib\imgui\imgui.cpp" />
+    <ClCompile Include="lib\imgui\imgui_demo.cpp" />
+    <ClCompile Include="lib\imgui\imgui_draw.cpp" />
+    <ClCompile Include="lib\imgui\imgui_widgets.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="None_Element.cpp" />
-    <ClCompile Include="Random.cpp" />
-    <ClCompile Include="Sand.cpp" />
-    <ClCompile Include="Simulation.cpp" />
-    <ClCompile Include="SquareBrush.cpp" />
-    <ClCompile Include="Vector.cpp" />
+    <ClCompile Include="src\Air.cpp" />
+    <ClCompile Include="src\BaseUI.cpp" />
+    <ClCompile Include="src\Brush.cpp" />
+    <ClCompile Include="src\CircleBrush.cpp" />
+    <ClCompile Include="src\Element.cpp" />
+    <ClCompile Include="src\Elements\GOL.cpp" />
+    <ClCompile Include="src\Elements\Sand.cpp" />
+    <ClCompile Include="src\Gravity.cpp" />
+    <ClCompile Include="src\Random.cpp" />
+    <ClCompile Include="src\Simulation.cpp" />
+    <ClCompile Include="src\SquareBrush.cpp" />
+    <ClCompile Include="src\Vector.cpp" />
+    <ClCompile Include="src\Elements\Water.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Air.h" />
-    <ClInclude Include="Brush.h" />
-    <ClInclude Include="CircleBrush.h" />
-    <ClInclude Include="Elements.h" />
-    <ClInclude Include="ElementsIds.h" />
-    <ClInclude Include="GOL.h" />
-    <ClInclude Include="Element.h" />
-    <ClInclude Include="Gravity.h" />
-    <ClInclude Include="None_Element.h" />
-    <ClInclude Include="Random.h" />
+    <ClInclude Include="include\Powder\Brush.h" />
+    <ClInclude Include="include\Powder\CircleBrush.h" />
+    <ClInclude Include="include\Powder\Gravity.h" />
+    <ClInclude Include="include\Powder\Random.h" />
+    <ClInclude Include="include\Powder\SquareBrush.h" />
+    <ClInclude Include="include\Powder\Vector.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="Sand.h" />
-    <ClInclude Include="Simulation.h" />
-    <ClInclude Include="SquareBrush.h" />
-    <ClInclude Include="Vector.h" />
+    <ClInclude Include="src\Air.h" />
+    <ClInclude Include="src\BaseUI.h" />
+    <ClInclude Include="src\Element.h" />
+    <ClInclude Include="src\Elements.h" />
+    <ClInclude Include="src\ElementsIds.h" />
+    <ClInclude Include="src\Elements\GOL.h" />
+    <ClInclude Include="src\Elements\Sand.h" />
+    <ClInclude Include="src\Simulation.h" />
+    <ClInclude Include="src\Elements\Water.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Powder.rc" />

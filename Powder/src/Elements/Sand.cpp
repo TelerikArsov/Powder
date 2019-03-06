@@ -17,12 +17,11 @@ Sand::Sand(Simulation& sim)
 	colors = {sf::Color(237, 201, 175), sf::Color(240, 222, 180)};
 	color = colors[random.between(0, colors.size() - 1)];
 	mass = 5;
-	restitution = 0.1;
-	temperature = 573.15;
+	restitution = 0.1f;
+	temperature = 573.15f;
 	thermal_cond = 2;
-	specific_heat_cap = 0.8;
+	specific_heat_cap = 0.8f;
 	this->sim = &sim;
-	//calc_term_vel();
 }
 
 Sand::Sand(const Sand& rhs)

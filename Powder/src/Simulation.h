@@ -1,8 +1,10 @@
 #pragma once
-#include "Element.h"
-#include "ElementsIds.h"
 #include <vector>
 #include <list>
+
+#include "Element.h"
+#include "ElementsIds.h"
+#include "BaseUI.h" 
 #include "Brush.h"
 #include "Gravity.h"
 #include "Air.h"
@@ -14,14 +16,16 @@ class Simulation
 public:
 	// Not yet used
 	int elements_count;
+	float fps = 0.0f;
+	bool paused = true;
 	int mouse_cell_x, mouse_cell_y;
 	// the dimensions of each cell
-	double cell_height, cell_width;
+	float cell_height, cell_width;
 	int cells_x_count, cells_y_count;
 	// for air at 15 C
-	double air_density = 1.23; 
+	float air_density = 1.23f; 
 	// power of 10, not sure how to make it only a power of 10 
-	double scale = 0.1;
+	float scale = 0.1f;
 	// The identifier of the current selected element
 	// TODO: move to private make a method to check if the selected element is 
 	// present in the available_elements array
@@ -29,11 +33,14 @@ public:
 	int selected_brush;
 	Gravity* gravity;
 	Air* air;
+	BaseUI* baseUI;
 	bool neut_grav = false;
-	bool drav_grav_grid = true;
-	Element* get_from_grid(double x, double y);
+	// Set in the ui, used to know which grid to draw
+	// either none = 0, grav = 1, air = 2
+	int drav_grid = 0;
+	Element* get_from_grid(float x, float y);
 	Element* get_from_grid(int x, int y);
-	int get_from_gol(double x, double y);
+	int get_from_gol(float x, float y);
 	int get_from_gol(int x, int y);
 	void set_gol_el(int x, int y, int val);
 	Element* find_by_id(int id);
@@ -41,7 +48,7 @@ public:
 	// Loops over all the active elements and calls their update method.
 	// If the update method returns true, then the elements is deleted.
 	// Adds any newly created elements to the active list.
-	void tick(bool bypass_pause = false, double dt = 1);
+	void tick(bool bypass_pause = false, float dt = 1);
 	// Loops over all the active elements and calls their render method.
 	// Renders the grid(NOT YET IMPLEMENTED) and the outline of the spawn area
 	void render(sf::RenderWindow* window);
@@ -77,25 +84,23 @@ public:
 	bool add_brush(Brush *);
 	// int window_width, int window_height = the dimensions of the window 
 	// where the simulation will be rendered
-	Simulation(int cells_x_count, int cells_y_count, int window_width, int window_height, double base_g);
+	Simulation(int cells_x_count, int cells_y_count, int window_width, int window_height, float base_g);
 	~Simulation();
 	//TODO something something encapsulation, most of the public properties should be here anyways
 private:
-
+	friend class BaseUI;
 	int mouse_x = 0, mouse_y = 0;
 	std::vector<Brush* > brushes;
 	std::vector<Element*> elements_grid;
 	// Used for GoL simulation
 	// 1 is alive 0 is dead, anything else varies
 	// of the specific GoL element
-	std::vector<std::vector<int>> gol_grid; 
+	std::vector<int> gol_grid; 
 	// All the available elements that can be spawned
 	std::vector<Element*> available_elements;
 	// All currently active elements inside the element grid
 	std::list<Element*> active_elements;
 	// Elements that need to be added to the active list
 	std::list<Element*> add_queue;
-	bool draw_grid = false;
-	int spawn_width = 1, spawn_height = 1, spawn_radius = 1;
-	bool paused = true;
+	sf::VertexArray draw_grid(std::vector<Vector> velocities, int cell_size, int  height, int width);
 };

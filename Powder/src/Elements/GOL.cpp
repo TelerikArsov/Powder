@@ -46,7 +46,7 @@ void GOL::process_rules()
 	}
 }
 
-bool GOL::update(double dt) 
+bool GOL::update(float dt) 
 {
 	if (state == 0)
 		return true;
@@ -85,7 +85,7 @@ GOL::GOL(std::string name, std::string rules_s)
 {
 	identifier = 1;
 	this->name = name;
-	description = "Brians brain rules set for game of life";
+	description = "Game of life element";
 	menu_section = 1;
 	state = ST_SOLID;
 	rule_string = rules_s;

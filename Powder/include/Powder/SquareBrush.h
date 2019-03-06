@@ -9,9 +9,5 @@ public:
 	void create_area() override;
 	SquareBrush();
 	~SquareBrush();
-private:
-	enum Sizes {
-		Side
-	};
 };
 

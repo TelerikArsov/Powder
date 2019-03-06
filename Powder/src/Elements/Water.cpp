@@ -15,10 +15,10 @@ Water::Water(Simulation& sim)
 	state = ST_LIQUID;
 	color = sf::Color::Blue;
 	mass = 1;
-	restitution = 0.6;
+	restitution = 0.0f;
 	temperature = 22;
-	thermal_cond = 0.606;
-	specific_heat_cap = 4.19;
+	thermal_cond = 0.606f;
+	specific_heat_cap = 4.19f;
 	this->sim = &sim;
 	//calc_term_vel();
 }

@@ -19,7 +19,7 @@ static uint64_t splitmix64next(uint64_t x)
 	return z ^ (z >> 31);
 }
 
-static inline double to_double(uint64_t x) 
+static inline float to_float(uint64_t x) 
 {
 	const union { uint64_t i; double d; } u = { UINT64_C(0x3FF) << 52 | x >> 12 };
 	return u.d - 1.0;
@@ -86,9 +86,9 @@ uint64_t Random::next()
 
 
 
-double Random::next_double()
+float Random::next_float()
 {
-	return to_double(next());
+	return to_float(next());
 }
 
 bool Random::next_bool()

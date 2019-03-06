@@ -3,15 +3,15 @@
 
 
 
-double Vector::Magnitude() const
+float Vector::Magnitude() const
 {
-	return sqrt(x * x + y * y + z * z);
+	return sqrtf(x * x + y * y + z * z);
 }
 
-Vector& Vector::Rotate2D(double angle)
+Vector& Vector::Rotate2D(float angle)
 {
-	double xr = x * cos(angle) - y * sin(angle);
-	double yr = y * sin(angle) + y * cos(angle);
+	float xr = x * cosf(angle) - y * sinf(angle);
+	float yr = y * sinf(angle) + y * cosf(angle);
 	x = xr;
 	y = yr;
 	return *this;
@@ -34,16 +34,16 @@ Vector Vector::Normalize(const Vector& u)
 	return Vector(u.x, u.y, u.z).Normalize();
 }
 
-double Vector::TripleScalarProduct(const Vector & u, const Vector & v, const Vector & w) const
+float Vector::TripleScalarProduct(const Vector & u, const Vector & v, const Vector & w) const
 {
-	return double((u.x * (v.y * w.z - v.z * w.y)) + 
+	return float((u.x * (v.y * w.z - v.z * w.y)) + 
 				(u.y * (-v.x *w.z + v.z * w.x)) + 
 				(u.z * (v.x * w.y - v.y * w.x)));
 }
 
 Vector& Vector::Normalize()
 {
-	double m = Magnitude();
+	float m = Magnitude();
 	if (m <= tol)
 		m = 1;     
 	x /= m;     
@@ -107,7 +107,7 @@ Vector& Vector::operator=(const Vector& u)
 	return *this;
 }
 
-Vector& Vector::operator*=(const double s)
+Vector& Vector::operator*=(const float s)
 {
 	x *= s;
 	y *= s;
@@ -115,7 +115,7 @@ Vector& Vector::operator*=(const double s)
 	return *this;
 }
 
-Vector& Vector::operator/=(const double s)
+Vector& Vector::operator/=(const float s)
 {
 	x /= s;
 	y /= s;
@@ -138,27 +138,27 @@ Vector operator-(Vector u, const Vector& v)
 	return u -= v;
 }
 
-double operator*(const Vector& u, const Vector& v)
+float operator*(const Vector& u, const Vector& v)
 {
 	return u.x * v.x + u.y * v.y + u.z * v.z;
 }
 
-Vector operator*(Vector u, const double s)
+Vector operator*(Vector u, const float s)
 {
 	return u *= s;
 }
 
-Vector operator*(const double s, Vector u)
+Vector operator*(const float s, Vector u)
 {
 	return u *= s;
 }
 
-Vector operator/(Vector u, const double s)
+Vector operator/(Vector u, const float s)
 {
 	return u /= s;
 }
 
-Vector operator/(const double s, Vector u)
+Vector operator/(const float s, Vector u)
 {
 	return u /= s;
 }

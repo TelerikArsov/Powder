@@ -1,5 +1,5 @@
 #pragma once
-#define EL_NONE 0
+#define EL_NONE nullptr
 #define EL_GOL 1
 #define EL_SAND 2
 #define EL_WATER 3

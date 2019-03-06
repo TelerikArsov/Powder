@@ -1,6 +1,6 @@
 #include "SquareBrush.h"
 
-
+#define Side 0
 
 void SquareBrush::change_size(int d)
 {
@@ -48,6 +48,8 @@ void SquareBrush::create_area()
 
 SquareBrush::SquareBrush()
 {
+	name = "Square";
+	description = "Squared";
 	sizes.push_back(0);
 	create_area();
 }
