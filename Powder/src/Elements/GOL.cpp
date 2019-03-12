@@ -62,7 +62,7 @@ bool GOL::update(float dt)
 					sim->set_gol_el(j, i, 2);
 					if (rules[B][size])
 					{
-						sim->create_element(identifier, false, false, j, i, rule_string);
+						sim->create_element(identifier, false, false, j, i);
 					}
 				}
 			}
@@ -80,17 +80,15 @@ Element * GOL::clone() const
 {
 	return new GOL(*this);
 }
-
-GOL::GOL(std::string name, std::string rules_s)
+//some values are missing as their usage is not yet implemented
+GOL::GOL(std::string name, std::string description, std::string rule_string)
 {
-	identifier = 1;
+	identifier = EL_GOL;
 	this->name = name;
-	description = "Game of life element";
-	menu_section = 1;
+	this->description = description;
 	state = ST_SOLID;
-	rule_string = rules_s;
+	this->rule_string = rule_string;
 	process_rules();
-	mass = 1;
 }
 
 GOL::GOL(const GOL& rhs)
@@ -102,12 +100,9 @@ GOL::GOL(const GOL& rhs)
 	drag_coef = rhs.drag_coef;
 	menu_id = rhs.menu_id;
 	menu_section = rhs.menu_section;
-	endurance = rhs.endurance;
 	x = rhs.x;
 	y = rhs.y;
-	mass = rhs.mass;
 	temperature = rhs.temperature;
-	meltable = rhs.meltable;
 	state = rhs.state;
 	rule_string = rhs.rule_string;
 	process_rules();

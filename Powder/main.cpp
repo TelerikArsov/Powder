@@ -13,14 +13,14 @@ int main()
 	sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "SFML works!");
 	window.setVerticalSyncEnabled(true);
 	ImGui::SFML::Init(window);
-	Simulation gol(92, 92, WINDOW_WIDTH, WINDOW_HEIGHT, 9.8f);
-	gol.add_element(new GOL("WALL", "s1/b1"));
-	gol.add_element(new Sand(gol));
-	gol.add_element(new Water(gol));
-	gol.add_brush(new CircleBrush());
-	gol.add_brush(new SquareBrush());
-	gol.selected_brush = 0;
-	gol.selected_element = EL_SAND;
+	Simulation sim(368, 368, WINDOW_WIDTH, WINDOW_HEIGHT, 9.8f);
+	sim.add_element(new GOL("WALL", "Wall rule" ,"s1/b1"));
+	sim.add_element(new Sand(sim));
+	sim.add_element(new Water(sim));
+	sim.add_brush(new CircleBrush());
+	sim.add_brush(new SquareBrush());
+	sim.selected_brush = 0;
+	sim.selected_element = EL_SAND;
 
 	sf::Clock clock;
 	const unsigned int max_fps = 60;
@@ -41,11 +41,11 @@ int main()
 				window.close();
 			if (event.type == sf::Event::MouseMoved)
 			{
-				gol.set_mouse_cor(event.mouseMove.x, event.mouseMove.y);
+				sim.set_mouse_cor(event.mouseMove.x, event.mouseMove.y);
 			}
 			if (event.type == sf::Event::MouseWheelScrolled)
 			{
-				gol.resize_brush(event.mouseWheelScroll.delta);
+				sim.resize_brush(event.mouseWheelScroll.delta);
 			}
 			if (event.type == sf::Event::MouseButtonPressed)
 			{
@@ -69,32 +69,32 @@ int main()
 			{
 				if (event.key.code == sf::Keyboard::Space)
 				{
-					gol.air->add_pressure(gol.mouse_cell_x, gol.mouse_cell_y, -25);
+					sim.air->add_pressure(sim.mouse_cell_x, sim.mouse_cell_y, -25);
 				}
 				if (event.key.code == sf::Keyboard::Escape)
 				{
-					gol.pause();
+					sim.pause();
 				}
 				if (event.key.code == sf::Keyboard::A)
 				{
-					gol.tick(true, 1 / 60.0f);
+					sim.tick(true, 1 / 60.0f);
 				}
 			}
 			if (mouse_left_hold)
 			{
-				gol.spawn_at_mouse();
+				sim.spawn_at_mouse();
 			}
 		}
 		sf::Time time = clock.restart();
 		elapsed = time.asSeconds();
-		//if(gol.active_elements.size() > 0 && gol.active_elements.front())
-			//std::cout << gol.active_elements.front()->velocity.y << std::endl;
+		//if(sim.active_elements.size() > 0 && sim.active_elements.front())
+			//std::cout << sim.active_elements.front()->velocity.y << std::endl;
 		std::cout << 1 / elapsed << std::endl;
 		ImGui::SFML::Update(window, time);
 		//ImGui::ShowDemoWindow();
-		gol.tick(false, elapsed);
+		sim.tick(false, elapsed);
 		window.clear();
-		gol.render(&window);
+		sim.render(&window);
 		ImGui::SFML::Render(window);
 		window.display();
 	}

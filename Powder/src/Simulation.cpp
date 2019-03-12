@@ -195,20 +195,27 @@ bool Simulation::bounds_check(int corr_x, int corr_y) const
 	return (corr_x >= 0 && corr_x < cells_x_count) && (corr_y >= 0 && corr_y < cells_y_count);
 }
 
-bool Simulation::create_element(int id, bool fm, bool ata, int x, int y, std::string vars, Element* origin)
+bool Simulation::create_element(int id, bool fm, bool ata, int x, int y, Element* origin)
 {
 	int idx = IDX(x, y, cells_x_count);
 	// If the element at the position is None_Element (id == 0)
 	if (bounds_check(x, y) && !(fm && !check_if_empty(x, y)))
 	{
 		Element* new_element;
-		Element* tmp;
-		id = fm ? selected_element : id;
-		tmp = find_by_id(id);
-		if (tmp)
-			new_element = tmp->clone();
+		if (origin != EL_NONE)
+		{
+			new_element = origin->clone(); // should overload the = opererator, or some method maybe?
+		}
 		else
-			return false;
+		{
+			Element* tmp;
+			id = fm ? selected_element : id;
+			tmp = find_by_id(id);
+			if (tmp)
+				new_element = tmp->clone();
+			else
+				return false;
+		}
 		new_element->set_pos(x, y, true);
 		new_element->sim = this;
 

@@ -22,7 +22,9 @@ void Gravity::resize()
 
 void Gravity::set_baseG()
 {
-	base_grav.Normalize() *= base_g;
+	base_grav = Vector(0, 1);
+	base_grav *= base_g;
+	update_grav(false);
 }
 
 void Gravity::update_mass(float mass, int new_x, int new_y, int old_x, int old_y)
@@ -78,10 +80,11 @@ void Gravity::update_grav(bool neut_grav)
 						if (nX < 0 || nX >= grid_width || nY < 0 || nY >= grid_height)
 							continue;
 						int other_cell_index = nX + nY * grid_width;
+						float distance_sqf = static_cast<float>(distance_sq);
 						// we multiply by cell_size because  distance is the distance between
 						// the gravavity cells not the simulation cells
 						grav_grid[other_cell_index] += Vector(oX - nX, oY - nY) * (G * mass_grid[el]) / 
-							(distance_sq * sqrtf(distance_sq) * cell_size * cell_size * cell_size);
+							(distance_sqf * sqrtf(distance_sqf) * static_cast<float>(cell_size * cell_size * cell_size));
 						//grav_grid[other_cell_index].grav_force.y = -grav_grid[other_cell_index].grav_force.y;
 					}
 				}

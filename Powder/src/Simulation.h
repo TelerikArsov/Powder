@@ -64,7 +64,7 @@ public:
 	// bool add_to_active = whether the elements needs to be added to the active list
 	// int x, y = the position of the element in the grid
 	// string vars = any bonus information that might be needed in the creation of the element 
-	bool create_element(int id, bool from_mouse, bool add_to_active, int x, int y, std::string vars = "", Element* origin = EL_NONE);
+	bool create_element(int id, bool from_mouse, bool add_to_active, int x, int y, Element* origin = EL_NONE);
 	void destroy_element(Element* destroyed);
 	void destroy_element(int x, int y);
 	void swap_elements(int x1, int y1, int x2, int y2);

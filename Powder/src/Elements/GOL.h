@@ -24,7 +24,7 @@ public:
 	void process_rules();
 	bool update(float dt) override;
 	Element* clone() const override;
-	GOL(std::string, std::string);
+	GOL(std::string name, std::string description, std::string rule_string);
 	GOL(const GOL& rhs);
 	~GOL();
 };

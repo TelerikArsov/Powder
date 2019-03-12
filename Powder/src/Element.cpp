@@ -180,39 +180,46 @@ bool Element::powder_pile()
 	bool status = false;
 	if (speed > pile_threshold && collided_elem != this)
 	{
-		Vector dir_to_coll = Vector(collided_elem->x - x, collided_elem->y - y);
-		Vector perp = dir_to_coll.PerpendicularCW();
+		Vector perp = Vector(collided_elem->x - x, collided_elem->y - y).PerpendicularCW();
 		if (!moved)
 		{
 			bool side = random.next_bool();
-			Vector check_pos = Vector(collided_elem->x, collided_elem->y);
-			status = pile_helper(check_pos + (side ? perp : -perp));
+			perp = (side ? perp : -perp);
+			
+			status = (sim->check_if_empty(collided_elem->pos + perp) &&
+				sim->check_if_empty(pos + perp));
+			
 			if (!status)
-				status = pile_helper(check_pos + (side ? -perp : perp));
+			{
+				perp.Reverse();
+				status = (sim->check_if_empty(collided_elem->pos + perp) &&
+					sim->check_if_empty(pos + perp));
+			}
+			if(status)
+				status = move(collided_elem->pos + perp);
 		}
 	}
 	return status;
 }
 
-bool Element::pile_helper(Vector check_pos)
-{
-	Element* res = sim->get_from_grid(check_pos.x, check_pos.y);
-	if (res == EL_NONE)
-	{
-		move(check_pos);
-		return !collision;
-	}
-	return false;
-}
-
 void Element::liquid_move()
 {
-	Vector dir_to_coll = Vector(collided_elem->x - x, collided_elem->y - y);
-	Vector perp = dir_to_coll.PerpendicularCW();
+	bool ground = (collided_elem == this);
+	Vector perp = (ground ? ground_coll - pos :
+		collided_elem->pos - pos).PerpendicularCW();
+
 	bool side = random.next_bool();
-	move(pos + (side ? perp : -perp));
-	if (collision)
-		move(pos + (side ? -perp : perp));
+	perp = (side ? perp : -perp);
+
+	bool status = sim->check_if_empty(pos + perp);
+
+	if (!status)
+	{
+		perp.Reverse();
+		status = sim->check_if_empty(pos + perp);
+	}
+	if (status)
+		move(pos + perp);
 }
 
 
@@ -244,6 +251,7 @@ void Element::add_heat(float heat)
 
 bool Element::update(float dt)
 {
+	bool to_be_destroyed = false;
 	moved = false;
 	update_velocity(dt);
 	collided_elem = move(pos + (velocity * dt) / sim->scale);
@@ -273,7 +281,40 @@ bool Element::update(float dt)
 			}
 		}
 	}
-	return false;
+	if (sim->air->get_pressure(x, y) <= low_pressure)
+		to_be_destroyed = sim->create_element(low_pressure_transition, false, false, x, y);
+	
+	else if (sim->air->get_pressure(x, y) >= high_pressure)
+		to_be_destroyed = sim->create_element(high_pressure_transition, false, false, x, y);
+	
+	else if (temperature <= low_temperature)
+		to_be_destroyed = sim->create_element(low_temperature_transition, false, false, x, y);
+	
+	else if (temperature <= low_pressure)
+		to_be_destroyed = sim->create_element(high_temperature_transition, false, false, x, y);
+
+	return to_be_destroyed;
+}
+
+void Element::draw_ui()
+{
+	editor->float_prop(&drag_coef, "drag coeficent", 0.01f, 0.1f);
+	editor->float_prop(&mass, "mass", 1.0f, 10.0f);
+	editor->float_prop(&speed, "speed", 1.0f, 10.0f, DrawLineGraph);
+	editor->int_prop(&endurance, "endurance", 1, 5);
+	editor->int_prop(&pile_threshold, "piling threshold", 1, 3);
+	editor->float_prop(&temperature, "temperature", 0.1f, 1.0f);
+	editor->float_prop(&thermal_cond, "thermal conductivity", 0.01f, 1.0f);
+	editor->float_prop(&specific_heat_cap, "specific heat capacity", 0.01f, 1.0f, SameLineAfter);
+	editor->bool_prop(&meltable, "meltable");
+}
+
+Element::~Element()
+{
+	if (editor)
+	{
+		editor->detach();
+	}
 }
 
 void Element::render(float cell_height, float cell_width, sf::Vertex* quad)
