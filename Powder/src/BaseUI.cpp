@@ -7,6 +7,18 @@ void BaseUI::draw(Simulation* sim)
 	if (show_em) show_element_menu(sim);
 	if (show_so) show_simulation_overlay(sim);
 	show_simulation_settings(sim);
+	int id = 0;
+	for (auto ed = el_editor_queue.begin(); ed != el_editor_queue.end();)
+	{
+		if (!(*ed)->draw(id, sim))
+		{
+			delete (*ed);
+			ed = el_editor_queue.erase(ed);
+		}
+		else
+			++ed;
+		id++;
+	}
 }
 
 BaseUI::BaseUI() :
@@ -36,6 +48,10 @@ void BaseUI::show_simulation_settings(Simulation* sim)
 			ImGui::RadioButton("No grid", &(sim->drav_grid), 0); ImGui::SameLine();
 			ImGui::RadioButton("Draw grav grid", &(sim->drav_grid), 1); ImGui::SameLine();
 			ImGui::RadioButton("Draw air grid", &(sim->drav_grid), 2);
+			if (ImGui::Button("New element editor"))
+			{
+				el_editor_queue.push_back(new ElementEditor());
+			}
 		}
 		if (ImGui::CollapsingHeader("Gravity"))
 		{
