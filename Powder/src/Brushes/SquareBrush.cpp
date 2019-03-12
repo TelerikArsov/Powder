@@ -1,4 +1,4 @@
-#include "SquareBrush.h"
+#include "Brushes/SquareBrush.h"
 
 #define Side 0
 

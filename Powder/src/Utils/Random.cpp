@@ -1,4 +1,4 @@
-#include "Random.h"
+#include "Utils/Random.h"
 #include <chrono>
 
 bool Random::has_next_uint32 = false;
@@ -22,7 +22,7 @@ static uint64_t splitmix64next(uint64_t x)
 static inline float to_float(uint64_t x) 
 {
 	const union { uint64_t i; double d; } u = { UINT64_C(0x3FF) << 52 | x >> 12 };
-	return u.d - 1.0;
+	return static_cast<float>(u.d - 1.0);
 }
 
 static uint64_t time_based() 

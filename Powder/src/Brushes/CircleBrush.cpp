@@ -1,4 +1,4 @@
-#include "CircleBrush.h"
+#include "Brushes/CircleBrush.h"
 
 #define Radius 0
 

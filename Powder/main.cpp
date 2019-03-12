@@ -2,10 +2,10 @@
 
 #include <iostream>
 #include "Simulation.h"
-#include "Elements.h"
-#include "CircleBrush.h"
-#include "SquareBrush.h"
-#include "Vector.h"
+#include "Element/Elements.h"
+#include "Brushes/CircleBrush.h"
+#include "Brushes/SquareBrush.h"
+#include "Utils/Vector.h"
 
 int main()
 {

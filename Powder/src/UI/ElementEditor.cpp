@@ -1,5 +1,5 @@
 #include "ElementEditor.h"
-#include "Element.h"
+#include "Element/Element.h"
 #include <imgui_stdlib.h>
 #include "Simulation.h"
 

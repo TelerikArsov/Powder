@@ -1,30 +1,29 @@
-#include "Sand.h"
+#include "Water.h"
 #include "Simulation.h"
-#include "Random.h"
+#include "Utils/Random.h"
 
-Element* Sand::clone() const
+Element* Water::clone() const
 {
-	return new Sand(*this);
+	return new Water(*this);
 }
 
-Sand::Sand(Simulation& sim)
+Water::Water(Simulation& sim)
 {
-	identifier = EL_SAND;
-	name = "Sand";
-	description = "Sand";
-	colors = {sf::Color(237, 201, 175), sf::Color(240, 222, 180)};
+	identifier = EL_WATER;
+	name = "Water";
+	description = "Water";
+	colors = {sf::Color::Blue};
 	color = colors[0];
 	mass = 1;
-	restitution = 0.1f;
-	pile_threshold = 0;
-	temperature = 573.15f;
-	thermal_cond = 2;
-	specific_heat_cap = 0.8f;
-	state = ST_POWDER;
+	restitution = 0.0f;
+	temperature = 22;
+	thermal_cond = 0.606f;
+	specific_heat_cap = 4.19f;
+	state = ST_LIQUID;
 	this->sim = &sim;
 }
 
-Sand::Sand(const Sand& rhs)
+Water::Water(const Water& rhs)
 {
 	identifier = rhs.identifier;
 	name = rhs.name;
@@ -47,6 +46,6 @@ Sand::Sand(const Sand& rhs)
 }
 
 
-Sand::~Sand()
+Water::~Water()
 {
 }

@@ -1,7 +1,7 @@
 #include "Simulation.h"
 #include <algorithm>
-#include "Elements\GOL.h"
-#include "Vector.h"
+#include "Element/Elements/GOL.h"
+#include "Utils/Vector.h"
 
 static inline int IDX(int x, int y, int w)
 {

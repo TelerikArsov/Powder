@@ -2,8 +2,8 @@
 #include <string>
 #include <SFML/Graphics.hpp>
 #include "ElementsIds.h"
-#include "ElementEditor.h"
-#include "Vector.h"
+#include "UI/ElementEditor.h"
+#include "Utils/Vector.h"
 
 class Simulation;
 

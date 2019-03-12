@@ -1,4 +1,4 @@
-#include "Brush.h"
+#include "Brushes/Brush.h"
 
 
 void Brush::eight_fold_push(int x, int y, std::vector<points> &c)

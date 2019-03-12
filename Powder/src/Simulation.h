@@ -1,12 +1,12 @@
 #pragma once
 #include <vector>
 
-#include "Element.h"
-#include "ElementsIds.h"
-#include "BaseUI.h" 
-#include "Brush.h"
-#include "Gravity.h"
-#include "Air.h"
+#include "Element/Element.h"
+#include "Element/ElementsIds.h"
+#include "UI/BaseUI.h" 
+#include "Brushes/Brush.h"
+#include "Physics/Gravity.h"
+#include "Physics/Air.h"
 
 class Vector;
 

@@ -125,43 +125,47 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="lib\imgui\imgui_stdlib.cpp" />
+    <ClCompile Include="src\UI\ElementEditor.cpp" />
     <ClCompile Include="lib\imgui\imgui-SFML.cpp" />
     <ClCompile Include="lib\imgui\imgui.cpp" />
     <ClCompile Include="lib\imgui\imgui_demo.cpp" />
     <ClCompile Include="lib\imgui\imgui_draw.cpp" />
     <ClCompile Include="lib\imgui\imgui_widgets.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="src\Air.cpp" />
-    <ClCompile Include="src\BaseUI.cpp" />
-    <ClCompile Include="src\Brush.cpp" />
-    <ClCompile Include="src\CircleBrush.cpp" />
-    <ClCompile Include="src\Element.cpp" />
-    <ClCompile Include="src\Elements\GOL.cpp" />
-    <ClCompile Include="src\Elements\Sand.cpp" />
-    <ClCompile Include="src\Gravity.cpp" />
-    <ClCompile Include="src\Random.cpp" />
+    <ClCompile Include="src\Physics\Air.cpp" />
+    <ClCompile Include="src\UI\BaseUI.cpp" />
+    <ClCompile Include="src\Brushes\Brush.cpp" />
+    <ClCompile Include="src\Brushes\CircleBrush.cpp" />
+    <ClCompile Include="src\Element\Element.cpp" />
+    <ClCompile Include="src\Element\Elements\GOL.cpp" />
+    <ClCompile Include="src\Element\Elements\Sand.cpp" />
+    <ClCompile Include="src\Physics\Gravity.cpp" />
+    <ClCompile Include="src\Utils\Random.cpp" />
     <ClCompile Include="src\Simulation.cpp" />
-    <ClCompile Include="src\SquareBrush.cpp" />
-    <ClCompile Include="src\Vector.cpp" />
-    <ClCompile Include="src\Elements\Water.cpp" />
+    <ClCompile Include="src\Brushes\SquareBrush.cpp" />
+    <ClCompile Include="src\Utils\Vector.cpp" />
+    <ClCompile Include="src\Element\Elements\Water.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\Powder\Brush.h" />
-    <ClInclude Include="include\Powder\CircleBrush.h" />
-    <ClInclude Include="include\Powder\Gravity.h" />
-    <ClInclude Include="include\Powder\Random.h" />
-    <ClInclude Include="include\Powder\SquareBrush.h" />
-    <ClInclude Include="include\Powder\Vector.h" />
+    <ClInclude Include="lib\imgui\imgui_stdlib.h" />
+    <ClInclude Include="src\UI\ElementEditor.h" />
+    <ClInclude Include="include\Powder\Brushes\Brush.h" />
+    <ClInclude Include="include\Powder\Brushes\CircleBrush.h" />
+    <ClInclude Include="src\Physics\Gravity.h" />
+    <ClInclude Include="include\Powder\Utils\Random.h" />
+    <ClInclude Include="include\Powder\Brushes\SquareBrush.h" />
+    <ClInclude Include="include\Powder\Utils\Vector.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="src\Air.h" />
-    <ClInclude Include="src\BaseUI.h" />
-    <ClInclude Include="src\Element.h" />
-    <ClInclude Include="src\Elements.h" />
-    <ClInclude Include="src\ElementsIds.h" />
-    <ClInclude Include="src\Elements\GOL.h" />
-    <ClInclude Include="src\Elements\Sand.h" />
+    <ClInclude Include="src\Physics\Air.h" />
+    <ClInclude Include="src\UI\BaseUI.h" />
+    <ClInclude Include="src\Element\Element.h" />
+    <ClInclude Include="src\Element\Elements.h" />
+    <ClInclude Include="src\Element\ElementsIds.h" />
+    <ClInclude Include="src\Element\Elements\GOL.h" />
+    <ClInclude Include="src\Element\Elements\Sand.h" />
     <ClInclude Include="src\Simulation.h" />
-    <ClInclude Include="src\Elements\Water.h" />
+    <ClInclude Include="src\Element\Elements\Water.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Powder.rc" />
