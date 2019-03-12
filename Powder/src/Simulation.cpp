@@ -8,17 +8,45 @@ static inline int IDX(int x, int y, int w)
 	return y * w + x;
 }
 
+bool Simulation::check_if_empty(Vector cordinates)
+{
+	return check_if_empty(cordinates.x, cordinates.y);
+}
+
+bool Simulation::check_if_empty(float x, float y)
+{
+	return check_if_empty(static_cast<int>(floor(x)), static_cast<int>(floor(y)));
+}
+
+bool Simulation::check_if_empty(int x, int y)
+{
+	bool res = false;
+	if (bounds_check(x, y))
+		res = elements_grid[IDX(x, y, cells_x_count)] == EL_NONE;
+	return res;
+}
+
+Element* Simulation::get_from_grid(Vector cordinates)
+{
+	return get_from_grid(cordinates.x, cordinates.y);
+}
+
 Element* Simulation::get_from_grid(float x, float y)
 {
 	return get_from_grid(static_cast<int>(floor(x)), static_cast<int>(floor(y)));
 }
 
-Element * Simulation::get_from_grid(int x, int y)
+Element* Simulation::get_from_grid(int x, int y)
 {
 	Element* res = nullptr;
 	if (bounds_check(x, y))
 		res = elements_grid[IDX(x, y, cells_x_count)];
 	return res;
+}
+
+int Simulation::get_from_gol(Vector cordinates)
+{
+	return get_from_gol(cordinates.x, cordinates.y);
 }
 
 int Simulation::get_from_gol(float x, float y)
@@ -40,9 +68,9 @@ void Simulation::set_gol_el(int x, int y, int val)
 		gol_grid[IDX(x, y, cells_x_count)] = val;
 }
 
-Element * Simulation::find_by_id(int id)
+Element* Simulation::find_by_id(int id)
 {
-	Element * match = nullptr;
+	Element* match = nullptr;
 	for (auto el : available_elements)
 	{
 		if (el->identifier == id) 
@@ -66,29 +94,31 @@ void Simulation::tick(bool bypass_pause, float dt)
 			gol_grid[IDX(j, i, cells_x_count)] = elements_grid[IDX(j, i, cells_x_count)] != EL_NONE ? 1 : 0;
 		}
 	}
-	for(auto i = active_elements.begin(); i != active_elements.end();)
-	{
-		if ((*i)->update(dt)) 
+
+	active_elements.erase(std::remove_if(active_elements.begin(), active_elements.end(), 
+		[this, dt](Element* el) -> bool
 		{
-			int x = (*i)->x, y = (*i)->y;
-			i = active_elements.erase(i);
-			int idx = IDX(x, y, cells_x_count);
-			delete elements_grid[idx];
-			elements_grid[idx] = EL_NONE;
-			elements_count--;
-		}
-		else 
-		{
-			++i;
-		}
-	}
-	for (auto add_it = add_queue.begin(); add_it != add_queue.end(); add_it = add_queue.erase(add_it))
+			bool destroyed = el == EL_NONE;
+			if (!destroyed && el->update(dt))
+			{	
+				destroy_element(el);
+				destroyed = true;
+			}
+			return destroyed;
+		}), active_elements.end());
+
+	for (auto add_el : add_queue)
 	{
-		active_elements.push_back(*add_it);
+		active_elements.push_back(add_el);
+		int idx = IDX(add_el->x, add_el->y, cells_x_count);
+		elements_grid[idx] = add_el;
+		elements_count++;
+		gravity->update_mass(add_el->mass, add_el->x, add_el->y, -1, -1);
 	}
+	add_queue.clear();
 	if (neut_grav)
 	{
-		//doesnt make much sense for now but if we change the base gravity of the simulation
+		//doesnt make much sense for now, but if we change the base gravity of the simulation
 		//we gotta update only with the new grav value, prob should be a method in grav class
 		gravity->update_grav(neut_grav);
 	}
@@ -123,12 +153,12 @@ void Simulation::render(sf::RenderWindow* window)
 	{
 		int x = (mouse_cell_x + off.first);
 		int y = (mouse_cell_y + off.second);
-		quad[0].position = sf::Vector2f(x * cell_width, y * cell_height);
-		quad[1].position = sf::Vector2f((x + 1) * cell_width, y * cell_height);
-		quad[2].position = sf::Vector2f((x + 1) * cell_width, (y + 1) * cell_height);
+		quad[0].position = sf::Vector2f(x * cell_width, y * cell_height);				// this whole section should be in
+		quad[1].position = sf::Vector2f((x + 1) * cell_width, y * cell_height);			// some kind of method (draw_rect: color, x, y, cell_sizes)
+		quad[2].position = sf::Vector2f((x + 1) * cell_width, (y + 1) * cell_height);	// same thing is used in the element draw
 		quad[3].position = sf::Vector2f(x * cell_width, (y + 1) * cell_height);
 
-		quad[0].color = sf::Color(192, 192, 192);
+		quad[0].color = sf::Color(192, 192, 192); // hard coded should be part of the brush class
 		quad[1].color = sf::Color(192, 192, 192);
 		quad[2].color = sf::Color(192, 192, 192);
 		quad[3].color = sf::Color(192, 192, 192);
@@ -165,37 +195,49 @@ bool Simulation::bounds_check(int corr_x, int corr_y) const
 	return (corr_x >= 0 && corr_x < cells_x_count) && (corr_y >= 0 && corr_y < cells_y_count);
 }
 
-int Simulation::create_element(int id, bool fm, bool ata, int x, int y, std::string vars)
+bool Simulation::create_element(int id, bool fm, bool ata, int x, int y, std::string vars, Element* origin)
 {
 	int idx = IDX(x, y, cells_x_count);
 	// If the element at the position is None_Element (id == 0)
-	if (bounds_check(x, y) && elements_grid[idx] == EL_NONE)
+	if (bounds_check(x, y) && !(fm && !check_if_empty(x, y)))
 	{
 		Element* new_element;
 		Element* tmp;
-		// if creating from mouse
-		// 1 from mouse 0 anything else
 		id = fm ? selected_element : id;
 		tmp = find_by_id(id);
 		if (tmp)
 			new_element = tmp->clone();
 		else
-			return -1;
+			return false;
 		new_element->set_pos(x, y, true);
 		new_element->sim = this;
-		
-		ata ?
-			active_elements.push_back(new_element) :
-			add_queue.push_back(new_element);
 
-		delete elements_grid[idx];
-		elements_grid[idx] = new_element;
-		elements_count++;
-		gravity->update_mass(new_element->mass, x, y, -1, -1);
-		return 1;
+		if (ata)
+		{
+			active_elements.push_back(new_element);
+			delete elements_grid[idx];
+			elements_grid[idx] = new_element;
+			elements_count++;
+			gravity->update_mass(new_element->mass, x, y, -1, -1);
+		}
+		else
+			add_queue.push_back(new_element);
+		return true;
 	}
-	return -1;
-	
+	return false;
+}
+
+void Simulation::destroy_element(Element * destroyed)
+{
+	destroy_element(destroyed->x, destroyed->y);
+}
+
+void Simulation::destroy_element(int x, int y)
+{
+	int idx = IDX(x, y, cells_x_count);
+	delete elements_grid[idx];
+	elements_grid[idx] = EL_NONE;
+	elements_count--;
 }
 
 bool Simulation::add_element(Element * tba)

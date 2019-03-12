@@ -1,6 +1,5 @@
 #pragma once
 #include <vector>
-#include <list>
 
 #include "Element.h"
 #include "ElementsIds.h"
@@ -38,8 +37,13 @@ public:
 	// Set in the ui, used to know which grid to draw
 	// either none = 0, grav = 1, air = 2
 	int drav_grid = 0;
+	bool check_if_empty(Vector cordinates);
+	bool check_if_empty(float x, float y);
+	bool check_if_empty(int x, int y);
+	Element* get_from_grid(Vector cordinates);
 	Element* get_from_grid(float x, float y);
 	Element* get_from_grid(int x, int y);
+	int get_from_gol(Vector cordinates);
 	int get_from_gol(float x, float y);
 	int get_from_gol(int x, int y);
 	void set_gol_el(int x, int y, int val);
@@ -60,7 +64,9 @@ public:
 	// bool add_to_active = whether the elements needs to be added to the active list
 	// int x, y = the position of the element in the grid
 	// string vars = any bonus information that might be needed in the creation of the element 
-	int create_element(int id, bool from_mouse, bool add_to_active, int x, int y, std::string vars = "");
+	bool create_element(int id, bool from_mouse, bool add_to_active, int x, int y, std::string vars = "", Element* origin = EL_NONE);
+	void destroy_element(Element* destroyed);
+	void destroy_element(int x, int y);
 	void swap_elements(int x1, int y1, int x2, int y2);
 	// Gets all the alive neighbours of a cell
 	// with position x and y
@@ -99,8 +105,8 @@ private:
 	// All the available elements that can be spawned
 	std::vector<Element*> available_elements;
 	// All currently active elements inside the element grid
-	std::list<Element*> active_elements;
+	std::vector<Element*> active_elements;
 	// Elements that need to be added to the active list
-	std::list<Element*> add_queue;
+	std::vector<Element*> add_queue;
 	sf::VertexArray draw_grid(std::vector<Vector> velocities, int cell_size, int  height, int width);
 };
