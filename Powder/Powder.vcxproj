@@ -125,7 +125,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\SimTool\Tools\CoolTool.cpp" />
+    <ClCompile Include="src\SimTool\Tools\HeatTool.cpp" />
     <ClCompile Include="lib\imgui\imgui_stdlib.cpp" />
+    <ClCompile Include="src\SimTool\ToolsIds.h" />
+    <ClCompile Include="src\SimTool\Tools\SpawnTool.cpp" />
     <ClCompile Include="src\UI\ElementEditor.cpp" />
     <ClCompile Include="lib\imgui\imgui-SFML.cpp" />
     <ClCompile Include="lib\imgui\imgui.cpp" />
@@ -148,7 +152,10 @@
     <ClCompile Include="src\Element\Elements\Water.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\SimTool\Tools\CoolTool.h" />
+    <ClInclude Include="src\SimTool\Tools\HeatTool.h" />
     <ClInclude Include="lib\imgui\imgui_stdlib.h" />
+    <ClInclude Include="src\SimTool\Tools\SpawnTool.h" />
     <ClInclude Include="src\UI\ElementEditor.h" />
     <ClInclude Include="include\Powder\Brushes\Brush.h" />
     <ClInclude Include="include\Powder\Brushes\CircleBrush.h" />
@@ -166,6 +173,7 @@
     <ClInclude Include="src\Element\Elements\Sand.h" />
     <ClInclude Include="src\Simulation.h" />
     <ClInclude Include="src\Element\Elements\Water.h" />
+    <ClInclude Include="src\SimTool\Tool.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Powder.rc" />

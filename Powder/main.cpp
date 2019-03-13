@@ -1,11 +1,13 @@
 #include <SFML/Graphics.hpp>
-
 #include <iostream>
 #include "Simulation.h"
 #include "Element/Elements.h"
 #include "Brushes/CircleBrush.h"
 #include "Brushes/SquareBrush.h"
 #include "Utils/Vector.h"
+#include "SimTool/Tools/SpawnTool.h"
+#include "SimTool/Tools/HeatTool.h"
+#include "SimTool/Tools/CoolTool.h"
 
 int main()
 {
@@ -19,8 +21,11 @@ int main()
 	sim.add_element(new Water(sim));
 	sim.add_brush(new CircleBrush());
 	sim.add_brush(new SquareBrush());
-	sim.selected_brush = 0;
-	sim.selected_element = EL_SAND;
+	sim.add_tool(new SpawnTool());
+	sim.add_tool(new HeatTool());
+	sim.add_tool(new CoolTool());
+	sim.select_brush(0);
+	sim.select_element(EL_SAND);
 
 	sf::Clock clock;
 	const unsigned int max_fps = 60;
@@ -41,7 +46,7 @@ int main()
 				window.close();
 			if (event.type == sf::Event::MouseMoved)
 			{
-				sim.set_mouse_cor(event.mouseMove.x, event.mouseMove.y);
+				sim.set_mouse_coordinates(event.mouseMove.x, event.mouseMove.y);
 			}
 			if (event.type == sf::Event::MouseWheelScrolled)
 			{
@@ -73,7 +78,7 @@ int main()
 				}
 				if (event.key.code == sf::Keyboard::Escape)
 				{
-					sim.pause();
+					sim.toggle_pause();
 				}
 				if (event.key.code == sf::Keyboard::A)
 				{
@@ -82,7 +87,7 @@ int main()
 			}
 			if (mouse_left_hold)
 			{
-				sim.spawn_at_mouse();
+				sim.mouse_left_click();
 			}
 		}
 		sf::Time time = clock.restart();

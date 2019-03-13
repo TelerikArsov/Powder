@@ -59,7 +59,7 @@ bool GOL::update(float dt)
 				if (sim->get_from_gol(j, i) == 0)
 				{
 					int size = sim->get_gol_neigh_count(j, i);
-					sim->set_gol_el(j, i, 2);
+					sim->set_gol_at(j, i, 2);
 					if (rules[B][size])
 					{
 						sim->create_element(identifier, false, false, j, i);

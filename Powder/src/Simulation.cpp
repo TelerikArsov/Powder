@@ -62,7 +62,7 @@ int Simulation::get_from_gol(int x, int y)
 	return res;
 }
 
-void Simulation::set_gol_el(int x, int y, int val)
+void Simulation::set_gol_at(int x, int y, int val)
 {
 	if (bounds_check(x, y))
 		gol_grid[IDX(x, y, cells_x_count)] = val;
@@ -76,6 +76,20 @@ Element* Simulation::find_by_id(int id)
 		if (el->identifier == id) 
 		{
 			match = el;
+			break;
+		}
+	}
+	return match;
+}
+
+Tool * Simulation::find_tool_by_id(int id)
+{
+	Tool* match = nullptr;
+	for (auto tl : tools)
+	{
+		if (tl->identifier == id)
+		{
+			match = tl;
 			break;
 		}
 	}
@@ -267,6 +281,29 @@ bool Simulation::add_brush(Brush * tba)
 	return true;
 }
 
+bool Simulation::add_tool(Tool * tba)
+{
+	tools.push_back(tba);
+	return true;
+}
+
+void Simulation::select_brush(int brushId)
+{
+	selected_brush = brushId;
+}
+
+void Simulation::select_element(int elementId)
+{
+	selected_tool = TL_SPWN;
+	selected_element = elementId;
+}
+
+void Simulation::select_tool(int toolId)
+{
+	selected_tool = toolId;
+	selected_element = -1;
+}
+
 void Simulation::swap_elements(int x1, int y1, int x2, int y2)
 {
 	//Prob will add more stuff then just this but for now...
@@ -279,20 +316,22 @@ void Simulation::swap_elements(int x1, int y1, int x2, int y2)
 }
 
 
-void Simulation::spawn_at_mouse()
+void Simulation::mouse_left_click()
 {
 	for (auto &off : brushes[selected_brush]->get_area())
 	{
-		create_element(selected_element, true, true, mouse_cell_x + off.first, mouse_cell_y + off.second);
+		Tool* tool = find_tool_by_id(selected_tool);
+		if(tool)
+			tool->do_action(mouse_cell_x + off.first, mouse_cell_y + off.second, selected_element, this, 1);
 	}
 }
 
-void Simulation::pause()
+void Simulation::toggle_pause()
 {
 	paused = !paused;
 }
 
-void Simulation::set_mouse_cor(int x, int y)
+void Simulation::set_mouse_coordinates(int x, int y)
 {
 	mouse_x = x;
 	mouse_y = y;
@@ -314,6 +353,9 @@ Simulation::Simulation(int cells_x_count, int cells_y_count, int window_width, i
 	this->cells_y_count = cells_y_count;
 	this->cell_width = window_width / static_cast<float>(cells_x_count);
 	this->cell_height = window_height / static_cast<float>(cells_y_count);
+	selected_element = -1;
+	selected_tool = TL_SPWN;
+	selected_brush = 0;
 	air = new Air(this, 4, 295.15f, 4);
 	gravity = new Gravity(this, 10000, 25, 8, base_g, 1E-3f);
 	baseUI = new BaseUI();

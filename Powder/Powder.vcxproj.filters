@@ -78,6 +78,18 @@
     <ClCompile Include="src\Brushes\SquareBrush.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\SimTool\Tools\SpawnTool.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SimTool\ToolsIds.h">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SimTool\Tools\HeatTool.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SimTool\Tools\CoolTool.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -132,6 +144,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Powder\Utils\Vector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SimTool\Tool.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SimTool\Tools\SpawnTool.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SimTool\Tools\HeatTool.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SimTool\Tools\CoolTool.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

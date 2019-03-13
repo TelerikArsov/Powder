@@ -3,6 +3,8 @@
 
 #include "Element/Element.h"
 #include "Element/ElementsIds.h"
+#include "SimTool/Tool.h"
+#include "SimTool/ToolsIds.h"
 #include "UI/BaseUI.h" 
 #include "Brushes/Brush.h"
 #include "Physics/Gravity.h"
@@ -25,11 +27,6 @@ public:
 	float air_density = 1.23f; 
 	// power of 10, not sure how to make it only a power of 10 
 	float scale = 0.1f;
-	// The identifier of the current selected element
-	// TODO: move to private make a method to check if the selected element is 
-	// present in the available_elements array
-	int selected_element;
-	int selected_brush;
 	Gravity* gravity;
 	Air* air;
 	BaseUI* baseUI;
@@ -46,8 +43,9 @@ public:
 	int get_from_gol(Vector cordinates);
 	int get_from_gol(float x, float y);
 	int get_from_gol(int x, int y);
-	void set_gol_el(int x, int y, int val);
+	void set_gol_at(int x, int y, int val);
 	Element* find_by_id(int id);
+	Tool* find_tool_by_id(int id);
 	// Updates the gol grid.
 	// Loops over all the active elements and calls their update method.
 	// If the update method returns true, then the elements is deleted.
@@ -77,10 +75,10 @@ public:
 	bool bounds_check(int x, int y) const;
 	// Spawns elements at the mouse position
 	// Uses the spawn_area to determine the area in which the elements should be spawned
-	void spawn_at_mouse();
+	void mouse_left_click();
 	// Toggles the pause
-	void pause();
-	void set_mouse_cor(int x, int y);
+	void toggle_pause();
+	void set_mouse_coordinates(int x, int y);
 	// If d > 0 then the spawn area increases
 	// If d < 0 the spawn area decrease
 	// Based on the currently used spawn area type the creation method is called
@@ -88,15 +86,26 @@ public:
 	void resize_brush(float d);
 	bool add_element(Element*);
 	bool add_brush(Brush *);
+	bool add_tool(Tool *);
+	void select_brush(int brushId);
+	void select_element(int elementId);
+	void select_tool(int toolId);
 	// int window_width, int window_height = the dimensions of the window 
 	// where the simulation will be rendered
 	Simulation(int cells_x_count, int cells_y_count, int window_width, int window_height, float base_g);
 	~Simulation();
 	//TODO something something encapsulation, most of the public properties should be here anyways
 private:
+	// The identifier of the current selected element
+	// TODO: move to private make a method to check if the selected element is 
+	// present in the available_elements array
+	int selected_element;
+	int selected_brush;
+	int selected_tool;
 	friend class BaseUI;
 	int mouse_x = 0, mouse_y = 0;
 	std::vector<Brush* > brushes;
+	std::vector<Tool*> tools;
 	std::vector<Element*> elements_grid;
 	// Used for GoL simulation
 	// 1 is alive 0 is dead, anything else varies

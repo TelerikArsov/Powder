@@ -125,7 +125,7 @@ void BaseUI::show_simulation_overlay(Simulation* sim)
 void BaseUI::show_element_menu(Simulation* sim)
 {
 	ImGui::SetNextWindowPos(ImVec2(10, 58));
-	ImGui::SetNextWindowSize(ImVec2(165, 160), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(190, 160), ImGuiCond_FirstUseEver);
 	ImGui::SetNextWindowSizeConstraints(ImVec2(-1, 0), ImVec2(-1, FLT_MAX));
 	//ImGui::SetNextWindowContentSize(ImVec2(400, 0.0f));
 	if (ImGui::Begin("Element Menu", &show_em, ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar))
@@ -135,6 +135,8 @@ void BaseUI::show_element_menu(Simulation* sim)
 		ImGui::Text("Elements"); ImGui::NextColumn();
 		int i = 0;
 		ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.31f, 0.31f, 0.31f, 1));
+		// should be redone with templating and some other method 
+		// (gotta learn that stuff)
 		ImGui::BeginChildFrame(ImGui::GetID("brushes"), ImVec2(70, -1));
 		for (auto br : sim->brushes)
 		{
@@ -142,7 +144,7 @@ void BaseUI::show_element_menu(Simulation* sim)
 			if (ImGui::Selectable(br->name.c_str(), is_selected))
 			{
 				selected_br = i;
-				sim->selected_brush = i;
+				sim->select_brush(i);
 			}
 			if (is_selected)
 				ImGui::SetItemDefaultFocus();
@@ -152,25 +154,71 @@ void BaseUI::show_element_menu(Simulation* sim)
 		//ImGui::SameLine();
 		ImGui::NextColumn();
 		i = 0;
-		ImGui::BeginChildFrame(ImGui::GetID("elements"), ImVec2(55, -1));
-		for (auto el : sim->available_elements)
+
+		ImGui::BeginChildFrame(ImGui::GetID("elements"), ImVec2(80, -1));
+		if (ImGui::CollapsingHeader("Elems##header"))
 		{
-			bool is_selected = (selected_el == i);
-			ImGui::PushStyleColor(ImGuiCol_Text, el->color);
-			if (ImGui::Selectable(el->name.c_str(), is_selected))
+			for (auto el : sim->available_elements)
 			{
-				selected_el = i;
-				sim->selected_element = el->identifier;
+				bool is_selected = (selected_el == i);
+				ImGui::PushStyleColor(ImGuiCol_Text, el->color);
+				if (ImGui::Selectable(el->name.c_str(), is_selected))
+				{
+					selected_tl = -1;
+					selected_el = i;
+					sim->select_element(el->identifier);
+				}
+				if (is_selected)
+					ImGui::SetItemDefaultFocus();
+				i++;
+				ImGui::PopStyleColor();
 			}
-			if(is_selected)
-				ImGui::SetItemDefaultFocus();
-			i++;
-			ImGui::PopStyleColor();
+		}
+		i = 0;
+		if (ImGui::CollapsingHeader("Tools##header"))
+		{
+			for (auto el : sim->tools)
+			{
+				bool is_selected = (selected_tl == i);
+				if (el->identifier != TL_SPWN)
+				{
+					ImGui::PushStyleColor(ImGuiCol_Text, el->color);
+					if (ImGui::Selectable(el->name.c_str(), is_selected))
+					{
+						selected_el = -1;
+						selected_tl = i;
+						sim->select_tool(el->identifier);
+					}
+					if (is_selected)
+						ImGui::SetItemDefaultFocus();
+					i++;
+					ImGui::PopStyleColor();
+				}
+			}
 		}
 		ImGui::EndChildFrame();
+		
 		ImGui::PopStyleColor();
 		ImGui::NextColumn();
 		ImGui::Columns(1);
 	}
 	ImGui::End();
 }
+/*template <class T>
+void BaseUI::DrawSelectableList(std::vector<T> container, bool& selected)
+{
+	ImGui::BeginChildFrame(ImGui::GetID("brushes"), ImVec2(70, -1));
+	for (auto br : container)
+	{
+		bool is_selected = (selected == i);
+		if (ImGui::Selectable(br->name.c_str(), is_selected))
+		{
+			selected_br = i;
+			sim->select_brush(i);
+		}
+		if (is_selected)
+			ImGui::SetItemDefaultFocus();
+		i++;
+	}
+	ImGui::EndChildFrame();
+}*/
