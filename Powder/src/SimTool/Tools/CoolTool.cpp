@@ -3,7 +3,7 @@
 
 void CoolTool::do_action(int x, int y, int element_id, Simulation* sim, float strength)
 {
-	sim->GetFromGrid(x, y)->add_heat(-strength * 1000);
+	sim->get_from_grid(x, y)->add_heat(-strength * 1000);
 }
 
 CoolTool::CoolTool()
