@@ -223,7 +223,7 @@ void Element::liquid_move()
 }
 
 
-void Element::apply_impulse(Element* coll_el, float dt)
+void Element::apply_collision_impulse(Element* coll_el, float dt)
 {
 	bool ground = (coll_el == this);
 	Vector vr = (ground ? velocity : velocity - coll_el->velocity);
@@ -247,23 +247,27 @@ void Element::add_velocity(Vector nvelocity)
 void Element::add_heat(float heat)
 {
 	temperature += (heat / (mass * 1000) / specific_heat_cap);
+	temperature = std::clamp(temperature, 0.0f, 10000.0f);
 }
 
-bool Element::update(float dt)
+int Element::update(float dt)
 {
-	bool to_be_destroyed = false;
+	int to_be_destroyed = identifier;
 	moved = false;
-	update_velocity(dt);
-	collided_elem = move(pos + (velocity * dt) / sim->scale);
-	if (state == ST_POWDER && collision)
+	if (state != ST_SOLID)
 	{
-		apply_impulse(collided_elem, dt);
-		powder_pile();
-	}
-	if (state == ST_LIQUID && collision)
-	{
-		apply_impulse(collided_elem, dt);
-		liquid_move();
+		update_velocity(dt);
+		collided_elem = move(pos + (velocity * dt) / sim->scale);
+		if (state == ST_POWDER && collision)
+		{
+			apply_collision_impulse(collided_elem, dt);
+			powder_pile();
+		}
+		if (state == ST_LIQUID && collision)
+		{
+			apply_collision_impulse(collided_elem, dt);
+			liquid_move();
+		}
 	}
 	for (int i = -1; i < 2; i++)
 	{
@@ -281,17 +285,17 @@ bool Element::update(float dt)
 			}
 		}
 	}
-	if (sim->air->get_pressure(x, y) <= low_pressure)
-		to_be_destroyed = sim->create_element(low_pressure_transition, false, false, x, y);
+	if (sim->air->get_pressure(x, y) < low_pressure)
+		to_be_destroyed = low_pressure_transition;
+
+	else if (sim->air->get_pressure(x, y) > high_pressure)
+		to_be_destroyed = high_pressure_transition;
 	
-	else if (sim->air->get_pressure(x, y) >= high_pressure)
-		to_be_destroyed = sim->create_element(high_pressure_transition, false, false, x, y);
+	else if (temperature < low_temperature)
+		to_be_destroyed = low_temperature_transition;
 	
-	else if (temperature <= low_temperature)
-		to_be_destroyed = sim->create_element(low_temperature_transition, false, false, x, y);
-	
-	else if (temperature <= low_pressure)
-		to_be_destroyed = sim->create_element(high_temperature_transition, false, false, x, y);
+	else if (temperature > high_temperature)
+		to_be_destroyed = high_temperature_transition;
 
 	return to_be_destroyed;
 }

@@ -8,17 +8,17 @@ static inline int IDX(int x, int y, int w)
 	return y * w + x;
 }
 
-bool Simulation::check_if_empty(Vector cordinates)
+bool Simulation::check_if_empty(Vector cordinates) const
 {
 	return check_if_empty(cordinates.x, cordinates.y);
 }
 
-bool Simulation::check_if_empty(float x, float y)
+bool Simulation::check_if_empty(float x, float y) const
 {
 	return check_if_empty(static_cast<int>(floor(x)), static_cast<int>(floor(y)));
 }
 
-bool Simulation::check_if_empty(int x, int y)
+bool Simulation::check_if_empty(int x, int y) const
 {
 	bool res = false;
 	if (bounds_check(x, y))
@@ -26,17 +26,17 @@ bool Simulation::check_if_empty(int x, int y)
 	return res;
 }
 
-Element* Simulation::get_from_grid(Vector cordinates)
+Element* Simulation::get_from_grid(Vector cordinates) const
 {
 	return get_from_grid(cordinates.x, cordinates.y);
 }
 
-Element* Simulation::get_from_grid(float x, float y)
-{
+Element* Simulation::get_from_grid(float x, float y) const
+{ 
 	return get_from_grid(static_cast<int>(floor(x)), static_cast<int>(floor(y)));
 }
 
-Element* Simulation::get_from_grid(int x, int y)
+Element* Simulation::get_from_grid(int x, int y) const
 {
 	Element* res = nullptr;
 	if (bounds_check(x, y))
@@ -44,17 +44,17 @@ Element* Simulation::get_from_grid(int x, int y)
 	return res;
 }
 
-int Simulation::get_from_gol(Vector cordinates)
+int Simulation::get_from_gol(Vector cordinates) const
 {
 	return get_from_gol(cordinates.x, cordinates.y);
 }
 
-int Simulation::get_from_gol(float x, float y)
+int Simulation::get_from_gol(float x, float y) const
 {
 	return get_from_gol(static_cast<int>(floor(x)), static_cast<int>(floor(y)));
 }
 
-int Simulation::get_from_gol(int x, int y)
+int Simulation::get_from_gol(int x, int y) const
 {
 	int res = -1;
 	if (bounds_check(x, y))
@@ -98,7 +98,7 @@ Tool * Simulation::find_tool_by_id(int id)
 
 void Simulation::tick(bool bypass_pause, float dt)
 {
-	this->fps = 1 / dt;
+	fps = 1 / dt;
 	if (paused && !bypass_pause)
 		return;
 	for (int i = 0; i < cells_y_count; i++)
@@ -113,21 +113,24 @@ void Simulation::tick(bool bypass_pause, float dt)
 		[this, dt](Element* el) -> bool
 		{
 			bool destroyed = el == EL_NONE;
-			if (!destroyed && el->update(dt))
-			{	
-				destroy_element(el);
-				destroyed = true;
+			if (!destroyed)
+			{
+				int id = el->update(dt);
+				int x = el->x, y = el->y;
+				if(id != el->identifier)
+				{	
+					destroy_element(el);
+					if(id != EL_NONE_ID)
+						create_element(id, false, false, x, y);
+					destroyed = true;
+				}
 			}
 			return destroyed;
 		}), active_elements.end());
 
 	for (auto add_el : add_queue)
 	{
-		active_elements.push_back(add_el);
-		int idx = IDX(add_el->x, add_el->y, cells_x_count);
-		elements_grid[idx] = add_el;
-		elements_count++;
-		gravity->update_mass(add_el->mass, add_el->x, add_el->y, -1, -1);
+		active_elements.push_back(add_el);		
 	}
 	add_queue.clear();
 	if (neut_grav)
@@ -209,40 +212,32 @@ bool Simulation::bounds_check(int corr_x, int corr_y) const
 	return (corr_x >= 0 && corr_x < cells_x_count) && (corr_y >= 0 && corr_y < cells_y_count);
 }
 
-bool Simulation::create_element(int id, bool fm, bool ata, int x, int y, Element* origin)
+bool Simulation::create_element(int id, bool fm, bool ata, int x, int y)
 {
 	int idx = IDX(x, y, cells_x_count);
 	// If the element at the position is None_Element (id == 0)
 	if (bounds_check(x, y) && !(fm && !check_if_empty(x, y)))
 	{
 		Element* new_element;
-		if (origin != EL_NONE)
-		{
-			new_element = origin->clone(); // should overload the = opererator, or some method maybe?
-		}
+		Element* tmp;
+		id = fm ? selected_element : id;
+		tmp = find_by_id(id);
+		if (tmp)
+			new_element = tmp->clone();
 		else
-		{
-			Element* tmp;
-			id = fm ? selected_element : id;
-			tmp = find_by_id(id);
-			if (tmp)
-				new_element = tmp->clone();
-			else
-				return false;
-		}
+			return false;
 		new_element->set_pos(x, y, true);
 		new_element->sim = this;
 
 		if (ata)
-		{
 			active_elements.push_back(new_element);
-			delete elements_grid[idx];
-			elements_grid[idx] = new_element;
-			elements_count++;
-			gravity->update_mass(new_element->mass, x, y, -1, -1);
-		}
 		else
 			add_queue.push_back(new_element);
+
+		delete elements_grid[idx];
+		elements_grid[idx] = new_element;
+		elements_count++;
+		gravity->update_mass(new_element->mass, x, y, -1, -1);
 		return true;
 	}
 	return false;

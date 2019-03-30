@@ -16,10 +16,14 @@ Water::Water(Simulation& sim)
 	color = colors[0];
 	mass = 1;
 	restitution = 0.0f;
-	temperature = 22;
+	temperature = 293.15f;
 	thermal_cond = 0.606f;
 	specific_heat_cap = 4.19f;
 	state = ST_LIQUID;
+	low_temperature = 273.15f;
+	low_temperature_transition = EL_ICE;
+	//high_temperature = FLT_MAX;
+	//high_temperature_transition = -1;
 	this->sim = &sim;
 }
 
@@ -43,6 +47,10 @@ Water::Water(const Water& rhs)
 	specific_heat_cap = rhs.specific_heat_cap;
 	meltable = rhs.meltable;
 	state = rhs.state;
+	low_temperature = rhs.low_temperature;
+	low_temperature_transition = rhs.low_temperature_transition;
+	//high_temperature = FLT_MAX;
+	//high_temperature_transition = -1;
 }
 
 

@@ -22,7 +22,7 @@ public:
 	enum { B = 0, S = 1, D = 2 };
 	// Processes the rule string and fills the rules array
 	void process_rules();
-	bool update(float dt) override;
+	int update(float dt) override;
 	Element* clone() const override;
 	GOL(std::string name, std::string description, std::string rule_string);
 	GOL(const GOL& rhs);

@@ -15,10 +15,11 @@ int main()
 	sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "SFML works!");
 	window.setVerticalSyncEnabled(true);
 	ImGui::SFML::Init(window);
-	Simulation sim(368, 368, WINDOW_WIDTH, WINDOW_HEIGHT, 9.8f);
+	Simulation sim(92, 92, WINDOW_WIDTH, WINDOW_HEIGHT, 9.8f);
 	sim.add_element(new GOL("WALL", "Wall rule" ,"s1/b1"));
 	sim.add_element(new Sand(sim));
 	sim.add_element(new Water(sim));
+	sim.add_element(new Ice(sim));
 	sim.add_brush(new CircleBrush());
 	sim.add_brush(new SquareBrush());
 	sim.add_tool(new SpawnTool());

@@ -15,7 +15,6 @@ class Vector;
 class Simulation 
 {
 public:
-	// Not yet used
 	int elements_count;
 	float fps = 0.0f;
 	bool paused = true;
@@ -34,15 +33,19 @@ public:
 	// Set in the ui, used to know which grid to draw
 	// either none = 0, grav = 1, air = 2
 	int drav_grid = 0;
-	bool check_if_empty(Vector cordinates);
-	bool check_if_empty(float x, float y);
-	bool check_if_empty(int x, int y);
-	Element* get_from_grid(Vector cordinates);
-	Element* get_from_grid(float x, float y);
-	Element* get_from_grid(int x, int y);
-	int get_from_gol(Vector cordinates);
-	int get_from_gol(float x, float y);
-	int get_from_gol(int x, int y);
+	bool check_if_empty(Vector cordinates) const;
+	bool check_if_empty(float x, float y) const;
+	bool check_if_empty(int x, int y) const;
+	Element* get_from_grid(Vector cordinates) const;
+	Element* get_from_grid(float x, float y) const;
+	Element* get_from_grid(int x, int y) const;
+	int get_from_gol(Vector cordinates) const;
+	int get_from_gol(float x, float y) const;
+	int get_from_gol(int x, int y) const;
+	// Gets all the alive neighbours of a cell
+	// with position x and y
+	// Uses the gol_grid
+	int get_gol_neigh_count(int x, int y) const;
 	void set_gol_at(int x, int y, int val);
 	Element* find_by_id(int id);
 	Tool* find_tool_by_id(int id);
@@ -61,15 +64,10 @@ public:
 	// int id = the identifier of the element to be created
 	// bool add_to_active = whether the elements needs to be added to the active list
 	// int x, y = the position of the element in the grid
-	// string vars = any bonus information that might be needed in the creation of the element 
-	bool create_element(int id, bool from_mouse, bool add_to_active, int x, int y, Element* origin = EL_NONE);
+	bool create_element(int id, bool from_mouse, bool add_to_active, int x, int y);
 	void destroy_element(Element* destroyed);
 	void destroy_element(int x, int y);
 	void swap_elements(int x1, int y1, int x2, int y2);
-	// Gets all the alive neighbours of a cell
-	// with position x and y
-	// Uses the gol_grid
-	int get_gol_neigh_count(int x, int y) const;
 	// Checks if the possition at x and y
 	// is inside the grid
 	bool bounds_check(int x, int y) const;

@@ -208,7 +208,7 @@ void Air::update_airh()
 
 void Air::clear(std::vector<float>& data)
 {
-	std::fill(data.begin(), data.end(), 0);
+	std::fill(data.begin(), data.end(), 0.0f);
 }
 
 void Air::clear(std::vector<Vector>& data)

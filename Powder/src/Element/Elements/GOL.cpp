@@ -46,10 +46,10 @@ void GOL::process_rules()
 	}
 }
 
-bool GOL::update(float dt) 
+int GOL::update(float dt) 
 {
 	if (state == 0)
-		return true;
+		return EL_NONE_ID;
 	for(int i = y - 1; i < y + 2; i++)
 	{
 		for (int j = x - 1; j < x + 2; j++)
@@ -71,9 +71,9 @@ bool GOL::update(float dt)
 	}
 	if (!rules[S][sim->get_gol_neigh_count(x, y)])
 	{
-		return true;
+		return EL_NONE_ID;
 	}
-	return false;
+	return identifier;
 }
 
 Element * GOL::clone() const

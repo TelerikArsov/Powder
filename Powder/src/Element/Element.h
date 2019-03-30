@@ -43,15 +43,14 @@ public:
 	// Moves the element across a line (the start of the line is the 
 	// x and y of the element itself and the end is xDestination and yDestination)
 	// this function uses a modified version of bresenhams line algorithm
-	// return true if there is no collision TODO probably should return
-	// the x and y of the cell where collision occurred
+	// return true if there is no collision 
 	Element* move(Vector dest);
 	void update_velocity(float dt);
 	void set_pos(int x, int y, bool true_pos);
-	void apply_impulse(Element* collided_elem, float dt);
+	void apply_collision_impulse(Element* collided_elem, float dt);
 	void add_velocity(Vector nvelocity);
 	void add_heat(float heat);
-	virtual bool update(float dt);
+	virtual int update(float dt);
 	virtual void render(float cell_height, float cell_width, sf::Vertex* quad);
 	virtual void draw_ui();
 	virtual Element* clone() const = 0;
@@ -61,19 +60,19 @@ protected:
 	int high_pressure_transition = -1;		// will transfrom, based on the current
 	int low_temperature_transition = -1;	// physical state of the element
 	int high_temperature_transition = -1;	//
-	float low_pressure = FLT_MIN;                    // Number values at which the 
-	float high_pressure = FLT_MAX;					// transformation will occure
-	float low_temperature = FLT_MIN;
-	float high_temperature = FLT_MAX;
+	float low_pressure = -300;                    // Number values at which the 
+	float high_pressure = 300;					// transformation will occur
+	float low_temperature = -1;
+	float high_temperature = 10'000;
 	Vector ground_coll;
 	Element* collided_elem;
 	std::vector<sf::Color> colors;	// All the possible colors
 	// 0 - block; the element is blocked from moving further
 	// 1 - pass; both elements occupy the same space
 	// 2 - swap; the elements switch places
+	virtual int eval_col(Element* coll);
 	void calc_loads();
 	bool collision = false;
-	virtual int eval_col(Element* coll);
 	void liquid_move();
 	bool powder_pile();
 private:
