@@ -93,6 +93,9 @@
     <ClCompile Include="src\Element\Elements\Ice.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Element\Elements\Fire.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -162,6 +165,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Element\Elements\Ice.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Element\Elements\Fire.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

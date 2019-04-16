@@ -5,6 +5,7 @@
 #define EL_SAND 2
 #define EL_WATER 3
 #define EL_ICE 4
+#define EL_FIRE 5
 
 #define ST_GAS 0
 #define ST_LIQUID 1

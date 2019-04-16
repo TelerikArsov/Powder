@@ -100,12 +100,14 @@ void BaseUI::show_simulation_overlay(Simulation* sim)
 		ImGui::Text("Element count: %d", sim->elements_count);
 		float temperature;
 		float pressure;
+		Vector air_velocity;
 		const char* name;
 		if(hovered_el != EL_NONE)
 		{
 			temperature = hovered_el->temperature;
 			name = hovered_el->name.c_str();
 			pressure = sim->air->get_pressure(hovered_el->x, hovered_el->y);
+			air_velocity = sim->air->get_force(hovered_el->x, hovered_el->y);
 		}
 		else 
 		{
@@ -113,11 +115,14 @@ void BaseUI::show_simulation_overlay(Simulation* sim)
 			name = "None";
 			pressure = sim->air->get_pressure(sim->mouse_cell_x,
 				sim->mouse_cell_y);
+			air_velocity = sim->air->get_force(sim->mouse_cell_x,
+				sim->mouse_cell_y);
 		}
 		ImGui::Text("%s ", name); ImGui::SameLine();
 		ImGui::Text("Temperature: %.2f K, %.2f C;",
 			temperature, temperature - 273.15f); ImGui::SameLine();
 		ImGui::Text("Pressure: %.2f", pressure); ImGui::SameLine();
+		ImGui::Text("Air V: (%.1f, %.1f)", air_velocity.x, air_velocity.y); ImGui::SameLine();
 	}
 	ImGui::End();
 }

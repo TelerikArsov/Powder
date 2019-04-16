@@ -11,15 +11,16 @@
 
 int main()
 {
-	int WINDOW_HEIGHT = 1000, WINDOW_WIDTH = 1000;
+	int WINDOW_HEIGHT = 720, WINDOW_WIDTH = 1280;
 	sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "SFML works!");
 	window.setVerticalSyncEnabled(true);
 	ImGui::SFML::Init(window);
-	Simulation sim(92, 92, WINDOW_WIDTH, WINDOW_HEIGHT, 9.8f);
+	Simulation sim(160, 90, WINDOW_WIDTH, WINDOW_HEIGHT, 9.8f);
 	sim.add_element(new GOL("WALL", "Wall rule" ,"s1/b1"));
 	sim.add_element(new Sand(sim));
 	sim.add_element(new Water(sim));
 	sim.add_element(new Ice(sim));
+	sim.add_element(new Fire(sim));
 	sim.add_brush(new CircleBrush());
 	sim.add_brush(new SquareBrush());
 	sim.add_tool(new SpawnTool());
@@ -95,7 +96,7 @@ int main()
 		elapsed = time.asSeconds();
 		//if(sim.active_elements.size() > 0 && sim.active_elements.front())
 			//std::cout << sim.active_elements.front()->velocity.y << std::endl;
-		std::cout << 1 / elapsed << std::endl;
+		//std::cout << 1 / elapsed << std::endl;
 		ImGui::SFML::Update(window, time);
 		//ImGui::ShowDemoWindow();
 		sim.tick(false, elapsed);

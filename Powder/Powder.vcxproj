@@ -125,6 +125,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Element\Elements\Fire.cpp" />
     <ClCompile Include="src\Element\Elements\Ice.cpp" />
     <ClCompile Include="src\SimTool\Tools\CoolTool.cpp" />
     <ClCompile Include="src\SimTool\Tools\HeatTool.cpp" />
@@ -153,6 +154,7 @@
     <ClCompile Include="src\Element\Elements\Water.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Element\Elements\Fire.h" />
     <ClInclude Include="src\Element\Elements\Ice.h" />
     <ClInclude Include="src\SimTool\Tools\CoolTool.h" />
     <ClInclude Include="src\SimTool\Tools\HeatTool.h" />
