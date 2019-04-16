@@ -8,8 +8,8 @@ Element* Element::move(Vector dest)
 	collision = false;
 	pos = dest;
 	Element* coll_el = this;
-	int xD = static_cast<int>(std::round(dest.x));
-	int yD = static_cast<int>(std::round(dest.y));
+	int xD = static_cast<int>(round(dest.x));
+	int yD = static_cast<int>(round(dest.y));
 	int old_x = x;
 	int old_y = y;
 	if (x == xD && y == yD)
@@ -80,7 +80,8 @@ void Element::move_helper(int xO, int yO, int d, int xStep, int yStep, int de, i
 			}
 			else //the corner case
 			{
-				// TODO
+				if (collision)
+					break;
 			}
 		}
 		do_move(xO, yO, coll_el);
@@ -136,22 +137,13 @@ void Element::calc_loads()
 	forces.Zero();
 	collision = false;
 	collided_elem = this;
-	forces += sim->gravity->get_force(x, y, mass);
-	Vector air_drag;
-	air_drag = -velocity;
-	// our y in the grid increases downwards
-	// as opposed to the upward increase in the normal cartesian grid
-	// and the velocity y is the one we use not the normal cartesian
-	air_drag.ReverseY();
-	air_drag.Normalize();
-	air_drag *= 0.5f * sim->air_density * speed * speed *
-	(0.5f) * drag_coef;
-	forces += air_drag;
+	forces += sim->gravity->get_force(x, y, mass) *
+		(state == ST_GAS ? gas_gravity : 1);
+
 }
 
 void Element::update_velocity(float dt)
 {
-	add_velocity(sim->air->get_force(x, y));
 	calc_loads();
 	Vector a;
 	a = forces / mass;
@@ -159,6 +151,14 @@ void Element::update_velocity(float dt)
 	// as opposed to the upward increase in the normal cartesian grid
 	a.ReverseY();
 	add_velocity(a * dt);
+	add_velocity(sim->air->get_force(x, y));
+	if (tmp_velocity)
+	{
+		// cant really think of a proper way for this
+		// assuming that the normal temperature is 22 celsius
+		velocity *= std::clamp(temperature - 294.15f, 0.0f, 10000.0f);
+
+	}
 }
 
 void Element::set_pos(int x, int y, bool true_pos)
@@ -252,6 +252,15 @@ void Element::add_heat(float heat)
 
 int Element::update(float dt)
 {
+	if (life_dependant)
+	{
+		if (life < 0)
+		{
+			return EL_NONE_ID;
+		}
+	}
+	if (life_decay)
+		life--;
 	int to_be_destroyed = identifier;
 	moved = false;
 	if (state != ST_SOLID)
@@ -267,6 +276,20 @@ int Element::update(float dt)
 		{
 			apply_collision_impulse(collided_elem, dt);
 			liquid_move();
+		}
+		if (state == ST_GAS)
+		{
+			if(collision)
+				apply_collision_impulse(collided_elem, dt);
+			sim->air->add_pressure(x, y, gas_pressure);
+			if ((y + 1) / sim->air->cell_size < sim->air->grid_height)
+				sim->air->add_pressure(x, y + 1, gas_pressure);
+			if ((x + 1) / sim->air->cell_size < sim->air->grid_width)
+			{
+				sim->air->add_pressure(x + 1, y, gas_pressure);
+				if ((y + 1) / sim->air->cell_size < sim->air->grid_height)
+					sim->air->add_pressure(x + 1, y + 1, gas_pressure);
+			}
 		}
 	}
 	for (int i = -1; i < 2; i++)

@@ -25,7 +25,7 @@ public:
 	// for air at 15 C
 	float air_density = 1.23f; 
 	// power of 10, not sure how to make it only a power of 10 
-	float scale = 0.1f;
+	float scale = 1.f;
 	Gravity* gravity;
 	Air* air;
 	BaseUI* baseUI;

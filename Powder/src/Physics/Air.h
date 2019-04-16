@@ -34,7 +34,6 @@ public:
 	void clear(std::vector<Vector>& data);
 	void add_pressure(int x, int y, float pressure);
 	void add_velocity(int x, int y, Vector vel);
-	Vector get_vel(int x, int y);
 	float get_pressure(int x, int y);
 	Vector get_force(int x, int y);
 	Air(Simulation* sim, int air_mode, float ambient_air_temp, int cell_size);

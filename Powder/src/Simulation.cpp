@@ -306,8 +306,8 @@ void Simulation::swap_elements(int x1, int y1, int x2, int y2)
 	Element* tmp = elements_grid[idx2];
 	elements_grid[idx2] = elements_grid[idx1];
 	elements_grid[idx1] = tmp;
-	elements_grid[idx2]->set_pos(x2, y2, true);
-	elements_grid[idx1]->set_pos(x1, y1, true);
+	elements_grid[idx2]->set_pos(x2, y2, false);
+	elements_grid[idx1]->set_pos(x1, y1, false);
 }
 
 

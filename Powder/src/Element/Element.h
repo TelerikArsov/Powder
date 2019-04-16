@@ -25,20 +25,33 @@ public:
 	float speed = 0.0f;
 	bool moved = false;
 	Vector forces;
+	// not sure if we really need this air drag should
+	// be reworked anyways.
 	float drag_coef = 0.6f;
+	// how much gravity affects gases
+	// set to negative to make the effect of rising up
+	float gas_gravity = 1.f;
+	float gas_pressure = 0;
 	float mass = 1;
 	int endurance = 0;
+	int life = 0;
+	int damage = 0;
 	float restitution = 0.6f;
-	// used by powders in the creation of piles
-	// higher values means its harder for pile creation to occur
-	// essentially used as velocity threshold
-	// at which pile creation will happen
-	int pile_threshold = 1;
-	//in kelvins
-	float temperature = 0;
+	float temperature = 0; //in kelvins
 	float thermal_cond = 0;
 	float specific_heat_cap = 0;
+	// TO DO change these flags to use proper enum flags
+	// when set to true, will use high_temperature
+	// to transition to liquid state
 	bool meltable = false;
+	// if no high_temperature_transition is set
+	// will use high_temperature for spontaneous combustion
+	bool flammable = false;
+	bool tmp_velocity = false;
+	bool explosive = false;
+	bool corrosive = false;
+	bool life_dependant = false;
+	bool life_decay = false;
 	int state = 0; // 0 - gas 1 - liquid 2 - powder 3 - solid  
 	// Moves the element across a line (the start of the line is the 
 	// x and y of the element itself and the end is xDestination and yDestination)
@@ -64,6 +77,12 @@ protected:
 	float high_pressure = 300;					// transformation will occur
 	float low_temperature = -1;
 	float high_temperature = 10'000;
+	// used by powders in the creation of piles
+	// higher values means its harder for pile creation to occur
+	// essentially used as velocity threshold
+	// at which pile creation will happen
+	int pile_threshold = 1;
+	// damage threshold
 	Vector ground_coll;
 	Element* collided_elem;
 	std::vector<sf::Color> colors;	// All the possible colors

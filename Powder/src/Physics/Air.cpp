@@ -229,11 +229,6 @@ void Air::add_velocity(int x, int y, Vector vel)
 	velocity[x / cell_size + grid_width * (y / cell_size)] += vel;
 }
 
-Vector Air::get_vel(int x, int y)
-{
-	return velocity[x / cell_size + grid_width * (y / cell_size)];
-}
-
 float Air::get_pressure(int x, int y)
 {
 	return pv[x / cell_size + grid_width * (y / cell_size)];
