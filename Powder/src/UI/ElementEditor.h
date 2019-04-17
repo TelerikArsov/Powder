@@ -5,7 +5,7 @@
 
 enum ElementEditorFlags : uint8_t
 {
-	None = 0,
+	NoFlags = 0,
 	SameLineAfter = 1 << 0,
 	SameLineBefore = 1 << 1,
 	DragNumeric = 1 << 2,
@@ -70,11 +70,11 @@ class ElementEditor
 public:
 	Element* s_el;
     bool draw(int id, Simulation* sim);
-	void string_prop(std::string* prop, const char* label, ElementEditorFlags flags = None);
-	void float_prop(float* prop, const char* label, float step, float step_fast, ElementEditorFlags flags = None);
-	void int_prop(int* prop, const char* label, int step, int step_fast, ElementEditorFlags flags = None);
-	void bool_prop(bool* prop, const char* labell, ElementEditorFlags flags = None);
-	void element_prop(Element* el, const char* label, ElementEditorFlags flags = None);
+	void string_prop(std::string* prop, const char* label, ElementEditorFlags flags = NoFlags);
+	void float_prop(float* prop, const char* label, float step, float step_fast, ElementEditorFlags flags = NoFlags);
+	void int_prop(int* prop, const char* label, int step, int step_fast, ElementEditorFlags flags = NoFlags);
+	void bool_prop(bool* prop, const char* labell, ElementEditorFlags flags = NoFlags);
+	void element_prop(Element* el, const char* label, ElementEditorFlags flags = NoFlags);
 	bool attach(Element* attacheble);
 	bool detach();
 	ElementEditor();

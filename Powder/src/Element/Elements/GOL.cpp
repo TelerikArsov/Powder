@@ -93,17 +93,7 @@ GOL::GOL(std::string name, std::string description, std::string rule_string)
 
 GOL::GOL(const GOL& rhs)
 {
-	identifier = rhs.identifier;
-	name = rhs.name;
-	description = rhs.description;
-	color = rhs.color;
-	drag_coef = rhs.drag_coef;
-	menu_id = rhs.menu_id;
-	menu_section = rhs.menu_section;
-	x = rhs.x;
-	y = rhs.y;
-	temperature = rhs.temperature;
-	state = rhs.state;
+	Element::element_copy(rhs);
 	rule_string = rhs.rule_string;
 	process_rules();
 }

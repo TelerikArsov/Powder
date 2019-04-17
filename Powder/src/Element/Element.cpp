@@ -50,6 +50,39 @@ Element* Element::move(Vector dest)
 	return coll_el;
 }
 
+void Element::element_copy(const Element & rhs)
+{
+	identifier = rhs.identifier;
+	name = rhs.name;
+	description = rhs.description;
+	colors = rhs.colors;
+	color = rhs.color;
+	menu_id = rhs.menu_id;
+	menu_section = rhs.menu_section;
+	set_pos(rhs.x, rhs.y, true);
+	gas_gravity = rhs.gas_gravity;
+	gas_pressure = rhs.gas_pressure;
+	mass = rhs.mass;
+	endurance = rhs.endurance;
+	life = rhs.life;
+	restitution = rhs.restitution;
+	pile_threshold = rhs.pile_threshold;
+	temperature = rhs.temperature;
+	thermal_cond = rhs.thermal_cond;
+	specific_heat_cap = rhs.specific_heat_cap;
+	state = rhs.state;
+	prop = rhs.prop;
+	low_pressure_transition = rhs.low_pressure_transition;		
+	high_pressure_transition = rhs.high_pressure_transition;
+	low_temperature_transition = rhs.low_temperature_transition;	
+	high_temperature_transition = rhs.high_temperature_transition;	
+	low_pressure = rhs.low_pressure;    
+	high_pressure = rhs.high_pressure;	
+	low_temperature = rhs.low_temperature;
+	high_temperature = rhs.high_temperature;
+	pile_threshold = rhs.pile_threshold;
+}
+
 void Element::move_helper(int xO, int yO, int d, int xStep, int yStep, int de, int dr, bool ytype, Element*& coll_el)
 {
 	int eprev = d, e = d;
@@ -152,7 +185,7 @@ void Element::update_velocity(float dt)
 	a.ReverseY();
 	add_velocity(a * dt);
 	add_velocity(sim->air->get_force(x, y));
-	if (tmp_velocity)
+	if ((prop & Tmp_velocity) == Tmp_velocity)
 	{
 		// cant really think of a proper way for this
 		// assuming that the normal temperature is 22 celsius
@@ -200,6 +233,22 @@ bool Element::powder_pile()
 		}
 	}
 	return status;
+}
+
+void Element::burn()
+{
+	life--;
+	for(int x = -1; x <= 1; x++)
+		for (int y = -1; y <= 1; y++)
+		{
+			if (x && y)
+			{
+				if (sim->check_if_empty(x, y))
+				{
+					sim->create_element(EL_FIRE, false, false, x, y);
+				}
+			}
+		}
 }
 
 void Element::liquid_move()
@@ -252,14 +301,14 @@ void Element::add_heat(float heat)
 
 int Element::update(float dt)
 {
-	if (life_dependant)
+	if ((prop & Life_dependant) == Life_dependant)
 	{
 		if (life < 0)
 		{
 			return EL_NONE_ID;
 		}
 	}
-	if (life_decay)
+	if ((prop & Life_decay) == Life_decay)
 		life--;
 	int to_be_destroyed = identifier;
 	moved = false;
@@ -325,7 +374,6 @@ int Element::update(float dt)
 
 void Element::draw_ui()
 {
-	editor->float_prop(&drag_coef, "drag coeficent", 0.01f, 0.1f);
 	editor->float_prop(&mass, "mass", 1.0f, 10.0f);
 	editor->float_prop(&speed, "speed", 1.0f, 10.0f, DrawLineGraph);
 	editor->int_prop(&endurance, "endurance", 1, 5);
@@ -333,7 +381,6 @@ void Element::draw_ui()
 	editor->float_prop(&temperature, "temperature", 0.1f, 1.0f);
 	editor->float_prop(&thermal_cond, "thermal conductivity", 0.01f, 1.0f);
 	editor->float_prop(&specific_heat_cap, "specific heat capacity", 0.01f, 1.0f, SameLineAfter);
-	editor->bool_prop(&meltable, "meltable");
 }
 
 Element::~Element()

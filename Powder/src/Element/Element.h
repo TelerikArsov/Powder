@@ -5,6 +5,61 @@
 #include "UI/ElementEditor.h"
 #include "Utils/Vector.h"
 
+enum ElementProperties : uint16_t
+{
+	NoProperties = 0,
+	// when set to true, will use high_temperature
+	// to transition to liquid state
+	Meltable = 1 << 0,
+	// if no high_temperature_transition is set
+	// will use high_temperature for spontaneous combustion
+	Flammable = 1 << 1,
+	Tmp_velocity = 1 << 2,
+	Explosive = 1 << 3,
+	Corrosive = 1 << 4,
+	Life_dependant = 1 << 5,
+	Life_decay = 1 << 6
+};
+
+constexpr ElementProperties operator& (ElementProperties x, ElementProperties y)
+{
+	return static_cast<ElementProperties>(
+		static_cast<uint16_t>(x) & static_cast<uint16_t>(y));
+}
+
+constexpr ElementProperties operator| (ElementProperties x, ElementProperties y)
+{
+	return static_cast<ElementProperties>(
+		static_cast<uint16_t>(x) | static_cast<uint16_t>(y));
+}
+
+constexpr ElementProperties operator^ (ElementProperties x, ElementProperties y)
+{
+	return static_cast<ElementProperties>(
+		static_cast<uint16_t>(x) ^ static_cast<uint16_t>(y));
+}
+
+constexpr ElementProperties operator~ (ElementProperties x)
+{
+	return static_cast<ElementProperties>(~static_cast<uint16_t>(x));
+}
+
+constexpr ElementProperties operator&= (ElementProperties x, ElementProperties y)
+{
+	x = x & y; return x;
+}
+
+constexpr ElementProperties operator|= (ElementProperties x, ElementProperties y)
+{
+	x = x | y; return x;
+}
+
+constexpr ElementProperties operator^= (ElementProperties x, ElementProperties y)
+{
+	x = x ^ y; return x;
+}
+
+
 class Simulation;
 
 class Element
@@ -25,39 +80,26 @@ public:
 	float speed = 0.0f;
 	bool moved = false;
 	Vector forces;
-	// not sure if we really need this air drag should
-	// be reworked anyways.
-	float drag_coef = 0.6f;
 	// how much gravity affects gases
 	// set to negative to make the effect of rising up
 	float gas_gravity = 1.f;
 	float gas_pressure = 0;
 	float mass = 1;
 	int endurance = 0;
-	int life = 0;
+	int life = 100;
 	int damage = 0;
 	float restitution = 0.6f;
 	float temperature = 0; //in kelvins
 	float thermal_cond = 0;
 	float specific_heat_cap = 0;
-	// TO DO change these flags to use proper enum flags
-	// when set to true, will use high_temperature
-	// to transition to liquid state
-	bool meltable = false;
-	// if no high_temperature_transition is set
-	// will use high_temperature for spontaneous combustion
-	bool flammable = false;
-	bool tmp_velocity = false;
-	bool explosive = false;
-	bool corrosive = false;
-	bool life_dependant = false;
-	bool life_decay = false;
 	int state = 0; // 0 - gas 1 - liquid 2 - powder 3 - solid  
+	ElementProperties prop = NoProperties;
 	// Moves the element across a line (the start of the line is the 
 	// x and y of the element itself and the end is xDestination and yDestination)
 	// this function uses a modified version of bresenhams line algorithm
 	// return true if there is no collision 
 	Element* move(Vector dest);
+	void element_copy(const Element& rhs);
 	void update_velocity(float dt);
 	void set_pos(int x, int y, bool true_pos);
 	void apply_collision_impulse(Element* collided_elem, float dt);
@@ -92,6 +134,7 @@ protected:
 	virtual int eval_col(Element* coll);
 	void calc_loads();
 	bool collision = false;
+	void burn();
 	void liquid_move();
 	bool powder_pile();
 private:

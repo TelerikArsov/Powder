@@ -28,26 +28,8 @@ Ice::Ice(Simulation& sim)
 
 Ice::Ice(const Ice & rhs)
 {
-	identifier = rhs.identifier;
-	name = rhs.name;
-	description = rhs.description;
-	colors = rhs.colors;
+	Element::element_copy(rhs);
 	color = colors[random.between(0, colors.size() - 1)];
-	menu_id = rhs.menu_id;
-	menu_section = rhs.menu_section;
-	set_pos(rhs.x, rhs.y, true);
-	drag_coef = rhs.drag_coef;
-	mass = rhs.mass;
-	endurance = rhs.endurance;
-	restitution = rhs.restitution;
-	pile_threshold = rhs.pile_threshold;
-	temperature = rhs.temperature;
-	thermal_cond = rhs.thermal_cond;
-	specific_heat_cap = rhs.specific_heat_cap;
-	meltable = rhs.meltable;
-	state = rhs.state;
-	high_temperature = rhs.high_temperature;
-	high_temperature_transition = rhs.high_temperature_transition;
 }
 
 
