@@ -81,6 +81,8 @@ void Element::element_copy(const Element & rhs)
 	low_temperature = rhs.low_temperature;
 	high_temperature = rhs.high_temperature;
 	pile_threshold = rhs.pile_threshold;
+	flammability = rhs.flammability;
+	spotaneous_combustion_tmp = rhs.spotaneous_combustion_tmp;
 }
 
 void Element::move_helper(int xO, int yO, int d, int xStep, int yStep, int de, int dr, bool ytype, Element*& coll_el)
@@ -237,18 +239,20 @@ bool Element::powder_pile()
 
 void Element::burn()
 {
-	life--;
-	for(int x = -1; x <= 1; x++)
-		for (int y = -1; y <= 1; y++)
-		{
-			if (x && y)
-			{
-				if (sim->check_if_empty(x, y))
-				{
-					sim->create_element(EL_FIRE, false, false, x, y);
-				}
-			}
-		}
+	life -= 1 * flammability;
+	// for now this will do, TODO find all free neighbours
+	// and choose one at random
+	if (random.chance(static_cast<int>(flammability), 100))
+	{
+		std::vector<int> idx;
+		for (int i = -1; i <= 1; i++)
+			for (int j = -1; j <= 1; j++)
+				if ((i || j) && sim->check_if_empty(x + j, y + i))
+					idx.push_back(IDX(x + j, y + i, sim->cells_x_count));
+		if(!idx.empty())
+			sim->create_element(EL_FIRE, false, false, 
+				idx[random.between(0, idx.size() - 1)]);
+	}
 }
 
 void Element::liquid_move()
@@ -339,8 +343,19 @@ int Element::update(float dt)
 				if ((y + 1) / sim->air->cell_size < sim->air->grid_height)
 					sim->air->add_pressure(x + 1, y + 1, gas_pressure);
 			}
+			/*if ((x - 1) / sim->air->cell_size >= 0)
+			{
+				sim->air->add_pressure(x - 1, y, gas_pressure);
+				if ((y + 1) / sim->air->cell_size < sim->air->grid_height)
+					sim->air->add_pressure(x - 1, y + 1, gas_pressure);
+			}*/
 		}
 	}
+	if ((prop & Burning) != Burning && (prop & Flammable) == Flammable &&
+		temperature > spotaneous_combustion_tmp)
+		prop |= Burning;
+	if ((prop & Burning) == Burning)
+		burn();
 	for (int i = -1; i < 2; i++)
 	{
 		for (int j = -1; j < 2; j++)

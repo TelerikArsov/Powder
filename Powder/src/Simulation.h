@@ -57,6 +57,7 @@ public:
 	// Loops over all the active elements and calls their render method.
 	// Renders the grid(NOT YET IMPLEMENTED) and the outline of the spawn area
 	void render(sf::RenderWindow* window);
+	bool create_element(int id, bool from_mouse, bool add_to_active, int idx);
 	// Creates element inside the grid
 	//
 	// bool from_mouse = whether the creation is called by the mouse

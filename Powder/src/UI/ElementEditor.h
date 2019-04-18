@@ -2,7 +2,6 @@
 #include <imgui.h>
 #include <imgui-SFML.h>
 #include <vector>
-
 enum ElementEditorFlags : uint8_t
 {
 	NoFlags = 0,
@@ -47,17 +46,17 @@ constexpr ElementEditorFlags operator~ (ElementEditorFlags x)
 	return static_cast<ElementEditorFlags>(~static_cast<uint8_t>(x));
 }
 
-constexpr ElementEditorFlags operator&= (ElementEditorFlags x, ElementEditorFlags y)
+constexpr ElementEditorFlags& operator&= (ElementEditorFlags& x, ElementEditorFlags y)
 {
 	x = x & y; return x;
 }
 
-constexpr ElementEditorFlags operator|= (ElementEditorFlags x, ElementEditorFlags y)
+constexpr ElementEditorFlags& operator|= (ElementEditorFlags& x, ElementEditorFlags y)
 {
 	x = x | y; return x;
 }
 
-constexpr ElementEditorFlags operator^= (ElementEditorFlags x, ElementEditorFlags y)
+constexpr ElementEditorFlags& operator^= (ElementEditorFlags& x, ElementEditorFlags y)
 {
 	x = x ^ y; return x;
 }

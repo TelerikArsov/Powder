@@ -18,7 +18,8 @@ enum ElementProperties : uint16_t
 	Explosive = 1 << 3,
 	Corrosive = 1 << 4,
 	Life_dependant = 1 << 5,
-	Life_decay = 1 << 6
+	Life_decay = 1 << 6,
+	Burning = 1 << 7
 };
 
 constexpr ElementProperties operator& (ElementProperties x, ElementProperties y)
@@ -44,17 +45,17 @@ constexpr ElementProperties operator~ (ElementProperties x)
 	return static_cast<ElementProperties>(~static_cast<uint16_t>(x));
 }
 
-constexpr ElementProperties operator&= (ElementProperties x, ElementProperties y)
+constexpr ElementProperties& operator&= (ElementProperties& x, ElementProperties y)
 {
 	x = x & y; return x;
 }
 
-constexpr ElementProperties operator|= (ElementProperties x, ElementProperties y)
+constexpr ElementProperties& operator|= (ElementProperties& x, ElementProperties y)
 {
 	x = x | y; return x;
 }
 
-constexpr ElementProperties operator^= (ElementProperties x, ElementProperties y)
+constexpr ElementProperties& operator^= (ElementProperties& x, ElementProperties y)
 {
 	x = x ^ y; return x;
 }
@@ -86,12 +87,13 @@ public:
 	float gas_pressure = 0;
 	float mass = 1;
 	int endurance = 0;
-	int life = 100;
+	float life = 100.f;
 	int damage = 0;
 	float restitution = 0.6f;
 	float temperature = 0; //in kelvins
 	float thermal_cond = 0;
 	float specific_heat_cap = 0;
+	float flammability = 1.f;
 	int state = 0; // 0 - gas 1 - liquid 2 - powder 3 - solid  
 	ElementProperties prop = NoProperties;
 	// Moves the element across a line (the start of the line is the 
@@ -119,6 +121,7 @@ protected:
 	float high_pressure = 300;					// transformation will occur
 	float low_temperature = -1;
 	float high_temperature = 10'000;
+	float spotaneous_combustion_tmp = 10'000;
 	// used by powders in the creation of piles
 	// higher values means its harder for pile creation to occur
 	// essentially used as velocity threshold

@@ -15,3 +15,8 @@
 #define C_BLOCK 0
 #define C_PASS 1
 #define C_SWAP 2
+
+static inline int IDX(int x, int y, int w)
+{
+	return y * w + x;
+}

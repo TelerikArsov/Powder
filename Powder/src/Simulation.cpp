@@ -3,11 +3,6 @@
 #include "Element/Elements/GOL.h"
 #include "Utils/Vector.h"
 
-static inline int IDX(int x, int y, int w)
-{
-	return y * w + x;
-}
-
 bool Simulation::check_if_empty(Vector cordinates) const
 {
 	return check_if_empty(cordinates.x, cordinates.y);
@@ -212,11 +207,16 @@ bool Simulation::bounds_check(int corr_x, int corr_y) const
 	return (corr_x >= 0 && corr_x < cells_x_count) && (corr_y >= 0 && corr_y < cells_y_count);
 }
 
+bool Simulation::create_element(int id, bool fm, bool ata, int idx)
+{
+	return create_element(id, fm, ata, idx % cells_x_count, idx / cells_x_count);
+}
+
 bool Simulation::create_element(int id, bool fm, bool ata, int x, int y)
 {
 	int idx = IDX(x, y, cells_x_count);
 	// If the element at the position is None_Element (id == 0)
-	if (bounds_check(x, y) && !(fm && !check_if_empty(x, y)))
+	if (bounds_check(x, y) && check_if_empty(x, y))
 	{
 		Element* new_element;
 		Element* tmp;
@@ -234,7 +234,6 @@ bool Simulation::create_element(int id, bool fm, bool ata, int x, int y)
 		else
 			add_queue.push_back(new_element);
 
-		delete elements_grid[idx];
 		elements_grid[idx] = new_element;
 		elements_count++;
 		gravity->update_mass(new_element->mass, x, y, -1, -1);
@@ -377,6 +376,7 @@ sf::VertexArray Simulation::draw_grid(std::vector<Vector> velocities, int cell_s
 {
 	sf::VertexArray grid(sf::Lines, height * width * 2);
 	int g_i = 0;
+	// velocities
 	for (int i = 0; i < height * width; i++)
 	{
 		int x = i % width * cell_size + cell_size / 2;
@@ -389,18 +389,20 @@ sf::VertexArray Simulation::draw_grid(std::vector<Vector> velocities, int cell_s
 		grid[g_i + 1] = sf::Vector2f((dir.x + x) * cell_width, (dir.y + y) * cell_height);
 		g_i += 2;
 	}
+	//the grid
 	sf::Vertex line[2];
 	for (int i = 0; i < height - 1; i++)
 	{
 		line[0] = sf::Vector2f(0, (i + 1) * cell_size * cell_height);
-		line[1] = sf::Vector2f(1000, (i + 1) * cell_size * cell_height);
+		//hardcoded bad :( TODO change it
+		line[1] = sf::Vector2f(1280, (i + 1) * cell_size * cell_height);
 		for (int i = 0; i < 2; i++)
 			grid.append(line[i]);
 	}
 	for (int i = 0; i < width - 1; i++)
 	{
 		line[0] = sf::Vector2f((i + 1) * cell_size * cell_width, 0);
-		line[1] = sf::Vector2f((i + 1) * cell_size * cell_width, 1000);
+		line[1] = sf::Vector2f((i + 1) * cell_size * cell_width, 720);
 		for (int i = 0; i < 2; i++)
 			grid.append(line[i]);
 	}
