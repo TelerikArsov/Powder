@@ -10,6 +10,7 @@ public:
 	unsigned int between(unsigned int lower, unsigned int upper);
 	float next_float();
 	bool next_bool();
+	bool chance(unsigned int threshold, unsigned int max);
 	Random();
 	~Random();
 private:

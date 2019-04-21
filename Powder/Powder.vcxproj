@@ -125,13 +125,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\SimTool\Tools\Cool.cpp" />
+    <ClCompile Include="src\SimTool\Tools\Heat.cpp" />
+    <ClCompile Include="src\SimTool\Tools\NegP.cpp" />
     <ClCompile Include="src\Element\Elements\Fire.cpp" />
     <ClCompile Include="src\Element\Elements\Ice.cpp" />
-    <ClCompile Include="src\SimTool\Tools\CoolTool.cpp" />
-    <ClCompile Include="src\SimTool\Tools\HeatTool.cpp" />
     <ClCompile Include="lib\imgui\imgui_stdlib.cpp" />
     <ClCompile Include="src\SimTool\ToolsIds.h" />
-    <ClCompile Include="src\SimTool\Tools\SpawnTool.cpp" />
+    <ClCompile Include="src\SimTool\Tools\Spwn.cpp" />
     <ClCompile Include="src\UI\ElementEditor.cpp" />
     <ClCompile Include="lib\imgui\imgui-SFML.cpp" />
     <ClCompile Include="lib\imgui\imgui.cpp" />
@@ -154,12 +155,16 @@
     <ClCompile Include="src\Element\Elements\Water.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Element\ElementIncludes.h" />
+    <ClInclude Include="src\SimTool\ToolIncludes.h" />
+    <ClInclude Include="src\SimTool\Tools.h" />
+    <ClInclude Include="src\SimTool\Tools\Cool.h" />
+    <ClInclude Include="src\SimTool\Tools\Heat.h" />
+    <ClInclude Include="src\SimTool\Tools\NegP.h" />
     <ClInclude Include="src\Element\Elements\Fire.h" />
     <ClInclude Include="src\Element\Elements\Ice.h" />
-    <ClInclude Include="src\SimTool\Tools\CoolTool.h" />
-    <ClInclude Include="src\SimTool\Tools\HeatTool.h" />
     <ClInclude Include="lib\imgui\imgui_stdlib.h" />
-    <ClInclude Include="src\SimTool\Tools\SpawnTool.h" />
+    <ClInclude Include="src\SimTool\Tools\Spwn.h" />
     <ClInclude Include="src\UI\ElementEditor.h" />
     <ClInclude Include="include\Powder\Brushes\Brush.h" />
     <ClInclude Include="include\Powder\Brushes\CircleBrush.h" />

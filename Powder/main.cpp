@@ -1,13 +1,11 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include "Simulation.h"
-#include "Element/Elements.h"
+#include "Element/ElementIncludes.h"
 #include "Brushes/CircleBrush.h"
 #include "Brushes/SquareBrush.h"
 #include "Utils/Vector.h"
-#include "SimTool/Tools/SpawnTool.h"
-#include "SimTool/Tools/HeatTool.h"
-#include "SimTool/Tools/CoolTool.h"
+#include "SimTool/ToolIncludes.h"
 
 int main()
 {
@@ -26,6 +24,7 @@ int main()
 	sim.add_tool(new SpawnTool());
 	sim.add_tool(new HeatTool());
 	sim.add_tool(new CoolTool());
+	sim.add_tool(new NegPTool());
 	sim.select_brush(0);
 	sim.select_element(EL_SAND);
 
@@ -87,16 +86,18 @@ int main()
 					sim.tick(true, 1 / 60.0f);
 				}
 			}
-			if (mouse_left_hold)
-			{
-				sim.mouse_left_click();
-			}
+		}
+		if (mouse_left_hold)
+		{
+			sim.mouse_left_click();
+			std::cout << sim.mouse_cell_x << " " << sim.mouse_cell_y << std::endl;
 		}
 		sf::Time time = clock.restart();
 		elapsed = time.asSeconds();
 		//if(sim.active_elements.size() > 0 && sim.active_elements.front())
 			//std::cout << sim.active_elements.front()->velocity.y << std::endl;
 		//std::cout << 1 / elapsed << std::endl;
+		//std::cout << (mouse_left_hold ? "hold" : "nohole") << std::endl;
 		ImGui::SFML::Update(window, time);
 		//ImGui::ShowDemoWindow();
 		sim.tick(false, elapsed);

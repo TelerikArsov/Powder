@@ -1,4 +1,4 @@
-#include "CoolTool.h"
+#include "Cool.h"
 #include "Simulation.h"
 
 void CoolTool::do_action(int x, int y, int element_id, Simulation* sim, float strength)

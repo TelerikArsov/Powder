@@ -1,4 +1,4 @@
-#include "HeatTool.h"
+#include "Heat.h"
 #include "Simulation.h"
 
 void HeatTool::do_action(int x, int y, int element_id, Simulation* sim, float strength)

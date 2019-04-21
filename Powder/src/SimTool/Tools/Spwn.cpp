@@ -1,4 +1,4 @@
-#include "SpawnTool.h"
+#include "Spwn.h"
 #include "Simulation.h"
 
 void SpawnTool::do_action(int x, int y, int element_id, Simulation* sim, float strength)

@@ -96,7 +96,7 @@ bool Random::next_bool()
 	return (next() >> 63) & 1;
 }
 
-bool Random::chance(int threshold, int max)
+bool Random::chance(unsigned int threshold, unsigned int max)
 {
 	return between(1, max) > max - threshold;
 }

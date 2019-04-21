@@ -78,22 +78,25 @@
     <ClCompile Include="src\Brushes\SquareBrush.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\SimTool\Tools\SpawnTool.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\SimTool\ToolsIds.h">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\SimTool\Tools\HeatTool.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\SimTool\Tools\CoolTool.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Element\Elements\Ice.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Element\Elements\Fire.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SimTool\Tools\Cool.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SimTool\Tools\Heat.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SimTool\Tools\NegP.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SimTool\Tools\Spwn.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -155,19 +158,31 @@
     <ClInclude Include="src\SimTool\Tool.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\SimTool\Tools\SpawnTool.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\SimTool\Tools\HeatTool.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\SimTool\Tools\CoolTool.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\Element\Elements\Ice.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Element\Elements\Fire.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SimTool\Tools.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Element\ElementIncludes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SimTool\Tools\Cool.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SimTool\Tools\Heat.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SimTool\Tools\NegP.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SimTool\Tools\Spwn.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SimTool\ToolIncludes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
