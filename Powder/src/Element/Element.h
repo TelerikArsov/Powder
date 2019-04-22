@@ -11,15 +11,20 @@ enum ElementProperties : uint16_t
 	// when set to true, will use high_temperature
 	// to transition to liquid state
 	Meltable = 1 << 0,
+	Melted = 1 << 1,
 	// if no high_temperature_transition is set
 	// will use high_temperature for spontaneous combustion
-	Flammable = 1 << 1,
-	Tmp_velocity = 1 << 2,
-	Explosive = 1 << 3,
-	Corrosive = 1 << 4,
-	Life_dependant = 1 << 5,
-	Life_decay = 1 << 6,
-	Burning = 1 << 7
+	Flammable = 1 << 2,
+	Tmp_velocity = 1 << 3,
+	Explosive = 1 << 4,
+	Explosive_Pressure = 1 << 5,
+	Corrosive = 1 << 6,
+	Corrosive_Res = 1 << 7,
+	Life_dependant = 1 << 8,
+	Life_decay = 1 << 9,
+	Burning = 1 << 10,
+	Igniter = 1 << 11,
+	Breakable = 1 << 12
 };
 
 constexpr ElementProperties operator& (ElementProperties x, ElementProperties y)
@@ -88,7 +93,6 @@ public:
 	float mass = 1;
 	int endurance = 0;
 	float life = 100.f;
-	int damage = 0;
 	float restitution = 0.6f;
 	float temperature = 0; //in kelvins
 	float thermal_cond = 0;
@@ -117,11 +121,13 @@ protected:
 	int high_pressure_transition = -1;		// will transfrom, based on the current
 	int low_temperature_transition = -1;	// physical state of the element
 	int high_temperature_transition = -1;	//
-	float low_pressure = -300;                    // Number values at which the 
-	float high_pressure = 300;					// transformation will occur
-	float low_temperature = -1;
-	float high_temperature = 10'000;
-	float spotaneous_combustion_tmp = 10'000;
+	float low_pressure = -300.f;                  // Number values at which the 
+	float high_pressure = 300.f;					// transformation will occur
+	float low_temperature = -1.f;
+	float high_temperature = 10'000.f;
+	float spotaneous_combustion_tmp = 10'000.f;
+	float melting_temperature = 10'000.f;
+	float br_pressure = 300.f;
 	// used by powders in the creation of piles
 	// higher values means its harder for pile creation to occur
 	// essentially used as velocity threshold
@@ -138,6 +144,7 @@ protected:
 	void calc_loads();
 	bool collision = false;
 	void burn();
+	void ignite();
 	void liquid_move();
 	bool powder_pile();
 private:

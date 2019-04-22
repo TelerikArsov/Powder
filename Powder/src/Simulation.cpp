@@ -10,7 +10,7 @@ bool Simulation::check_if_empty(Vector cordinates) const
 
 bool Simulation::check_if_empty(float x, float y) const
 {
-	return check_if_empty(static_cast<int>(floor(x)), static_cast<int>(floor(y)));
+	return check_if_empty(static_cast<int>(x), static_cast<int>(y));
 }
 
 bool Simulation::check_if_empty(int x, int y) const
@@ -18,6 +18,24 @@ bool Simulation::check_if_empty(int x, int y) const
 	bool res = false;
 	if (bounds_check(x, y))
 		res = elements_grid[IDX(x, y, cells_x_count)] == EL_NONE;
+	return res;
+}
+
+bool Simulation::check_id(Vector cordinates, int id) const
+{
+	return check_id(cordinates.x, cordinates.y, id);
+}
+
+bool Simulation::check_id(float x, float y, int id) const
+{
+	return check_id(static_cast<int>(x), static_cast<int>(y), id);
+}
+
+bool Simulation::check_id(int x, int y, int id) const
+{
+	bool res = false;
+	if (bounds_check(x, y) && !check_if_empty(x, y))
+		res = elements_grid[IDX(x, y, cells_x_count)]->identifier == id;
 	return res;
 }
 

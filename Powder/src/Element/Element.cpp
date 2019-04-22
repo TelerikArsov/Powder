@@ -83,6 +83,8 @@ void Element::element_copy(const Element & rhs)
 	pile_threshold = rhs.pile_threshold;
 	flammability = rhs.flammability;
 	spotaneous_combustion_tmp = rhs.spotaneous_combustion_tmp;
+	melting_temperature = rhs.melting_temperature;
+	br_pressure = rhs.br_pressure;
 }
 
 void Element::move_helper(int xO, int yO, int d, int xStep, int yStep, int de, int dr, bool ytype, Element*& coll_el)
@@ -255,6 +257,22 @@ void Element::burn()
 	}
 }
 
+void Element::ignite()
+{
+	for (int i = -1; i <= 1; i++)
+		for (int j = -1; j <= 1; j++)
+			if ((i || j) && !sim->check_if_empty(x + j, y + i) &&
+				sim->bounds_check(x + j, y + i))
+			{
+				Element* target = sim->get_from_grid(x + j, y + i);
+				if (((target->prop & Flammable) == Flammable ||
+					(target->prop & Explosive) == Explosive) &&
+					(target->prop & Burning) != Burning &&
+					random.chance(static_cast<int>(target->flammability), 1000))
+					target->prop |= Burning;
+			}
+}
+
 void Element::liquid_move()
 {
 	bool ground = (collided_elem == this);
@@ -321,6 +339,19 @@ int Element::update(float dt)
 		life--;
 	int to_be_destroyed = identifier;
 	moved = false;
+	if ((prop & Meltable) == Meltable && temperature > melting_temperature)
+	{
+		state = ST_LIQUID;
+		prop |= Melted;
+	}
+	if ((prop & Melted) == Melted && temperature < melting_temperature)
+	{
+		state = ST_SOLID;
+		prop &= ~Melted;
+	}
+	if ((prop & Breakable) == Breakable
+		&& fabsf(sim->air->get_pressure(x, y)) > br_pressure)
+		state = ST_POWDER;
 	if (state != ST_SOLID)
 	{
 		update_velocity(dt);
@@ -356,11 +387,13 @@ int Element::update(float dt)
 			}*/
 		}
 	}
-	if ((prop & Burning) != Burning && (prop & Flammable) == Flammable &&
-		temperature > spotaneous_combustion_tmp)
+	if ((prop & Burning) != Burning && (prop & Flammable) == Flammable
+		&& temperature > spotaneous_combustion_tmp)
 		prop |= Burning;
 	if ((prop & Burning) == Burning)
 		burn();
+	if ((prop & Igniter) == Igniter)
+		ignite();
 	for (int i = -1; i < 2; i++)
 	{
 		for (int j = -1; j < 2; j++)
@@ -376,6 +409,23 @@ int Element::update(float dt)
 				}
 			}
 		}
+	}
+	if ((prop & Explosive) == Explosive)
+	{
+		for (int i = -1; i < 2; i++)
+			for (int j = -1; j < 2; j++)
+				if ((i || j)
+					&& sim->check_id(x + j, y + i, EL_FIRE)
+					&&(prop & Burning) != Burning &&
+					random.chance(static_cast<int>(flammability), 1000))
+					prop |= Burning;
+	}
+	if (((prop & Explosive) == Explosive && (prop & Burning) == Burning)
+		|| ((prop & Explosive_Pressure) == Explosive_Pressure
+			&& fabsf(sim->air->get_pressure(x, y)) > 2.5f))
+	{
+		sim->air->add_pressure(x, y, 0.25);
+		return EL_FIRE;
 	}
 	if (sim->air->get_pressure(x, y) < low_pressure)
 		to_be_destroyed = low_pressure_transition;

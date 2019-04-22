@@ -36,6 +36,9 @@ public:
 	bool check_if_empty(Vector cordinates) const;
 	bool check_if_empty(float x, float y) const;
 	bool check_if_empty(int x, int y) const;
+	bool check_id(Vector cordinates, int id) const;
+	bool check_id(float x, float y, int id) const;
+	bool check_id(int x, int y, int id) const;
 	Element* get_from_grid(Vector cordinates) const;
 	Element* get_from_grid(float x, float y) const;
 	Element* get_from_grid(int x, int y) const;
