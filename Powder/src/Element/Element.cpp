@@ -278,13 +278,17 @@ void Element::liquid_move()
 
 void Element::apply_collision_impulse(Element* coll_el, float dt)
 {
-	//some bugs, hard to reacreate 
 	bool ground = (coll_el == this);
 	Vector vr = (ground ? velocity : velocity - coll_el->velocity);
 	Vector d = (ground ? pos - ground_coll : pos - coll_el->pos);
 	d.Normalize();
-	float j = (-(1 + restitution) * (vr * d)) 
-		/ ((d * d) * (1 / mass + (ground ? 0 : 1 / coll_el->mass)));
+	float nominator = (-(1 + restitution) * (vr * d));
+	float denominator = ((d * d) * (1 / mass + (ground ? 0 : 1 / coll_el->mass)));
+	//not sure if this completely fixes the bug
+	if (denominator == 0.f && nominator == 0.f)
+		return;
+	float j = nominator
+		/ denominator;
 	add_velocity(j * d / mass);
 	if (!ground)
 	{
