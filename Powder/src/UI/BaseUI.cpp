@@ -130,7 +130,7 @@ void BaseUI::show_simulation_overlay(Simulation* sim)
 void BaseUI::show_element_menu(Simulation* sim)
 {
 	ImGui::SetNextWindowPos(ImVec2(10, 58));
-	ImGui::SetNextWindowSize(ImVec2(190, 160), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(210, 200), ImGuiCond_FirstUseEver);
 	ImGui::SetNextWindowSizeConstraints(ImVec2(-1, 0), ImVec2(-1, FLT_MAX));
 	//ImGui::SetNextWindowContentSize(ImVec2(400, 0.0f));
 	if (ImGui::Begin("Element Menu", &show_em, ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar))

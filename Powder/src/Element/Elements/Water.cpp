@@ -19,9 +19,12 @@ Water::Water(Simulation& sim)
 	temperature = 293.15f;
 	thermal_cond = 0.606f;
 	specific_heat_cap = 4.19f;
+	endurance = 980;
 	state = ST_LIQUID;
 	low_temperature = 273.15f;
 	low_temperature_transition = EL_ICE;
+	high_temperature = 373.f;
+	high_temperature_transition = EL_WTRV;
 	this->sim = &sim;
 }
 

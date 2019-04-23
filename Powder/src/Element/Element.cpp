@@ -268,9 +268,8 @@ void Element::liquid_move()
 void Element::burn()
 {
 	life -= 1 * flammability;
-	// for now this will do, TODO find all free neighbours
-	// and choose one at random
-	if (random.chance(static_cast<int>(flammability), 100))
+	add_heat(1000 * flammability);
+	if (random.chance(static_cast<int>(flammability), 1000))
 	{
 		std::vector<int> idx;
 		for (int i = -1; i <= 1; i++)

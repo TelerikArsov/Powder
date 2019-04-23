@@ -1,6 +1,6 @@
 #pragma once
-#include "SimTool\Tool.h"
-#include "SimTool\ToolsIds.h"
+#include "SimTool/Tool.h"
+#include "SimTool/ToolsIds.h"
 
 class SpawnTool :
 	public Tool

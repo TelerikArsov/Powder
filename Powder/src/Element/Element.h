@@ -92,7 +92,7 @@ public:
 	float gas_gravity = 1.f;
 	float gas_pressure = 0;
 	float mass = 1;
-	int endurance = 0;
+	int endurance = 10;
 	float life = 100.f;
 	float restitution = 0.6f;
 	float temperature = 0; //in kelvins

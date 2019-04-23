@@ -5,7 +5,7 @@ void CoolTool::do_action(int x, int y, int element_id, Simulation* sim, float st
 {
 	Element* el = sim->get_from_grid(x, y);
 	if(el != EL_NONE)
-		el->add_heat(-strength * 1000);
+		el->add_heat(-strength * 10000);
 }
 
 CoolTool::CoolTool()

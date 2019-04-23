@@ -18,9 +18,9 @@ Fire::Fire(Simulation& sim)
 	gas_gravity = -1.f;
 	gas_pressure = 0.001f;
 	restitution = 0.f;
-	temperature = 573.15f;
-	thermal_cond = 2;
-	specific_heat_cap = 0.8f;
+	temperature = 695.15f;
+	thermal_cond = 5;
+	specific_heat_cap = 1.f;
 	prop = Life_decay | Life_dependant | Igniter;
 	state = ST_GAS;
 	this->sim = &sim;

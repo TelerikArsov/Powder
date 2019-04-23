@@ -125,6 +125,22 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\SimTool\Tools\PosP.cpp" />
+    <ClCompile Include="src\Element\Elements\Acid.cpp" />
+    <ClCompile Include="src\Element\Elements\Brick.cpp" />
+    <ClCompile Include="src\Element\Elements\Caus.cpp" />
+    <ClCompile Include="src\Element\Elements\Coal.cpp" />
+    <ClCompile Include="src\Element\Elements\Dust.cpp" />
+    <ClCompile Include="src\Element\Elements\EXC4.cpp" />
+    <ClCompile Include="src\Element\Elements\Gas.cpp" />
+    <ClCompile Include="src\Element\Elements\Gold.cpp" />
+    <ClCompile Include="src\Element\Elements\Gun.cpp" />
+    <ClCompile Include="src\Element\Elements\Lava.cpp" />
+    <ClCompile Include="src\Element\Elements\Nitr.cpp" />
+    <ClCompile Include="src\Element\Elements\Oil.cpp" />
+    <ClCompile Include="src\Element\Elements\Stone.cpp" />
+    <ClCompile Include="src\Element\Elements\Wood.cpp" />
+    <ClCompile Include="src\SimTool\Tools\Clear.cpp" />
     <ClCompile Include="src\SimTool\Tools\Cool.cpp" />
     <ClCompile Include="src\SimTool\Tools\Heat.cpp" />
     <ClCompile Include="src\SimTool\Tools\NegP.cpp" />
@@ -153,17 +169,35 @@
     <ClCompile Include="src\Brushes\SquareBrush.cpp" />
     <ClCompile Include="src\Utils\Vector.cpp" />
     <ClCompile Include="src\Element\Elements\Water.cpp" />
+    <ClCompile Include="src\Element\Elements\Wtrv.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Element\ElementIncludes.h" />
+    <ClInclude Include="src\Element\Elements\Acid.h" />
+    <ClInclude Include="src\Element\Elements\Brick.h" />
+    <ClInclude Include="src\Element\Elements\Caus.h" />
+    <ClInclude Include="src\Element\Elements\Coal.h" />
+    <ClInclude Include="src\Element\Elements\Dust.h" />
+    <ClInclude Include="src\Element\Elements\EXC4.h" />
+    <ClInclude Include="src\Element\Elements\Gas.h" />
+    <ClInclude Include="src\Element\Elements\Gold.h" />
+    <ClInclude Include="src\Element\Elements\Gun.h" />
+    <ClInclude Include="src\Element\Elements\Lava.h" />
+    <ClInclude Include="src\Element\Elements\Nitr.h" />
+    <ClInclude Include="src\Element\Elements\Oil.h" />
+    <ClInclude Include="src\Element\Elements\Stone.h" />
+    <ClInclude Include="src\Element\Elements\Wood.h" />
+    <ClInclude Include="src\Element\Elements\Wtrv.h" />
     <ClInclude Include="src\SimTool\ToolIncludes.h" />
     <ClInclude Include="src\SimTool\Tools.h" />
+    <ClInclude Include="src\SimTool\Tools\Clear.h" />
     <ClInclude Include="src\SimTool\Tools\Cool.h" />
     <ClInclude Include="src\SimTool\Tools\Heat.h" />
     <ClInclude Include="src\SimTool\Tools\NegP.h" />
     <ClInclude Include="src\Element\Elements\Fire.h" />
     <ClInclude Include="src\Element\Elements\Ice.h" />
     <ClInclude Include="lib\imgui\imgui_stdlib.h" />
+    <ClInclude Include="src\SimTool\Tools\PosP.h" />
     <ClInclude Include="src\SimTool\Tools\Spwn.h" />
     <ClInclude Include="src\UI\ElementEditor.h" />
     <ClInclude Include="include\Powder\Brushes\Brush.h" />

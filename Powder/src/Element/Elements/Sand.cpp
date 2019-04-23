@@ -17,7 +17,7 @@ Sand::Sand(Simulation& sim)
 	mass = 1;
 	restitution = 0.f;
 	pile_threshold = 0;
-	temperature = 573.15f;
+	temperature = 295.15f;
 	thermal_cond = 2;
 	specific_heat_cap = 0.8f;
 	state = ST_POWDER;
