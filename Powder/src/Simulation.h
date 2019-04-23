@@ -69,8 +69,8 @@ public:
 	// bool add_to_active = whether the elements needs to be added to the active list
 	// int x, y = the position of the element in the grid
 	bool create_element(int id, bool from_mouse, bool add_to_active, int x, int y);
-	void destroy_element(Element* destroyed);
-	void destroy_element(int x, int y);
+	void destroy_element(Element* destroyed, bool destroy_from_active = true);
+	void destroy_element(int x, int y, bool destroy_from_active = false);
 	void swap_elements(int x1, int y1, int x2, int y2);
 	// Checks if the possition at x and y
 	// is inside the grid

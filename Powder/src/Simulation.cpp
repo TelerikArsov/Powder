@@ -132,7 +132,7 @@ void Simulation::tick(bool bypass_pause, float dt)
 				int x = el->x, y = el->y;
 				if(id != el->identifier)
 				{	
-					destroy_element(el);
+					destroy_element(el, false);
 					if(id != EL_NONE_ID)
 						create_element(id, false, false, x, y);
 					destroyed = true;
@@ -164,8 +164,11 @@ void Simulation::render(sf::RenderWindow* window)
 		int quad_i = 0;
 		for (auto &el : active_elements)
 		{
-			el->render(cell_height, cell_width, &cells_vertices[quad_i * 4]);
-			quad_i++;
+			if (el != EL_NONE)
+			{
+				el->render(cell_height, cell_width, &cells_vertices[quad_i * 4]);
+				quad_i++;
+			}
 		}
 		
 	}
@@ -260,14 +263,26 @@ bool Simulation::create_element(int id, bool fm, bool ata, int x, int y)
 	return false;
 }
 
-void Simulation::destroy_element(Element * destroyed)
+void Simulation::destroy_element(Element * destroyed, bool dfa)
 {
-	destroy_element(destroyed->x, destroyed->y);
+	destroy_element(destroyed->x, destroyed->y, dfa);
 }
 
-void Simulation::destroy_element(int x, int y)
+void Simulation::destroy_element(int x, int y, bool dfa)
 {
 	int idx = IDX(x, y, cells_x_count);
+	if (dfa)
+	{
+		auto pos = std::find_if(active_elements.begin(), active_elements.end(), 
+			[idx, &cells = cells_x_count](Element* el)
+			{ 
+				return el != EL_NONE 
+					? idx == IDX(el->x, el->y, cells)
+					: false;
+			}) - active_elements.begin();
+		if (pos < active_elements.size())
+			active_elements[pos] = EL_NONE;
+	}
 	delete elements_grid[idx];
 	elements_grid[idx] = EL_NONE;
 	elements_count--;
