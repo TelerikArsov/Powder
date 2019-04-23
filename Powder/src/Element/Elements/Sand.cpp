@@ -16,7 +16,7 @@ Sand::Sand(Simulation& sim)
 	color = colors[0];
 	mass = 1;
 	restitution = 0.f;
-	pile_threshold = 30;
+	pile_threshold = 0;
 	temperature = 573.15f;
 	thermal_cond = 2;
 	specific_heat_cap = 0.8f;

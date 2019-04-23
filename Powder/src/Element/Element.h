@@ -24,7 +24,8 @@ enum ElementProperties : uint16_t
 	Life_decay = 1 << 9,
 	Burning = 1 << 10,
 	Igniter = 1 << 11,
-	Breakable = 1 << 12
+	Breakable = 1 << 12,
+	Destroyed = 1 << 15
 };
 
 constexpr ElementProperties operator& (ElementProperties x, ElementProperties y)
@@ -104,8 +105,8 @@ public:
 	// x and y of the element itself and the end is xDestination and yDestination)
 	// this function uses a modified version of bresenhams line algorithm
 	// return true if there is no collision 
-	Element* move(Vector dest);
 	void element_copy(const Element& rhs);
+	void move(Vector dest);
 	void update_velocity(float dt);
 	void set_pos(int x, int y, bool true_pos);
 	void apply_collision_impulse(Element* collided_elem, float dt);
@@ -144,10 +145,11 @@ protected:
 	void calc_loads();
 	bool collision = false;
 	void burn();
-	void ignite();
+	bool ignite();
+	bool corrode(Element* coll_el);
 	void liquid_move();
-	bool powder_pile();
+	void powder_pile();
 private:
-	void move_helper(int xO, int yO, int d, int xStep, int yStep, int de, int dr, bool ytype, Element*& coll_el);
-	void do_move(int diff_x, int diff_y, Element*& coll_el);
+	void move_helper(int xO, int yO, int d, int xStep, int yStep, int de, int dr, bool ytype);
+	void do_move(int diff_x, int diff_y);
 };

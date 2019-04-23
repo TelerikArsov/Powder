@@ -3,17 +3,17 @@
 #include "Utils/Random.h"
 #include <math.h>
 
-Element* Element::move(Vector dest)
+void Element::move(Vector dest)
 {
 	collision = false;
 	pos = dest;
-	Element* coll_el = this;
-	int xD = static_cast<int>(round(dest.x));
-	int yD = static_cast<int>(round(dest.y));
+	collided_elem = this;
+	int xD = static_cast<int>(ceil(dest.x));
+	int yD = static_cast<int>(ceil(dest.y));
 	int old_x = x;
 	int old_y = y;
 	if (x == xD && y == yD)
-		return coll_el;
+		return;
 	int xStep, yStep;
 	int dx = xD - x;
 	int dy = yD - y;
@@ -40,14 +40,13 @@ Element* Element::move(Vector dest)
 	// we check if the slope is in the 1st 4th 5th and 8th octant
 	if (ddx >= ddy)
 	{
-		move_helper(x, y, dx, xStep, yStep, ddx, ddy, false, coll_el);
+		move_helper(x, y, dx, xStep, yStep, ddx, ddy, false);
 	}
 	else // if its in the other 4 octants
 	{
-		move_helper(x, y, dy, xStep, yStep, ddy, ddx, true, coll_el);
+		move_helper(x, y, dy, xStep, yStep, ddy, ddx, true);
 	}
 	sim->gravity->update_mass(mass, x, y, old_x, old_y);
-	return coll_el;
 }
 
 void Element::element_copy(const Element & rhs)
@@ -87,7 +86,7 @@ void Element::element_copy(const Element & rhs)
 	br_pressure = rhs.br_pressure;
 }
 
-void Element::move_helper(int xO, int yO, int d, int xStep, int yStep, int de, int dr, bool ytype, Element*& coll_el)
+void Element::move_helper(int xO, int yO, int d, int xStep, int yStep, int de, int dr, bool ytype)
 {
 	int eprev = d, e = d;
 	int diff_x, diff_y;
@@ -103,7 +102,7 @@ void Element::move_helper(int xO, int yO, int d, int xStep, int yStep, int de, i
 			{
 				diff_x = xO - (ytype ? xStep : 0);
 				diff_y = yO - (!ytype ? yStep : 0);
-				do_move(diff_x, diff_y, coll_el);
+				do_move(diff_x, diff_y);
 				if (collision)
 					break;
 			}
@@ -111,7 +110,7 @@ void Element::move_helper(int xO, int yO, int d, int xStep, int yStep, int de, i
 			{
 				diff_x = xO - (!ytype ? xStep : 0);
 				diff_y = yO - (ytype ? yStep : 0);
-				do_move(diff_x, diff_y, coll_el);
+				do_move(diff_x, diff_y);
 				if (collision)
 					break;
 			}
@@ -121,7 +120,7 @@ void Element::move_helper(int xO, int yO, int d, int xStep, int yStep, int de, i
 					break;
 			}
 		}
-		do_move(xO, yO, coll_el);
+		do_move(xO, yO);
 		if (collision)
 			break;
 		eprev = e;
@@ -129,7 +128,7 @@ void Element::move_helper(int xO, int yO, int d, int xStep, int yStep, int de, i
 	}
 }
 
-void Element::do_move(int diff_x, int diff_y, Element*& coll_el)
+void Element::do_move(int diff_x, int diff_y)
 {
 	if (!sim->bounds_check(diff_x, diff_y))
 	{
@@ -140,9 +139,25 @@ void Element::do_move(int diff_x, int diff_y, Element*& coll_el)
 	}
 	else
 	{
-		coll_el = sim->get_from_grid(diff_x, diff_y);
+		collided_elem = sim->get_from_grid(diff_x, diff_y);
 		// if there is no collision we update the elements real coordinates
-		int res = eval_col(coll_el);
+		int res = eval_col(collided_elem);
+		if (collided_elem != EL_NONE)
+		{
+			if ((prop & Corrosive) == Corrosive
+				&& (collided_elem->prop & Corrosive_Res) != Corrosive_Res)
+			{
+				if(corrode(collided_elem))
+					res = C_SWAP;
+			}
+			else if ((collided_elem->prop & Corrosive) == Corrosive
+				&& (prop & Corrosive_Res) != Corrosive_Res)
+			{
+				if(collided_elem->corrode(this))
+					res = C_BLOCK;
+			}
+		}
+		
 		if (res == C_BLOCK)
 		{
 			set_pos(x, y, true);
@@ -151,7 +166,7 @@ void Element::do_move(int diff_x, int diff_y, Element*& coll_el)
 		else if(res == C_SWAP)
 		{
 			sim->swap_elements(x, y, diff_x, diff_y);
-			coll_el = this;
+			collided_elem = this;
 		}
 	}
 }
@@ -212,7 +227,7 @@ void Element::set_pos(int x, int y, bool true_pos)
 	}
 }
 
-bool Element::powder_pile()
+void Element::powder_pile()
 {
 	bool status = false;
 	if (speed > pile_threshold && collided_elem != this)
@@ -222,21 +237,32 @@ bool Element::powder_pile()
 		{
 			bool side = random.next_bool();
 			perp = (side ? perp : -perp);
-			
-			status = (sim->check_if_empty(collided_elem->pos + perp) &&
-				sim->check_if_empty(pos + perp));
-			
-			if (!status)
+
+			if (eval_col(sim->get_from_grid(collided_elem->pos + perp)) == C_SWAP)
+				move((collided_elem->pos + perp));
+			if (collision)
 			{
 				perp.Reverse();
-				status = (sim->check_if_empty(collided_elem->pos + perp) &&
-					sim->check_if_empty(pos + perp));
+				if (eval_col(sim->get_from_grid(collided_elem->pos + perp)) == C_SWAP)
+					move(collided_elem->pos + perp);
 			}
-			if(status)
-				status = move(collided_elem->pos + perp);
 		}
 	}
-	return status;
+}
+
+void Element::liquid_move()
+{
+	bool ground = (collided_elem == this);
+	Vector perp = (ground ? ground_coll - pos :
+		collided_elem->pos - pos).PerpendicularCW();
+	bool side = random.next_bool();
+	perp = (side ? perp : -perp);
+	move(pos + perp);
+	if (collision)
+	{
+		perp.Reverse();
+		move(pos + perp);
+	}
 }
 
 void Element::burn()
@@ -257,8 +283,9 @@ void Element::burn()
 	}
 }
 
-void Element::ignite()
+bool Element::ignite()
 {
+	bool res = false;
 	for (int i = -1; i <= 1; i++)
 		for (int j = -1; j <= 1; j++)
 			if ((i || j) && !sim->check_if_empty(x + j, y + i) &&
@@ -269,28 +296,25 @@ void Element::ignite()
 					(target->prop & Explosive) == Explosive) &&
 					(target->prop & Burning) != Burning &&
 					random.chance(static_cast<int>(target->flammability), 1000))
+				{
 					target->prop |= Burning;
+					res = true;
+				}
 			}
+	return res;
 }
 
-void Element::liquid_move()
+bool Element::corrode(Element* coll_el)
 {
-	bool ground = (collided_elem == this);
-	Vector perp = (ground ? ground_coll - pos :
-		collided_elem->pos - pos).PerpendicularCW();
-
-	bool side = random.next_bool();
-	perp = (side ? perp : -perp);
-
-	bool status = sim->check_if_empty(pos + perp);
-
-	if (!status)
+	bool res = false;
+	if (coll_el != this && identifier != coll_el->identifier 
+		&& random.chance(1000 - coll_el->endurance, 1000))
 	{
-		perp.Reverse();
-		status = sim->check_if_empty(pos + perp);
+		coll_el->prop |= Destroyed;
+		life--;
+		res = true;
 	}
-	if (status)
-		move(pos + perp);
+	return res;
 }
 
 
@@ -328,12 +352,10 @@ void Element::add_heat(float heat)
 
 int Element::update(float dt)
 {
-	if ((prop & Life_dependant) == Life_dependant)
+	if (((prop & Life_dependant) == Life_dependant && life < 0) 
+		|| (prop & Destroyed) == Destroyed)
 	{
-		if (life < 0)
-		{
 			return EL_NONE_ID;
-		}
 	}
 	if ((prop & Life_decay) == Life_decay)
 		life--;
@@ -355,21 +377,21 @@ int Element::update(float dt)
 	if (state != ST_SOLID)
 	{
 		update_velocity(dt);
-		collided_elem = move(pos + (velocity * dt) / sim->scale);
-		if (state == ST_POWDER && collision)
+		move(pos + (velocity * dt) / sim->scale);
+		if (collision)
 		{
 			apply_collision_impulse(collided_elem, dt);
-			powder_pile();
-		}
-		if (state == ST_LIQUID && collision)
-		{
-			apply_collision_impulse(collided_elem, dt);
-			liquid_move();
+			if (state == ST_POWDER)
+			{
+				powder_pile();
+			}
+			else if (state == ST_LIQUID)
+			{
+				liquid_move();
+			}
 		}
 		if (state == ST_GAS)
 		{
-			if(collision)
-				apply_collision_impulse(collided_elem, dt);
 			sim->air->add_pressure(x, y, gas_pressure);
 			if ((y + 1) / sim->air->cell_size < sim->air->grid_height)
 				sim->air->add_pressure(x, y + 1, gas_pressure);
@@ -427,6 +449,7 @@ int Element::update(float dt)
 		sim->air->add_pressure(x, y, 0.25);
 		return EL_FIRE;
 	}
+
 	if (sim->air->get_pressure(x, y) < low_pressure)
 		to_be_destroyed = low_pressure_transition;
 
@@ -456,9 +479,7 @@ void Element::draw_ui()
 Element::~Element()
 {
 	if (editor)
-	{
 		editor->detach();
-	}
 }
 
 void Element::render(float cell_height, float cell_width, sf::Vertex* quad)
