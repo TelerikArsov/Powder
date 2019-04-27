@@ -48,6 +48,10 @@ void BaseUI::show_simulation_settings(Simulation* sim)
 			ImGui::RadioButton("No grid", &(sim->drav_grid), 0); ImGui::SameLine();
 			ImGui::RadioButton("Draw grav grid", &(sim->drav_grid), 1); ImGui::SameLine();
 			ImGui::RadioButton("Draw air grid", &(sim->drav_grid), 2);
+			if (ImGui::Button("Clear simulation field"))
+			{
+				sim->clear_field();
+			}
 			if (ImGui::Button("New element editor"))
 			{
 				el_editor_queue.push_back(new ElementEditor());

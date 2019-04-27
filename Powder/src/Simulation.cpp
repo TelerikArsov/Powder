@@ -235,10 +235,10 @@ bool Simulation::create_element(int id, bool fm, bool ata, int idx)
 
 bool Simulation::create_element(int id, bool fm, bool ata, int x, int y)
 {
-	int idx = IDX(x, y, cells_x_count);
 	// If the element at the position is None_Element (id == 0)
 	if (bounds_check(x, y) && check_if_empty(x, y))
 	{
+		int idx = IDX(x, y, cells_x_count);
 		Element* new_element;
 		Element* tmp;
 		id = fm ? selected_element : id;
@@ -270,22 +270,25 @@ void Simulation::destroy_element(Element * destroyed, bool dfa)
 
 void Simulation::destroy_element(int x, int y, bool dfa)
 {
-	int idx = IDX(x, y, cells_x_count);
-	if (dfa)
+	if (bounds_check(x, y) && !check_if_empty(x, y))
 	{
-		auto pos = std::find_if(active_elements.begin(), active_elements.end(), 
-			[idx, &cells = cells_x_count](Element* el)
-			{ 
-				return el != EL_NONE 
-					? idx == IDX(el->x, el->y, cells)
-					: false;
-			}) - active_elements.begin();
-		if (pos < active_elements.size())
-			active_elements[pos] = EL_NONE;
+		int idx = IDX(x, y, cells_x_count);
+		if (dfa)
+		{
+			auto pos = std::find_if(active_elements.begin(), active_elements.end(), 
+				[idx, &cells = cells_x_count](Element* el)
+				{ 
+					return el != EL_NONE 
+						? idx == IDX(el->x, el->y, cells)
+						: false;
+				}) - active_elements.begin();
+			if (pos < active_elements.size())
+				active_elements[pos] = EL_NONE;
+		}
+		delete elements_grid[idx];
+		elements_grid[idx] = EL_NONE;
+		elements_count--;
 	}
-	delete elements_grid[idx];
-	elements_grid[idx] = EL_NONE;
-	elements_count--;
 }
 
 bool Simulation::add_element(Element * tba)
@@ -329,6 +332,17 @@ void Simulation::select_tool(int toolId)
 {
 	selected_tool = toolId;
 	selected_element = -1;
+}
+
+void Simulation::clear_field()
+{
+	for (auto& el : elements_grid)
+	{
+		delete el;
+	}
+	elements_grid.clear();
+	active_elements.clear();
+	elements_count = 0;
 }
 
 void Simulation::swap_elements(int x1, int y1, int x2, int y2)
@@ -390,11 +404,7 @@ Simulation::Simulation(int cells_x_count, int cells_y_count, int window_width, i
 
 Simulation::~Simulation()
 {
-	for (auto& el : elements_grid)
-	{
-		delete el;
-	}
-	elements_grid.clear();
+	clear_field();
 	for (auto& el : available_elements)
 	{
 		delete el;

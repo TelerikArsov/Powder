@@ -92,6 +92,7 @@ public:
 	void select_brush(int brushId);
 	void select_element(int elementId);
 	void select_tool(int toolId);
+	void clear_field();
 	// int window_width, int window_height = the dimensions of the window 
 	// where the simulation will be rendered
 	Simulation(int cells_x_count, int cells_y_count, int window_width, int window_height, float base_g);
