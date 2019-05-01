@@ -45,6 +45,18 @@ void BaseUI::show_simulation_settings(Simulation* sim)
 			ImGui::InputFloat("Scale", &(sim->scale), 0.01f, 1.0f);
 			ImGui::Checkbox("Show element_menu", &show_em);
 			ImGui::Checkbox("Show simulation overlay", &show_so);
+			int cell_size[2] = { sim->cells_x_count, sim->cells_y_count };
+			if (ImGui::InputInt2("Cell count", cell_size, ImGuiInputTextFlags_EnterReturnsTrue))
+			{
+				sim->set_cell_count(cell_size[0], cell_size[1]);
+			}
+			/* Still not sure if this should be here
+			int window_size[2] = { sim->window_width, sim->window_height };
+			if (ImGui::InputInt2("Window size (width, height)", window_size))
+			{
+				sim->set_window_size(window_size[0], window_size[1]);
+			}
+			*/
 			ImGui::RadioButton("No grid", &(sim->drav_grid), 0); ImGui::SameLine();
 			ImGui::RadioButton("Draw grav grid", &(sim->drav_grid), 1); ImGui::SameLine();
 			ImGui::RadioButton("Draw air grid", &(sim->drav_grid), 2);

@@ -10,14 +10,7 @@ void Gravity::resize()
 	grid_height = static_cast<int>
 		(std::ceil(static_cast<float>(sim->cells_y_count) / cell_size));
 	mass_grid.assign(grid_height * grid_width, 0);
-	grav_grid.clear();
-	for (int i = 0; i < grid_height; i++)
-	{
-		for (int j = 0; j < grid_width; j++)
-		{
-			grav_grid.push_back(base_grav);
-		}
-	}
+	grav_grid.assign(grid_height * grid_width, base_grav);
 }
 
 void Gravity::set_baseG()

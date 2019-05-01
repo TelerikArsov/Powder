@@ -30,6 +30,7 @@ public:
 	std::vector<float> hv;
 
 	void update_air();
+	void resize();
 	void clear(std::vector<float>& data);
 	void clear(std::vector<Vector>& data);
 	void add_pressure(int x, int y, float pressure);

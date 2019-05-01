@@ -18,10 +18,8 @@ public:
 	int elements_count;
 	float fps = 0.0f;
 	bool paused = true;
+	int cells_x_count = 10, cells_y_count = 10;
 	int mouse_cell_x, mouse_cell_y;
-	// the dimensions of each cell
-	float cell_height, cell_width;
-	int cells_x_count, cells_y_count;
 	// for air at 15 C
 	float air_density = 1.23f; 
 	// power of 10, not sure how to make it only a power of 10 
@@ -93,15 +91,20 @@ public:
 	void select_element(int elementId);
 	void select_tool(int toolId);
 	void clear_field();
+	void set_cell_count(int x_count, int y_count);
+	void set_window_size(int window_width, int window_height);
 	// int window_width, int window_height = the dimensions of the window 
 	// where the simulation will be rendered
 	Simulation(int cells_x_count, int cells_y_count, int window_width, int window_height, float base_g);
 	~Simulation();
 	//TODO something something encapsulation, most of the public properties should be here anyways
 private:
+	// the dimensions of each cell
+	float cell_height, cell_width;
+	float m_cell_height, m_cell_width;
+	int const window_height, window_width;
+	int m_window_height, m_window_width;
 	// The identifier of the current selected element
-	// TODO: move to private make a method to check if the selected element is 
-	// present in the available_elements array
 	int selected_element;
 	int selected_brush;
 	int selected_tool;
@@ -120,5 +123,6 @@ private:
 	std::vector<Element*> active_elements;
 	// Elements that need to be added to the active list
 	std::vector<Element*> add_queue;
+	void mouse_calibrate();
 	sf::VertexArray draw_grid(std::vector<Vector> velocities, int cell_size, int  height, int width);
 };

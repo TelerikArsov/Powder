@@ -339,12 +339,47 @@ void Simulation::clear_field()
 	for (auto& el : elements_grid)
 	{
 		delete el;
+		el = EL_NONE;
 	}
-	elements_grid.clear();
 	active_elements.clear();
 	elements_count = 0;
 }
 
+void Simulation::set_cell_count(int x_count, int y_count)
+{
+	if ((x_count != cells_x_count || y_count != cells_y_count) 
+		&& x_count >= 10 && y_count >= 10)
+	{
+		clear_field();
+		cells_x_count = x_count;
+		cells_y_count = y_count;
+		gol_grid.resize(x_count * y_count);
+		elements_grid.assign(x_count * y_count, EL_NONE);
+		if(air)
+			air->resize();
+		if(gravity)
+			gravity->resize();
+		cell_width = window_width / static_cast<float>(x_count);
+		cell_height = window_height / static_cast<float>(y_count);
+		mouse_calibrate();
+	}
+}
+
+void Simulation::set_window_size(int window_w, int window_h)
+{
+		m_window_width = window_w;
+		m_window_height = window_h;
+		mouse_calibrate();
+}
+
+void Simulation::mouse_calibrate()
+{
+	if (cells_x_count && cells_y_count)
+	{
+		m_cell_width = m_window_width / static_cast<float>(cells_x_count);
+		m_cell_height = m_window_height / static_cast<float>(cells_y_count);
+	}
+}
 void Simulation::swap_elements(int x1, int y1, int x2, int y2)
 {
 	//Prob will add more stuff then just this but for now...
@@ -376,8 +411,8 @@ void Simulation::set_mouse_coordinates(int x, int y)
 {
 	mouse_x = x;
 	mouse_y = y;
-	mouse_cell_x = std::clamp(static_cast<int>(floor(mouse_x / cell_width)), 0, cells_x_count - 1);
-	mouse_cell_y = std::clamp(static_cast<int>(floor(mouse_y / cell_height)), 0, cells_y_count - 1);
+	mouse_cell_x = std::clamp(static_cast<int>(floor(mouse_x / m_cell_width)), 0, cells_x_count - 1);
+	mouse_cell_y = std::clamp(static_cast<int>(floor(mouse_y / m_cell_height)), 0, cells_y_count - 1);
 }
 
 void Simulation::resize_brush(float d)
@@ -385,15 +420,20 @@ void Simulation::resize_brush(float d)
 	brushes[selected_brush]->change_size(lrint(d));
 }
 
-Simulation::Simulation(int cells_x_count, int cells_y_count, int window_width, int window_height, float base_g) :
+Simulation::Simulation(int x_count, int y_count, int window_w, int window_h, float base_g) :
 	elements_count(0),
-	gol_grid(cells_y_count * cells_x_count, 0),
-	elements_grid(cells_y_count * cells_x_count, nullptr)
-{
-	this->cells_x_count = cells_x_count;
-	this->cells_y_count = cells_y_count;
-	this->cell_width = window_width / static_cast<float>(cells_x_count);
-	this->cell_height = window_height / static_cast<float>(cells_y_count);
+	gol_grid(y_count * x_count, 0),
+	elements_grid(y_count * x_count, EL_NONE),
+	cell_width(window_w / static_cast<float>(x_count)),
+	cell_height(window_h / static_cast<float>(y_count)),
+	cells_x_count(x_count),
+	cells_y_count(y_count),
+	window_height(window_h),
+	window_width(window_w),
+	m_window_height(window_h),
+	m_window_width(window_w)
+{ 
+	mouse_calibrate();
 	selected_element = -1;
 	selected_tool = TL_SPWN;
 	selected_brush = 0;
@@ -405,11 +445,6 @@ Simulation::Simulation(int cells_x_count, int cells_y_count, int window_width, i
 Simulation::~Simulation()
 {
 	clear_field();
-	for (auto& el : available_elements)
-	{
-		delete el;
-	}
-	available_elements.clear();
 	delete gravity;
 	delete air;
 	delete baseUI;
@@ -437,15 +472,14 @@ sf::VertexArray Simulation::draw_grid(std::vector<Vector> velocities, int cell_s
 	for (int i = 0; i < height - 1; i++)
 	{
 		line[0] = sf::Vector2f(0, (i + 1) * cell_size * cell_height);
-		//hardcoded bad :( TODO change it
-		line[1] = sf::Vector2f(1280, (i + 1) * cell_size * cell_height);
+		line[1] = sf::Vector2f(static_cast<float>(window_width), (i + 1) * cell_size * cell_height);
 		for (int i = 0; i < 2; i++)
 			grid.append(line[i]);
 	}
 	for (int i = 0; i < width - 1; i++)
 	{
 		line[0] = sf::Vector2f((i + 1) * cell_size * cell_width, 0);
-		line[1] = sf::Vector2f((i + 1) * cell_size * cell_width, 720);
+		line[1] = sf::Vector2f((i + 1) * cell_size * cell_width, static_cast<float>(window_height));
 		for (int i = 0; i < 2; i++)
 			grid.append(line[i]);
 	}

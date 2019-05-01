@@ -143,6 +143,18 @@ void Air::update_air()
 	}
 }
 
+void Air::resize()
+{
+	grid_width = static_cast<int>(std::ceil(static_cast<float>(sim->cells_x_count) / cell_size));
+	grid_height = static_cast<int>(std::ceil(static_cast<float>(sim->cells_y_count) / cell_size));
+	velocity.assign(grid_width * grid_height, Vector());
+	ovelocity.assign(grid_width * grid_height, Vector());
+	hv.assign(grid_width * grid_height, 0.0);
+	ohv.assign(grid_width * grid_height, 0.0);
+	pv.assign(grid_width * grid_height, 0.0);
+	opv.assign(grid_width * grid_height, 0.0);
+}
+
 void Air::update_airh()
 {
 	/*float dh, f;

@@ -14,6 +14,7 @@ int main()
 	window.setVerticalSyncEnabled(true);
 	ImGui::SFML::Init(window);
 	Simulation sim(160, 90, WINDOW_WIDTH, WINDOW_HEIGHT, 9.8f);
+	// TODO make the generate script do this
 	sim.add_element(new GOL("WALL", "Wall rule" ,"s1/b1"));
 	sim.add_element(new Acid(sim));
 	sim.add_element(new Brick(sim));
@@ -102,6 +103,10 @@ int main()
 				{
 					sim.tick(true, 1 / 60.0f);
 				}
+			}
+			if (event.type == sf::Event::Resized)
+			{
+				sim.set_window_size(event.size.width, event.size.height);
 			}
 		}
 		if (mouse_left_hold)
