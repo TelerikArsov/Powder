@@ -153,6 +153,8 @@ void Simulation::tick(bool bypass_pause, float dt)
 		gravity->update_grav(neut_grav);
 	}
 	air->update_air();
+	if (air->ambient_heat)
+		air->update_airh();
 }
 
 void Simulation::render(sf::RenderWindow* window)

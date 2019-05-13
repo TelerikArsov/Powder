@@ -22,5 +22,6 @@ private:
 	void show_simulation_settings(Simulation* sim);
 	void show_simulation_overlay(Simulation* sim);
 	void show_element_menu(Simulation* sim);
+	void fill_scrollable_list();
 };
 

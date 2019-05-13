@@ -8,8 +8,6 @@
 enum ElementProperties : uint16_t
 {
 	NoProperties = 0,
-	// when set to true, will use high_temperature
-	// to transition to liquid state
 	Meltable = 1 << 0,
 	Melted = 1 << 1,
 	// if no high_temperature_transition is set

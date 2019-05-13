@@ -19,6 +19,8 @@ public:
 	int air_mode;
 	bool ambient_heat;
 	float amb_air_temp;
+	float air_shc = 0.718f;
+	float air_tc = 0.0333f; // seems kinda low need tweaking
 	float air_tstepp = 0.3f;
 	float air_tstepv = 0.4f;
 	float air_vadv = 0.3f;
@@ -29,13 +31,16 @@ public:
 	std::vector<float> pv;
 	std::vector<float> hv;
 
+	void update_airh();
 	void update_air();
 	void resize();
 	void clear(std::vector<float>& data);
 	void clear(std::vector<Vector>& data);
 	void add_pressure(int x, int y, float pressure);
 	void add_velocity(int x, int y, Vector vel);
+	void add_heat(int x, int y, float heat);
 	float get_pressure(int x, int y);
+	float get_temperature(int x, int y);
 	Vector get_force(int x, int y);
 	Air(Simulation* sim, int air_mode, float ambient_air_temp, int cell_size);
 	~Air();
@@ -46,6 +51,5 @@ private:
 	std::vector<float> ohv;
 	//gaussian blur kernel
 	void make_kernel();
-	void update_airh();
 };
 

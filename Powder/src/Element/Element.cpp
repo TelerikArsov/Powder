@@ -424,13 +424,26 @@ int Element::update(float dt)
 				Element* el = sim->get_from_grid(x + j, y + i);
 				if (el != EL_NONE && el->temperature < temperature)
 				{
-					float heat = thermal_cond * (temperature - el->temperature);
+					float heat = thermal_cond * (temperature - el->temperature)
+						* sim->heat_coef;
 					el->add_heat(heat);
 					add_heat(-heat);
 				}
 			}
 		}
 	}
+
+	if (sim->air->ambient_heat 
+		&& temperature != sim->air->get_temperature(x, y))
+	{
+		bool hotter = temperature > sim->air->get_temperature(x, y);
+		float heat = (hotter ? thermal_cond : sim->air->air_tc) * 
+			(fabsf(sim->air->get_temperature(x, y) - temperature))
+			* sim->heat_coef;
+		add_heat(heat * (hotter ? -1 : 1));
+		sim->air->add_heat(x, y, heat * (hotter ? 1 : -1));
+	}
+
 	if ((prop & Explosive) == Explosive)
 	{
 		for (int i = -1; i < 2; i++)

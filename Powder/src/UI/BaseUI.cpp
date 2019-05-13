@@ -43,6 +43,7 @@ void BaseUI::show_simulation_settings(Simulation* sim)
 		if (ImGui::CollapsingHeader("Simulation specific"))
 		{
 			ImGui::InputFloat("Scale", &(sim->scale), 0.01f, 1.0f);
+			ImGui::InputFloat("Heat coef", &(sim->heat_coef), 0.1, 1.f);
 			ImGui::Checkbox("Show element_menu", &show_em);
 			ImGui::Checkbox("Show simulation overlay", &show_so);
 			int cell_size[2] = { sim->cells_x_count, sim->cells_y_count };
@@ -88,6 +89,8 @@ void BaseUI::show_simulation_settings(Simulation* sim)
 			ImGui::Combo("Air mode", &(sim->air->air_mode), "No update\0Pressure off\0Velocity off\0Off\0On\0\0");
 			ImGui::Checkbox("Ambient heat", &(sim->air->ambient_heat));
 			ImGui::InputFloat("Ambient air temperature", &(sim->air->amb_air_temp), 0.1f, 1.0f, "%.2f");
+			ImGui::InputFloat("Ambient air special heat coef", &(sim->air->air_shc), 0.001f, 0.01f);
+			ImGui::InputFloat("Ambient air thermal conductivity heat coef", &(sim->air->air_tc), 0.001f, 0.01f);
 			ImGui::InputFloat("Pressure time step", &(sim->air->air_tstepp), 0.01f, 0.1f);
 			ImGui::InputFloat("Velocity time step", &(sim->air->air_tstepv), 0.01f, 0.1f);
 			ImGui::InputFloat("Air advection coef", &(sim->air->air_vadv), 0.01f, 0.1f);
@@ -127,7 +130,8 @@ void BaseUI::show_simulation_overlay(Simulation* sim)
 		}
 		else 
 		{
-			temperature = sim->air->amb_air_temp;
+			temperature = sim->air->get_temperature(sim->mouse_cell_x, 
+				sim->mouse_cell_y);
 			name = "None";
 			pressure = sim->air->get_pressure(sim->mouse_cell_x,
 				sim->mouse_cell_y);
@@ -156,8 +160,6 @@ void BaseUI::show_element_menu(Simulation* sim)
 		ImGui::Text("Elements"); ImGui::NextColumn();
 		int i = 0;
 		ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.31f, 0.31f, 0.31f, 1));
-		// should be redone with templating and some other method 
-		// (gotta learn that stuff)
 		ImGui::BeginChildFrame(ImGui::GetID("brushes"), ImVec2(70, -1));
 		for (auto br : sim->brushes)
 		{
@@ -200,9 +202,9 @@ void BaseUI::show_element_menu(Simulation* sim)
 		{
 			for (auto el : sim->tools)
 			{
-				bool is_selected = (selected_tl == i);
 				if (el->identifier != TL_SPWN)
 				{
+					bool is_selected = (selected_tl == i);
 					ImGui::PushStyleColor(ImGuiCol_Text, el->color);
 					if (ImGui::Selectable(el->name.c_str(), is_selected))
 					{
@@ -225,21 +227,3 @@ void BaseUI::show_element_menu(Simulation* sim)
 	}
 	ImGui::End();
 }
-/*template <class T>
-void BaseUI::DrawSelectableList(std::vector<T> container, bool& selected)
-{
-	ImGui::BeginChildFrame(ImGui::GetID("brushes"), ImVec2(70, -1));
-	for (auto br : container)
-	{
-		bool is_selected = (selected == i);
-		if (ImGui::Selectable(br->name.c_str(), is_selected))
-		{
-			selected_br = i;
-			sim->select_brush(i);
-		}
-		if (is_selected)
-			ImGui::SetItemDefaultFocus();
-		i++;
-	}
-	ImGui::EndChildFrame();
-}*/

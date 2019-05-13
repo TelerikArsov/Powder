@@ -102,13 +102,9 @@ void Air::update_air()
 					j >= 2 && j < grid_height - 2)
 				{
 					d *= 1.0f - air_vadv;
-
 					d += air_vadv * (1.0f - t.x) * (1.0f - t.y) * velocity[j * grid_width + i];
-
 					d += air_vadv * t.x * (1.0f - t.y) * velocity[j * grid_width + i];
-
 					d += air_vadv * (1.0f - t.x) * t.y * velocity[(j + 1) * grid_width + i];
-
 					d += air_vadv * t.x * t.y * velocity[(j + 1) * grid_width + i + 1];
 				}
 
@@ -157,8 +153,9 @@ void Air::resize()
 
 void Air::update_airh()
 {
-	/*float dh, f;
-
+	float dh, f;
+	// TODO make the edges in the game one bit smaller then the air grid so this works properly
+	// or make them bigger but dont display all of it
 	for (int i = 0; i < grid_height; i++) //reduces pressure/velocity on the edges every frame
 	{
 		int idx = i * grid_width;
@@ -206,16 +203,18 @@ void Air::update_airh()
 			if (i >= 2 && i < grid_width - 2 && 
 				j >= 2 && j < grid_height - 2)
 			{
-				dh *= 1.0f - AIR_VADV;
-				dh += AIR_VADV * (1.0f - t.x) * (1.0f - t.y) * hv[j * grid_width + i];
-				dh += AIR_VADV * t.x * (1.0f - t.y) * hv[j * grid_width + i + 1];
-				dh += AIR_VADV * (1.0f - t.x) * t.y * hv[(j + 1) * grid_width + i];
-				dh += AIR_VADV * t.x * t.y * hv[(j + 1) * grid_width + i + 1];
+				dh *= 1.0f - air_vadv;
+				dh += air_vadv * (1.0f - t.x) * (1.0f - t.y) * hv[j * grid_width + i];
+				dh += air_vadv * t.x * (1.0f - t.y) * hv[j * grid_width + i + 1];
+				dh += air_vadv * (1.0f - t.x) * t.y * hv[(j + 1) * grid_width + i];
+				dh += air_vadv * t.x * t.y * hv[(j + 1) * grid_width + i + 1];
 			}
 			ohv[y * grid_width + x] = dh;
 		}
 	}
-	hv = ohv;*/
+	// add the code for the gravity later
+	// refactor
+	hv = ohv;
 }
 
 void Air::clear(std::vector<float>& data)
@@ -241,9 +240,21 @@ void Air::add_velocity(int x, int y, Vector vel)
 	velocity[x / cell_size + grid_width * (y / cell_size)] += vel;
 }
 
+void Air::add_heat(int x, int y, float heat)
+{
+	int idx = x / cell_size + grid_width * (y / cell_size);
+	hv[idx] += (heat / air_shc);
+	hv[idx] = std::clamp(hv[idx], 0.0f, 10000.0f);
+}
+
 float Air::get_pressure(int x, int y)
 {
 	return pv[x / cell_size + grid_width * (y / cell_size)];
+}
+
+float Air::get_temperature(int x, int y)
+{
+	return hv[x / cell_size + grid_width * (y / cell_size)];;
 }
 
 Vector Air::get_force(int x, int y)
@@ -266,7 +277,7 @@ Air::Air(Simulation* sim, int air_mode, float ambient_air_temp, int cell_size) :
 		{
 			velocity.emplace_back(Vector());
 			ovelocity.emplace_back(Vector());
-			hv.push_back(0.0);
+			hv.push_back(amb_air_temp);
 			ohv.push_back(0.0);
 			pv.push_back(0.0);
 			opv.push_back(0.0);

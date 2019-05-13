@@ -20,8 +20,8 @@ public:
 	bool paused = true;
 	int cells_x_count = 10, cells_y_count = 10;
 	int mouse_cell_x, mouse_cell_y;
-	// for air at 15 C
-	float air_density = 1.23f; 
+	// how fast heat heats up elements
+	float heat_coef = 1.f; 
 	// power of 10, not sure how to make it only a power of 10 
 	float scale = 1.f;
 	Gravity* gravity;
