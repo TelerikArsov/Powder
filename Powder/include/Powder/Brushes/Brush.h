@@ -1,13 +1,13 @@
 #pragma once
 #include <vector>
 #include <string>
+#include "SimObject.h"
 
-class Brush
+class Brush :
+	public SimObject
 {
 	using points = std::pair<int, int>;
 public:
-	std::string name;
-	std::string description;
 	virtual void change_size(int direction) = 0;
 	virtual void create_area() = 0;
 	std::vector<points> get_area() const

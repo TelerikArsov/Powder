@@ -48,6 +48,7 @@ void SquareBrush::create_area()
 
 SquareBrush::SquareBrush()
 {
+	identifier = 1;
 	name = "Square";
 	description = "Squared";
 	sizes.push_back(0);

@@ -4,6 +4,7 @@
 #include "ElementsIds.h"
 #include "UI/ElementEditor.h"
 #include "Utils/Vector.h"
+#include "SimObject.h"
 
 enum ElementProperties : uint16_t
 {
@@ -67,13 +68,10 @@ constexpr ElementProperties& operator^= (ElementProperties& x, ElementProperties
 
 class Simulation;
 
-class Element
+class Element :
+	public SimObject
 {
 public:
-	int identifier = -1;
-	std::string name = "TMP_ELEMENT";	// Will be used in the ui
-	std::string description = "DESC";
-	sf::Color color = sf::Color::Blue;	// The main color
 	Simulation* sim; // pointer to the Simulation the element currently is 
 	ElementEditor* editor = nullptr;
 	int menu_id = -1;		// Will be used in the ui 

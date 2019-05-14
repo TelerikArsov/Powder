@@ -125,6 +125,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\SimObject.cpp" />
     <ClCompile Include="src\SimTool\Tools\PosP.cpp" />
     <ClCompile Include="src\Element\Elements\Acid.cpp" />
     <ClCompile Include="src\Element\Elements\Brick.cpp" />
@@ -172,6 +173,7 @@
     <ClCompile Include="src\Element\Elements\Wtrv.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\SimObject.h" />
     <ClInclude Include="src\Element\ElementIncludes.h" />
     <ClInclude Include="src\Element\Elements\Acid.h" />
     <ClInclude Include="src\Element\Elements\Brick.h" />

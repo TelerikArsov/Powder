@@ -71,6 +71,7 @@ void CircleBrush::create_area()
 
 CircleBrush::CircleBrush()
 {
+	identifier = 0;
 	name = "Circle";
 	description = "Brush in the shape of a circle";
 	//circle has only one size radius

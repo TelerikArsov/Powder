@@ -84,28 +84,21 @@ void Simulation::set_gol_at(int x, int y, int val)
 Element* Simulation::find_by_id(int id)
 {
 	Element* match = nullptr;
-	for (auto el : available_elements)
-	{
-		if (el->identifier == id) 
-		{
-			match = el;
-			break;
-		}
-	}
+	match = static_cast<Element *>(find_simObject_byId(id, available_elements));
 	return match;
 }
 
-Tool * Simulation::find_tool_by_id(int id)
+Brush* Simulation::find_brush_by_id(int id)
+{
+	Brush* match = nullptr;
+	match = static_cast<Brush *>(find_simObject_byId(id, brushes));
+	return match;
+}
+
+Tool* Simulation::find_tool_by_id(int id)
 {
 	Tool* match = nullptr;
-	for (auto tl : tools)
-	{
-		if (tl->identifier == id)
-		{
-			match = tl;
-			break;
-		}
-	}
+	match = static_cast<Tool *>(find_simObject_byId(id, tools));
 	return match;
 }
 
@@ -122,8 +115,7 @@ void Simulation::tick(bool bypass_pause, float dt)
 		}
 	}
 
-	active_elements.erase(std::remove_if(active_elements.begin(), active_elements.end(), 
-		[this, dt](Element* el) -> bool
+	active_elements.remove_if([this, dt](Element* el) -> bool
 		{
 			bool destroyed = el == EL_NONE;
 			if (!destroyed)
@@ -139,13 +131,8 @@ void Simulation::tick(bool bypass_pause, float dt)
 				}
 			}
 			return destroyed;
-		}), active_elements.end());
-
-	for (auto add_el : add_queue)
-	{
-		active_elements.push_back(add_el);		
-	}
-	add_queue.clear();
+		});
+	active_elements.splice(active_elements.end(), add_queue);
 	if (neut_grav)
 	{
 		//doesnt make much sense for now, but if we change the base gravity of the simulation
@@ -184,7 +171,7 @@ void Simulation::render(sf::RenderWindow* window)
 	}
 	sf::Vertex quad[4];
 	// Only the outline is rendered
-	for (auto &off : brushes[selected_brush]->get_outline()) 
+	for (auto &off : selected_brush->get_outline()) 
 	{
 		int x = (mouse_cell_x + off.first);
 		int y = (mouse_cell_y + off.second);
@@ -277,15 +264,12 @@ void Simulation::destroy_element(int x, int y, bool dfa)
 		int idx = IDX(x, y, cells_x_count);
 		if (dfa)
 		{
-			auto pos = std::find_if(active_elements.begin(), active_elements.end(), 
-				[idx, &cells = cells_x_count](Element* el)
+			
+			active_elements.remove_if(
+				[x, y](Element* el) -> bool
 				{ 
-					return el != EL_NONE 
-						? idx == IDX(el->x, el->y, cells)
-						: false;
-				}) - active_elements.begin();
-			if (pos < active_elements.size())
-				active_elements[pos] = EL_NONE;
+					return x == el->x && y == el->y;
+				});
 		}
 		delete elements_grid[idx];
 		elements_grid[idx] = EL_NONE;
@@ -293,46 +277,41 @@ void Simulation::destroy_element(int x, int y, bool dfa)
 	}
 }
 
-bool Simulation::add_element(Element * tba)
+bool Simulation::add_element(Element* tba)
 {
-	for (auto el : available_elements) 
+	// should think what to do about gol elements
+	// prob. should inherit the main gol class and be other types of elements
+	if (tba->identifier != EL_GOL)
 	{
-		if (tba->identifier != EL_GOL && tba->identifier == el->identifier)
-		{
-			return false;
-		}
+		return add_simObject(tba, available_elements);
 	}
-	available_elements.push_back(tba);
-	return true;
+	return false;
 }
 
-bool Simulation::add_brush(Brush * tba)
+bool Simulation::add_brush(Brush* tba)
 {
-	//for now its gonna be this, might add some more functionality later
-	brushes.push_back(tba);
-	return true;
+	return add_simObject(tba, brushes);
 }
 
 bool Simulation::add_tool(Tool * tba)
 {
-	tools.push_back(tba);
-	return true;
+	return add_simObject(tba, tools);
 }
 
 void Simulation::select_brush(int brushId)
 {
-	selected_brush = brushId;
+	selected_brush = find_brush_by_id(brushId);
 }
 
 void Simulation::select_element(int elementId)
 {
-	selected_tool = TL_SPWN;
+	selected_tool = find_tool_by_id(TL_SPWN);
 	selected_element = elementId;
 }
 
 void Simulation::select_tool(int toolId)
 {
-	selected_tool = toolId;
+	selected_tool = find_tool_by_id(toolId);
 	selected_element = -1;
 }
 
@@ -374,6 +353,33 @@ void Simulation::set_window_size(int window_w, int window_h)
 		mouse_calibrate();
 }
 
+bool Simulation::add_simObject(SimObject* object, std::list<SimObject*>& container)
+{
+	for (auto ob : container)
+	{
+		if (object->identifier == ob->identifier)
+		{
+			return false;
+		}
+	}
+	container.push_back(object);
+	return true;
+}
+
+SimObject * Simulation::find_simObject_byId(int id, std::list<SimObject*>& list)
+{
+	SimObject* match = nullptr;
+	for (auto ob : list)
+	{
+		if (ob->identifier == id)
+		{
+			match = ob;
+			break;
+		}
+	}
+	return match;
+}
+
 void Simulation::mouse_calibrate()
 {
 	if (cells_x_count && cells_y_count)
@@ -396,11 +402,10 @@ void Simulation::swap_elements(int x1, int y1, int x2, int y2)
 
 void Simulation::mouse_left_click()
 {
-	for (auto &off : brushes[selected_brush]->get_area())
+	for (auto &off : selected_brush->get_area())
 	{
-		Tool* tool = find_tool_by_id(selected_tool);
-		if(tool)
-			tool->do_action(mouse_cell_x + off.first, mouse_cell_y + off.second, selected_element, this, 1);
+		if(selected_tool)
+			selected_tool->do_action(mouse_cell_x + off.first, mouse_cell_y + off.second, selected_element, this, 1);
 	}
 }
 
@@ -419,7 +424,7 @@ void Simulation::set_mouse_coordinates(int x, int y)
 
 void Simulation::resize_brush(float d)
 {
-	brushes[selected_brush]->change_size(lrint(d));
+	selected_brush->change_size(lrint(d));
 }
 
 Simulation::Simulation(int x_count, int y_count, int window_w, int window_h, float base_g) :
@@ -436,9 +441,9 @@ Simulation::Simulation(int x_count, int y_count, int window_w, int window_h, flo
 	m_window_width(window_w)
 { 
 	mouse_calibrate();
-	selected_element = -1;
-	selected_tool = TL_SPWN;
-	selected_brush = 0;
+	selected_element = EL_NONE_ID;
+	selected_tool = nullptr;
+	selected_brush = nullptr;
 	air = new Air(this, 4, 295.15f, 4);
 	gravity = new Gravity(this, 10000, 25, 8, base_g, 1E-3f);
 	baseUI = new BaseUI();

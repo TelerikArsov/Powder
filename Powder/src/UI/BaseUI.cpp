@@ -43,7 +43,7 @@ void BaseUI::show_simulation_settings(Simulation* sim)
 		if (ImGui::CollapsingHeader("Simulation specific"))
 		{
 			ImGui::InputFloat("Scale", &(sim->scale), 0.01f, 1.0f);
-			ImGui::InputFloat("Heat coef", &(sim->heat_coef), 0.1, 1.f);
+			ImGui::InputFloat("Heat coef", &(sim->heat_coef), 0.1f, 1.f);
 			ImGui::Checkbox("Show element_menu", &show_em);
 			ImGui::Checkbox("Show simulation overlay", &show_so);
 			int cell_size[2] = { sim->cells_x_count, sim->cells_y_count };
@@ -163,14 +163,12 @@ void BaseUI::show_element_menu(Simulation* sim)
 		ImGui::BeginChildFrame(ImGui::GetID("brushes"), ImVec2(70, -1));
 		for (auto br : sim->brushes)
 		{
-			bool is_selected = (selected_br == i);
-			if (ImGui::Selectable(br->name.c_str(), is_selected))
+			int id = br->scrollable_display(i == selected_br);
+			if (id != -1)
 			{
+				sim->select_brush(id);
 				selected_br = i;
-				sim->select_brush(i);
 			}
-			if (is_selected)
-				ImGui::SetItemDefaultFocus();
 			i++;
 		}
 		ImGui::EndChildFrame();
@@ -183,39 +181,31 @@ void BaseUI::show_element_menu(Simulation* sim)
 		{
 			for (auto el : sim->available_elements)
 			{
-				bool is_selected = (selected_el == i);
-				ImGui::PushStyleColor(ImGuiCol_Text, el->color);
-				if (ImGui::Selectable(el->name.c_str(), is_selected))
+				int id = el->scrollable_display(i == selected_el);
+				if (id != -1)
 				{
-					selected_tl = -1;
+					sim->select_element(id);
 					selected_el = i;
-					sim->select_element(el->identifier);
+					selected_tl = -1;
 				}
-				if (is_selected)
-					ImGui::SetItemDefaultFocus();
 				i++;
-				ImGui::PopStyleColor();
 			}
 		}
 		i = 0;
 		if (ImGui::CollapsingHeader("Tools##header"))
 		{
-			for (auto el : sim->tools)
+			for (auto tl : sim->tools)
 			{
-				if (el->identifier != TL_SPWN)
+				if (tl->identifier != TL_SPWN)
 				{
-					bool is_selected = (selected_tl == i);
-					ImGui::PushStyleColor(ImGuiCol_Text, el->color);
-					if (ImGui::Selectable(el->name.c_str(), is_selected))
+					int id = tl->scrollable_display(i == selected_tl);
+					if (id != -1)
 					{
+						sim->select_tool(id);
 						selected_el = -1;
 						selected_tl = i;
-						sim->select_tool(el->identifier);
 					}
-					if (is_selected)
-						ImGui::SetItemDefaultFocus();
 					i++;
-					ImGui::PopStyleColor();
 				}
 			}
 		}

@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <list>
 
 #include "Element/Element.h"
 #include "Element/ElementsIds.h"
@@ -49,6 +50,7 @@ public:
 	int get_gol_neigh_count(int x, int y) const;
 	void set_gol_at(int x, int y, int val);
 	Element* find_by_id(int id);
+	Brush* find_brush_by_id(int id);
 	Tool* find_tool_by_id(int id);
 	// Updates the gol grid.
 	// Loops over all the active elements and calls their update method.
@@ -106,23 +108,25 @@ private:
 	int m_window_height, m_window_width;
 	// The identifier of the current selected element
 	int selected_element;
-	int selected_brush;
-	int selected_tool;
+	Brush* selected_brush;
+	Tool* selected_tool;
 	friend class BaseUI;
 	int mouse_x = 0, mouse_y = 0;
-	std::vector<Brush* > brushes;
-	std::vector<Tool*> tools;
 	std::vector<Element*> elements_grid;
 	// Used for GoL simulation
 	// 1 is alive 0 is dead, anything else varies
 	// of the specific GoL element
 	std::vector<int> gol_grid; 
 	// All the available elements that can be spawned
-	std::vector<Element*> available_elements;
+	std::list<SimObject*> available_elements;
+	std::list<SimObject*> brushes;
+	std::list<SimObject*> tools;
 	// All currently active elements inside the element grid
-	std::vector<Element*> active_elements;
+	std::list<Element*> active_elements;
 	// Elements that need to be added to the active list
-	std::vector<Element*> add_queue;
+	std::list<Element*> add_queue;
+	bool add_simObject(SimObject* object, std::list<SimObject*>& container);
+	SimObject* find_simObject_byId(int id, std::list<SimObject*>& list);
 	void mouse_calibrate();
 	sf::VertexArray draw_grid(std::vector<Vector> velocities, int cell_size, int  height, int width);
 };

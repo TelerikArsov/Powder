@@ -196,7 +196,7 @@ void Air::update_airh()
 					}
 				}
 			}
-			Vector t = Vector(x, y) - d * 0.7;
+			Vector t = Vector(x, y) - d * 0.7f;
 			int i = static_cast<int>(t.x);
 			int j = static_cast<int>(t.y);
 			t -= Vector(i, j);
