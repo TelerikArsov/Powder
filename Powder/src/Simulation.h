@@ -60,15 +60,16 @@ public:
 	// Loops over all the active elements and calls their render method.
 	// Renders the grid(NOT YET IMPLEMENTED) and the outline of the spawn area
 	void render(sf::RenderWindow* window);
-	bool create_element(int id, bool from_mouse, bool add_to_active, int idx);
-	// Creates element inside the grid
+	// Creates element inside the grid and returns a pointer towards it
 	//
 	// bool from_mouse = whether the creation is called by the mouse
 	// or from another existing element
 	// int id = the identifier of the element to be created
 	// bool add_to_active = whether the elements needs to be added to the active list
 	// int x, y = the position of the element in the grid
-	bool create_element(int id, bool from_mouse, bool add_to_active, int x, int y);
+	Element* create_element(int id, bool from_mouse, bool add_to_active, int x, int y);
+	Element* create_element(int id, bool from_mouse, bool add_to_active, int idx);
+	void transition_element(Element* el, int id);
 	void destroy_element(Element* destroyed, bool destroy_from_active = true);
 	void destroy_element(int x, int y, bool destroy_from_active = true);
 	void swap_elements(int x1, int y1, int x2, int y2);

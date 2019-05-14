@@ -24,6 +24,8 @@ enum ElementProperties : uint16_t
 	Burning = 1 << 10,
 	Igniter = 1 << 11,
 	Breakable = 1 << 12,
+	Extinguisher = 1 << 13,
+	Conductive = 1 << 14,
 	Destroyed = 1 << 15
 };
 
@@ -95,6 +97,7 @@ public:
 	float thermal_cond = 0;
 	float specific_heat_cap = 0;
 	float flammability = 1.f;
+	int previous_id = EL_NONE_ID;
 	int state = 0; // 0 - gas 1 - liquid 2 - powder 3 - solid  
 	ElementProperties prop = NoProperties;
 	// Moves the element across a line (the start of the line is the 
@@ -114,10 +117,10 @@ public:
 	virtual Element* clone() const = 0;
 	virtual ~Element();
 protected:
-	int low_pressure_transition = -1;		// To which element the current element
-	int high_pressure_transition = -1;		// will transfrom, based on the current
-	int low_temperature_transition = -1;	// physical state of the element
-	int high_temperature_transition = -1;	//
+	int low_pressure_transition = EL_NONE_ID;		// To which element the current element
+	int high_pressure_transition = EL_NONE_ID;		// will transfrom, based on the current
+	int low_temperature_transition = EL_NONE_ID;	// physical state of the element
+	int high_temperature_transition = EL_NONE_ID;	//
 	float low_pressure = -300.f;                  // Number values at which the 
 	float high_pressure = 300.f;					// transformation will occur
 	float low_temperature = -1.f;

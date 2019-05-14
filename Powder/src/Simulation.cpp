@@ -121,12 +121,12 @@ void Simulation::tick(bool bypass_pause, float dt)
 			if (!destroyed)
 			{
 				int id = el->update(dt);
-				int x = el->x, y = el->y;
 				if(id != el->identifier)
 				{	
-					destroy_element(el, false);
-					if(id != EL_NONE_ID)
-						create_element(id, false, false, x, y);
+					if (id != EL_NONE_ID)
+						transition_element(el, id);
+					else
+						destroy_element(el, false);
 					destroyed = true;
 				}
 			}
@@ -217,12 +217,12 @@ bool Simulation::bounds_check(int corr_x, int corr_y) const
 	return (corr_x >= 0 && corr_x < cells_x_count) && (corr_y >= 0 && corr_y < cells_y_count);
 }
 
-bool Simulation::create_element(int id, bool fm, bool ata, int idx)
+Element* Simulation::create_element(int id, bool fm, bool ata, int idx)
 {
 	return create_element(id, fm, ata, idx % cells_x_count, idx / cells_x_count);
 }
 
-bool Simulation::create_element(int id, bool fm, bool ata, int x, int y)
+Element* Simulation::create_element(int id, bool fm, bool ata, int x, int y)
 {
 	// If the element at the position is None_Element (id == 0)
 	if (bounds_check(x, y) && check_if_empty(x, y))
@@ -247,12 +247,24 @@ bool Simulation::create_element(int id, bool fm, bool ata, int x, int y)
 		elements_grid[idx] = new_element;
 		elements_count++;
 		gravity->update_mass(new_element->mass, x, y, -1, -1);
-		return true;
+		return new_element;
 	}
-	return false;
+	return EL_NONE;
+}
+// for now it will only set the previous id and temperature
+// of the new element
+void Simulation::transition_element(Element* el, int id)
+{
+	int x = el->x, y = el->y;
+	float temp = el->temperature;
+	int old_id = el->identifier;
+	destroy_element(x, y, false);
+	Element* tmp = create_element(id, false, false, x, y);
+	tmp->temperature = temp;
+	tmp->previous_id = old_id;
 }
 
-void Simulation::destroy_element(Element * destroyed, bool dfa)
+void Simulation::destroy_element(Element* destroyed, bool dfa)
 {
 	destroy_element(destroyed->x, destroyed->y, dfa);
 }
