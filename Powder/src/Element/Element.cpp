@@ -204,13 +204,6 @@ void Element::update_velocity(float dt)
 	a.ReverseY();
 	add_velocity(a * dt);
 	add_velocity(sim->air->get_force(x, y));
-	if ((prop & Tmp_velocity) == Tmp_velocity)
-	{
-		// cant really think of a proper way for this
-		// assuming that the normal temperature is 22 celsius
-		velocity *= std::clamp(temperature - 294.15f, 0.0f, 10000.0f);
-
-	}
 }
 
 void Element::set_pos(int x, int y, bool true_pos)
@@ -253,8 +246,7 @@ void Element::powder_pile()
 void Element::liquid_move()
 {
 	bool ground = (collided_elem == this);
-	Vector perp = (ground ? ground_coll - pos :
-		collided_elem->pos - pos).PerpendicularCW();
+	Vector perp = sim->gravity->get_force(x, y, 1).PerpendicularCW().Normalize();
 	bool side = random.next_bool();
 	perp = (side ? perp : -perp);
 	move(pos + perp);
@@ -312,6 +304,16 @@ bool Element::corrode(Element* coll_el)
 		coll_el->prop |= Destroyed;
 		life--;
 		res = true;
+	}
+	return res;
+}
+
+bool Element::extinguish(Element* coll_el)
+{
+	bool res = false;
+	if (coll_el != this && (coll_el->prop & Burning) == Burning)
+	{
+		coll_el->prop &= ~Burning;
 	}
 	return res;
 }
@@ -379,6 +381,10 @@ int Element::update(float dt)
 		move(pos + (velocity * dt) / sim->scale);
 		if (collision)
 		{
+			if ((prop & Extinguisher) == Extinguisher)
+				extinguish(collided_elem);
+			else if ((collided_elem->prop & Extinguisher) == Extinguisher)
+				collided_elem->extinguish(this);
 			apply_collision_impulse(collided_elem, dt);
 			if (state == ST_POWDER)
 			{

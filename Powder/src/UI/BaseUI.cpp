@@ -7,18 +7,12 @@ void BaseUI::draw(Simulation* sim)
 	if (show_em) show_element_menu(sim);
 	if (show_so) show_simulation_overlay(sim);
 	show_simulation_settings(sim);
-	int id = 0;
-	for (auto ed = el_editor_queue.begin(); ed != el_editor_queue.end();)
+	int id = -1;
+	el_editor_queue.remove_if([sim, &id](ElementEditor &ed) -> bool
 	{
-		if (!(*ed)->draw(id, sim))
-		{
-			delete (*ed);
-			ed = el_editor_queue.erase(ed);
-		}
-		else
-			++ed;
 		id++;
-	}
+		return !ed.draw(id, sim);
+	});
 }
 
 BaseUI::BaseUI() :
@@ -30,6 +24,7 @@ BaseUI::BaseUI() :
 
 BaseUI::~BaseUI()
 {
+	el_editor_queue.clear();
 }
 
 
@@ -67,7 +62,7 @@ void BaseUI::show_simulation_settings(Simulation* sim)
 			}
 			if (ImGui::Button("New element editor"))
 			{
-				el_editor_queue.push_back(new ElementEditor());
+				el_editor_queue.push_back(ElementEditor());
 			}
 		}
 		if (ImGui::CollapsingHeader("Gravity"))

@@ -283,6 +283,7 @@ void Simulation::destroy_element(int x, int y, bool dfa)
 					return x == el->x && y == el->y;
 				});
 		}
+		gravity->update_mass(elements_grid[idx]->mass, -1, -1, x, y);
 		delete elements_grid[idx];
 		elements_grid[idx] = EL_NONE;
 		elements_count--;
@@ -329,13 +330,13 @@ void Simulation::select_tool(int toolId)
 
 void Simulation::clear_field()
 {
-	for (auto& el : elements_grid)
+	for (int y = 0; y < cells_y_count; y++)
 	{
-		delete el;
-		el = EL_NONE;
+		for (int x = 0; x < cells_x_count; x++)
+		{
+			destroy_element(x, y);
+		}
 	}
-	active_elements.clear();
-	elements_count = 0;
 }
 
 void Simulation::set_cell_count(int x_count, int y_count)
@@ -398,6 +399,13 @@ void Simulation::mouse_calibrate()
 	{
 		m_cell_width = m_window_width / static_cast<float>(cells_x_count);
 		m_cell_height = m_window_height / static_cast<float>(cells_y_count);
+	}
+}
+void Simulation::delete_simObjects(std::list<SimObject*> container)
+{
+	for (auto el : container)
+	{
+		delete el;
 	}
 }
 void Simulation::swap_elements(int x1, int y1, int x2, int y2)
@@ -464,6 +472,9 @@ Simulation::Simulation(int x_count, int y_count, int window_w, int window_h, flo
 Simulation::~Simulation()
 {
 	clear_field();
+	delete_simObjects(available_elements);
+	delete_simObjects(tools);
+	delete_simObjects(brushes);
 	delete gravity;
 	delete air;
 	delete baseUI;

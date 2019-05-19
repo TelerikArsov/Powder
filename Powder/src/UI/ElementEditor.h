@@ -73,7 +73,6 @@ public:
 	void float_prop(float* prop, const char* label, float step, float step_fast, ElementEditorFlags flags = NoFlags);
 	void int_prop(int* prop, const char* label, int step, int step_fast, ElementEditorFlags flags = NoFlags);
 	void bool_prop(bool* prop, const char* labell, ElementEditorFlags flags = NoFlags);
-	void element_prop(Element* el, const char* label, ElementEditorFlags flags = NoFlags);
 	bool attach(Element* attacheble);
 	bool detach();
 	ElementEditor();

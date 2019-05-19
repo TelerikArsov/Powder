@@ -9,6 +9,7 @@ class Gravity
 {
 public:
 	Simulation* sim;
+	//GRAVITY CONSTANT 
 	float G;
 	float mass_th;
 	float base_g;
@@ -27,5 +28,7 @@ public:
 	Vector get_force(int x, int y, float mass);
 	Gravity(Simulation* sim, float mass_threshold, int distance_threshold, int cell_size, float base_g, float g);
 	~Gravity();
+private:
+	bool changed;
 };
 

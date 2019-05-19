@@ -129,5 +129,6 @@ private:
 	bool add_simObject(SimObject* object, std::list<SimObject*>& container);
 	SimObject* find_simObject_byId(int id, std::list<SimObject*>& list);
 	void mouse_calibrate();
+	void delete_simObjects(std::list<SimObject*> container);
 	sf::VertexArray draw_grid(std::vector<Vector> velocities, int cell_size, int  height, int width);
 };

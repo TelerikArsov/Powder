@@ -21,6 +21,7 @@ Water::Water(Simulation& sim)
 	specific_heat_cap = 4.19f;
 	endurance = 980;
 	state = ST_LIQUID;
+	prop = Extinguisher;
 	low_temperature = 273.15f;
 	low_temperature_transition = EL_ICE;
 	high_temperature = 373.f;

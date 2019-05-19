@@ -14,7 +14,6 @@ enum ElementProperties : uint16_t
 	// if no high_temperature_transition is set
 	// will use high_temperature for spontaneous combustion
 	Flammable = 1 << 2,
-	Tmp_velocity = 1 << 3,
 	Explosive = 1 << 4,
 	Explosive_Pressure = 1 << 5,
 	Corrosive = 1 << 6,
@@ -145,6 +144,7 @@ protected:
 	bool collision = false;
 	void burn();
 	bool ignite();
+	bool extinguish(Element* coll_el);
 	bool corrode(Element* coll_el);
 	void liquid_move();
 	void powder_pile();

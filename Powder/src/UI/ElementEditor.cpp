@@ -96,9 +96,6 @@ void ElementEditor::bool_prop(bool* prop, const char* l, ElementEditorFlags flag
 	process_flags_a(flags);
 }
 
-void ElementEditor::element_prop(Element* el, const char* label, ElementEditorFlags flags)
-{
-}
 
 bool ElementEditor::attach(Element* attacheble)
 {
