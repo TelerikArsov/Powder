@@ -5,40 +5,18 @@
 
 float Vector::Magnitude() const
 {
-	return sqrtf(x * x + y * y + z * z);
+	return sqrtf(x * x + y * y);
 }
 
-Vector& Vector::Rotate2D(float angle)
-{
-	float xr = x * cosf(angle) - y * sinf(angle);
-	float yr = y * sinf(angle) + y * cosf(angle);
-	x = xr;
-	y = yr;
-	return *this;
-}
 
 Vector Vector::PerpendicularCW()
 {
 	return Vector(y, -x);
 }
 
-Vector Vector::Cross(const Vector& u, const Vector& v)
-{
-	return Vector(u.y * v.z - u.z * v.y,
-				-u.x * v.z + u.z * v.x,
-				u.x * v.y - u.y * v.x);
-}
-
 Vector Vector::Normalize(const Vector& u)
 {
-	return Vector(u.x, u.y, u.z).Normalize();
-}
-
-float Vector::TripleScalarProduct(const Vector & u, const Vector & v, const Vector & w) const
-{
-	return float((u.x * (v.y * w.z - v.z * w.y)) + 
-				(u.y * (-v.x *w.z + v.z * w.x)) + 
-				(u.z * (v.x * w.y - v.y * w.x)));
+	return Vector(u.x, u.y).Normalize();
 }
 
 Vector& Vector::Normalize()
@@ -48,13 +26,10 @@ Vector& Vector::Normalize()
 		m = 1;     
 	x /= m;     
 	y /= m;     
-	z /= m;
 	if (fabs(x) < tol) 
 		x = 0.0f;     
 	if (fabs(y) < tol) 
-		y = 0.0f;     
-	if (fabs(z) < tol) 
-		z = 0.0f;
+		y = 0.0f;
 	return *this;
 }
 
@@ -62,7 +37,6 @@ Vector& Vector::Reverse()
 {
 	x = -x;
 	y = -y;
-	z = -z;
 	return *this;
 }
 
@@ -76,7 +50,6 @@ Vector& Vector::Zero()
 {
 	x = 0;
 	y = 0;
-	z = 0;
 	return *this;
 }
 
@@ -84,7 +57,6 @@ Vector& Vector::operator+=(const Vector& u)
 {
 	x += u.x;
 	y += u.y;
-	z += u.z;
 	return *this;
 }
 
@@ -92,7 +64,6 @@ Vector& Vector::operator-=(const Vector& u)
 {
 	x -= u.x;
 	y -= u.y;
-	z -= u.z;
 	return *this;
 }
 
@@ -102,7 +73,6 @@ Vector& Vector::operator=(const Vector& u)
 	{
 		x = u.x;
 		y = u.y;
-		z = u.z;
 	}
 	return *this;
 }
@@ -111,7 +81,6 @@ Vector& Vector::operator*=(const float s)
 {
 	x *= s;
 	y *= s;
-	z *= s;
 	return *this;
 }
 
@@ -119,13 +88,12 @@ Vector& Vector::operator/=(const float s)
 {
 	x /= s;
 	y /= s;
-	z /= s;
 	return *this;
 }
 
 Vector Vector::operator-() const
 {
-	return Vector(-x, -y, -z);
+	return Vector(-x, -y);
 }
 
 Vector operator+(Vector u, const Vector& v)
@@ -140,7 +108,7 @@ Vector operator-(Vector u, const Vector& v)
 
 float operator*(const Vector& u, const Vector& v)
 {
-	return u.x * v.x + u.y * v.y + u.z * v.z;
+	return u.x * v.x + u.y * v.y;
 }
 
 Vector operator*(Vector u, const float s)
