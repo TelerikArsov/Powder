@@ -21,9 +21,9 @@ Wood::Wood(Simulation& sim)
 	specific_heat_cap = 2.f;
 	endurance = 985;
 	state = ST_SOLID;
-	prop = Flammable | Life_dependant;
+	prop = Flammable | Life_Dependant;
 	flammability = 15.f;
-	spotaneous_combustion_tmp = 573.15f;
+	spontaneous_combustion_tmp = 573.15f;
 	life = 4000.f;
 	this->sim = &sim;
 }

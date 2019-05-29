@@ -35,6 +35,7 @@ int main()
 	sim.add_element(new Water(sim));
 	sim.add_element(new Wood(sim));
 	sim.add_element(new Wtrv(sim));
+	sim.add_element(new Metl(sim));
 	sim.add_brush(new CircleBrush());
 	sim.add_brush(new SquareBrush());
 	sim.add_tool(new SpawnTool());

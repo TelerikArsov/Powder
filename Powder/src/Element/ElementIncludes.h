@@ -13,6 +13,7 @@
 #include "Elements\Gun.h"
 #include "Elements\Ice.h"
 #include "Elements\Lava.h"
+#include "Elements\Metl.h"
 #include "Elements\Nitr.h"
 #include "Elements\Oil.h"
 #include "Elements\Sand.h"

@@ -14,17 +14,17 @@ enum ElementProperties : uint16_t
 	// if no high_temperature_transition is set
 	// will use high_temperature for spontaneous combustion
 	Flammable = 1 << 2,
+	Red_Glow = 1 << 3,
 	Explosive = 1 << 4,
 	Explosive_Pressure = 1 << 5,
 	Corrosive = 1 << 6,
 	Corrosive_Res = 1 << 7,
-	Life_dependant = 1 << 8,
-	Life_decay = 1 << 9,
+	Life_Dependant = 1 << 8,
+	Life_Decay = 1 << 9,
 	Burning = 1 << 10,
 	Igniter = 1 << 11,
 	Breakable = 1 << 12,
 	Extinguisher = 1 << 13,
-	Conductive = 1 << 14,
 	Destroyed = 1 << 15
 };
 
@@ -75,8 +75,6 @@ class Element :
 public:
 	Simulation* sim; // pointer to the Simulation the element currently is 
 	ElementEditor* editor = nullptr;
-	int menu_id = -1;		// Will be used in the ui 
-	int menu_section = -1;	//
 	int x = 0; // Current position in the grid of elements
 	int y = 0; //
 	Vector pos = Vector(0, 0);
@@ -124,7 +122,7 @@ protected:
 	float high_pressure = 300.f;					// transformation will occur
 	float low_temperature = -1.f;
 	float high_temperature = 10'000.f;
-	float spotaneous_combustion_tmp = 10'000.f;
+	float spontaneous_combustion_tmp = 10'000.f;
 	float melting_temperature = 10'000.f;
 	float br_pressure = 300.f;
 	// used by powders in the creation of piles

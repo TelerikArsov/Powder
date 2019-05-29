@@ -17,7 +17,7 @@ Gold::Gold(Simulation& sim)
 	mass = 10;
 	restitution = 0.f;
 	temperature = 295.15f;
-	thermal_cond = 314;
+	thermal_cond = 314.f;
 	specific_heat_cap = 0.13f;
 	endurance = 1000;
 	state = ST_SOLID;

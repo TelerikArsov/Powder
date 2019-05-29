@@ -22,10 +22,10 @@ Dust::Dust(Simulation& sim)
 	specific_heat_cap = 0.9f;
 	endurance = 30;
 	state = ST_POWDER;
-	prop = Flammable | Life_dependant;
+	prop = Flammable | Life_Dependant;
 	flammability = 40;
 	life = 2000.f;
-	spotaneous_combustion_tmp = 573.15f;
+	spontaneous_combustion_tmp = 573.15f;
 	this->sim = &sim;
 }
 

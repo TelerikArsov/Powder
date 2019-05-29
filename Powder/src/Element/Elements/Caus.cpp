@@ -15,6 +15,7 @@ Caus::Caus(Simulation& sim)
 	colors = { sf::Color(127, 254, 159) };
 	color = colors[0];
 	mass = 1.f;
+	life = 23;
 	gas_gravity = 0.f;
 	gas_pressure = 0.001f;
 	restitution = 1.f;
@@ -22,7 +23,7 @@ Caus::Caus(Simulation& sim)
 	thermal_cond = 0.05f;
 	specific_heat_cap = 1.54f;
 	state = ST_GAS;
-	prop = Corrosive | Igniter;
+	prop = Corrosive | Igniter | Life_Dependant;
 	this->sim = &sim;
 }
 

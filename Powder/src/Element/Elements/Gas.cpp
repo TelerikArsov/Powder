@@ -22,7 +22,7 @@ Gas::Gas(Simulation& sim)
 	thermal_cond = 0.02f;
 	specific_heat_cap = 2.34f;
 	state = ST_GAS;
-	prop = Flammable | Life_dependant;
+	prop = Flammable | Life_Dependant;
 	flammability = 600.f;
 	high_pressure = 6.f;
 	high_pressure_transition = EL_OIL;
@@ -32,7 +32,6 @@ Gas::Gas(Simulation& sim)
 Gas::Gas(const Gas& rhs)
 {
 	Element::element_copy(rhs);
-	life = static_cast<float>(random.between(100, 140));
 }
 
 

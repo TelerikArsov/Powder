@@ -20,7 +20,7 @@ Oil::Oil(Simulation& sim)
 	thermal_cond = 0.15f;
 	specific_heat_cap = 1.79f;
 	state = ST_LIQUID;
-	prop = Flammable | Life_dependant;
+	prop = Flammable | Life_Dependant;
 	flammability = 20;
 	life = 1000.f;
 	high_temperature = 333.f;

@@ -276,7 +276,6 @@ void Simulation::destroy_element(int x, int y, bool dfa)
 		int idx = IDX(x, y, cells_x_count);
 		if (dfa)
 		{
-			
 			active_elements.remove_if(
 				[x, y](Element* el) -> bool
 				{ 
@@ -361,9 +360,9 @@ void Simulation::set_cell_count(int x_count, int y_count)
 
 void Simulation::set_window_size(int window_w, int window_h)
 {
-		m_window_width = window_w;
-		m_window_height = window_h;
-		mouse_calibrate();
+	m_window_width = window_w;
+	m_window_height = window_h;
+	mouse_calibrate();
 }
 
 bool Simulation::add_simObject(SimObject* object, std::list<SimObject*>& container)

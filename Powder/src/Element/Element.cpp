@@ -3,6 +3,41 @@
 #include "Utils/Random.h"
 #include <math.h>
 
+void Element::element_copy(const Element & rhs)
+{
+	identifier = rhs.identifier;
+	name = rhs.name;
+	description = rhs.description;
+	colors = rhs.colors;
+	color = rhs.color;
+	set_pos(rhs.x, rhs.y, true);
+	gas_gravity = rhs.gas_gravity;
+	gas_pressure = rhs.gas_pressure;
+	mass = rhs.mass;
+	endurance = rhs.endurance;
+	life = rhs.life;
+	restitution = rhs.restitution;
+	pile_threshold = rhs.pile_threshold;
+	temperature = rhs.temperature;
+	thermal_cond = rhs.thermal_cond;
+	specific_heat_cap = rhs.specific_heat_cap;
+	state = rhs.state;
+	prop = rhs.prop;
+	low_pressure_transition = rhs.low_pressure_transition;		
+	high_pressure_transition = rhs.high_pressure_transition;
+	low_temperature_transition = rhs.low_temperature_transition;	
+	high_temperature_transition = rhs.high_temperature_transition;	
+	low_pressure = rhs.low_pressure;    
+	high_pressure = rhs.high_pressure;	
+	low_temperature = rhs.low_temperature;
+	high_temperature = rhs.high_temperature;
+	pile_threshold = rhs.pile_threshold;
+	flammability = rhs.flammability;
+	spontaneous_combustion_tmp = rhs.spontaneous_combustion_tmp;
+	melting_temperature = rhs.melting_temperature;
+	br_pressure = rhs.br_pressure;
+}
+
 void Element::move(Vector dest)
 {
 	collision = false;
@@ -47,43 +82,6 @@ void Element::move(Vector dest)
 		move_helper(x, y, dy, xStep, yStep, ddy, ddx, true);
 	}
 	sim->gravity->update_mass(mass, x, y, old_x, old_y);
-}
-
-void Element::element_copy(const Element & rhs)
-{
-	identifier = rhs.identifier;
-	name = rhs.name;
-	description = rhs.description;
-	colors = rhs.colors;
-	color = rhs.color;
-	menu_id = rhs.menu_id;
-	menu_section = rhs.menu_section;
-	set_pos(rhs.x, rhs.y, true);
-	gas_gravity = rhs.gas_gravity;
-	gas_pressure = rhs.gas_pressure;
-	mass = rhs.mass;
-	endurance = rhs.endurance;
-	life = rhs.life;
-	restitution = rhs.restitution;
-	pile_threshold = rhs.pile_threshold;
-	temperature = rhs.temperature;
-	thermal_cond = rhs.thermal_cond;
-	specific_heat_cap = rhs.specific_heat_cap;
-	state = rhs.state;
-	prop = rhs.prop;
-	low_pressure_transition = rhs.low_pressure_transition;		
-	high_pressure_transition = rhs.high_pressure_transition;
-	low_temperature_transition = rhs.low_temperature_transition;	
-	high_temperature_transition = rhs.high_temperature_transition;	
-	low_pressure = rhs.low_pressure;    
-	high_pressure = rhs.high_pressure;	
-	low_temperature = rhs.low_temperature;
-	high_temperature = rhs.high_temperature;
-	pile_threshold = rhs.pile_threshold;
-	flammability = rhs.flammability;
-	spotaneous_combustion_tmp = rhs.spotaneous_combustion_tmp;
-	melting_temperature = rhs.melting_temperature;
-	br_pressure = rhs.br_pressure;
 }
 
 void Element::move_helper(int xO, int yO, int d, int xStep, int yStep, int de, int dr, bool ytype)
@@ -245,8 +243,7 @@ void Element::powder_pile()
 
 void Element::liquid_move()
 {
-	bool ground = (collided_elem == this);
-	Vector perp = sim->gravity->get_force(x, y, 1).PerpendicularCW().Normalize();
+	Vector perp = Vector(collided_elem->x - x, collided_elem->y - y).PerpendicularCW();
 	bool side = random.next_bool();
 	perp = (side ? perp : -perp);
 	move(pos + perp);
@@ -353,12 +350,12 @@ void Element::add_heat(float heat)
 
 int Element::update(float dt)
 {
-	if (((prop & Life_dependant) == Life_dependant && life < 0) 
+	if (((prop & Life_Dependant) == Life_Dependant && life < 0) 
 		|| (prop & Destroyed) == Destroyed)
 	{
 			return EL_NONE_ID;
 	}
-	if ((prop & Life_decay) == Life_decay)
+	if ((prop & Life_Decay) == Life_Decay)
 		life--;
 	int to_be_destroyed = identifier;
 	moved = false;
@@ -415,7 +412,7 @@ int Element::update(float dt)
 		}
 	}
 	if ((prop & Burning) != Burning && (prop & Flammable) == Flammable
-		&& temperature > spotaneous_combustion_tmp)
+		&& temperature > spontaneous_combustion_tmp)
 		prop |= Burning;
 	if ((prop & Burning) == Burning)
 		burn();
@@ -449,14 +446,14 @@ int Element::update(float dt)
 		add_heat(heat * (hotter ? -1 : 1));
 		sim->air->add_heat(x, y, heat * (hotter ? 1 : -1));
 	}
-
+	// Kinda repeating code but this is here so explosions happen faster
 	if ((prop & Explosive) == Explosive)
 	{
 		for (int i = -1; i < 2; i++)
 			for (int j = -1; j < 2; j++)
 				if ((i || j)
 					&& sim->check_id(x + j, y + i, EL_FIRE)
-					&&(prop & Burning) != Burning &&
+					&& (prop & Burning) != Burning &&
 					random.chance(static_cast<int>(flammability), 1000))
 					prop |= Burning;
 	}
@@ -502,10 +499,28 @@ Element::~Element()
 
 void Element::render(float cell_height, float cell_width, sf::Vertex* quad)
 {
+	sf::Color draw_color = color;
+	if ((prop & Red_Glow) == Red_Glow)
+	{
+		Element* org = sim->find_by_id(identifier);
+		int high_temp = (org->high_temperature_transition != EL_NONE_ID) ? org->high_temperature : 1300;
+		if (org && temperature > (high_temp - 800.0f))
+		{
+			int r = draw_color.r, g = draw_color.g, b = draw_color.b;
+			float gradv = 3.1415 / (2 * high_temp - (high_temp - 800.0f));
+			int caddress = (temperature > high_temp) ? high_temp - (high_temp - 800.0f) : temperature - (high_temp - 800.0f);
+			r += static_cast<int>(sin(gradv * caddress) * 226);
+			g += static_cast<int>(sin(gradv * caddress * 4.55 + 3.14) * 34);
+			b += static_cast<int>(sin(gradv * caddress * 2.22 + 3.14) * 64);
+			draw_color.r = std::clamp(r, 0, 255);
+			draw_color.g = std::clamp(g, 0, 255);
+			draw_color.b = std::clamp(b, 0, 255);
+		}
+	}
 	for (int i = 0; i < 4; i++)
 	{
 		quad[i].position = sf::Vector2f((x + ((i == 1 || i == 2) ? 1 : 0)) * cell_width, 
 			(y + ((i == 2 || i == 3) ? 1 : 0)) * cell_height);
-		quad[i].color = color;
+		quad[i].color = draw_color;
 	}
 }

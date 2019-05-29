@@ -21,7 +21,7 @@ Fire::Fire(Simulation& sim)
 	temperature = 695.15f;
 	thermal_cond = 5;
 	specific_heat_cap = 1.f;
-	prop = Life_decay | Life_dependant | Igniter;
+	prop = Life_Decay | Life_Dependant | Igniter;
 	state = ST_GAS;
 	this->sim = &sim;
 }

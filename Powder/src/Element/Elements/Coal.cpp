@@ -21,9 +21,9 @@ Coal::Coal(Simulation& sim)
 	specific_heat_cap = 2.f;
 	endurance = 970;
 	state = ST_SOLID;
-	prop = Flammable | Life_dependant;
+	prop = Flammable | Life_Dependant | Red_Glow;
 	flammability = 20.f;
-	spotaneous_combustion_tmp = 422.04f;
+	spontaneous_combustion_tmp = 422.04f;
 	life = 6000.f;
 	this->sim = &sim;
 }

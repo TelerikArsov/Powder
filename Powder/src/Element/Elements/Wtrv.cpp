@@ -15,9 +15,9 @@ Wtrv::Wtrv(Simulation& sim)
 	colors = { sf::Color(160, 160, 255) };
 	color = colors[0];
 	mass = 1.f;
-	gas_gravity = -0.2f;
+	gas_gravity = -1.7f;
 	gas_pressure = 0.0003f;
-	restitution = 1.f;
+	restitution = 0.5f;
 	temperature = 374.15f;
 	thermal_cond = 0.0267f;
 	specific_heat_cap = 1.864f;
@@ -30,7 +30,6 @@ Wtrv::Wtrv(Simulation& sim)
 Wtrv::Wtrv(const Wtrv& rhs)
 {
 	Element::element_copy(rhs);
-	life = static_cast<float>(random.between(100, 140));
 }
 
 

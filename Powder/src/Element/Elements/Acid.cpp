@@ -15,13 +15,14 @@ Acid::Acid(Simulation& sim)
 	colors = { sf::Color(236, 84, 254) };
 	color = colors[0];
 	mass = 1;
+	life = 23;
 	restitution = 0.0f;
 	temperature = 293.15f;
 	thermal_cond = 0.013f;
 	specific_heat_cap = 0.795f;
 	endurance = 980;
 	state = ST_LIQUID;
-	prop = Corrosive | Igniter;
+	prop = Corrosive | Igniter | Life_Dependant;
 	this->sim = &sim;
 }
 
