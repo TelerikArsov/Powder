@@ -21,7 +21,7 @@ Metl::Metl(Simulation& sim)
 	specific_heat_cap = 0.45f;
 	endurance = 999;
 	state = ST_SOLID;
-	prop = Red_Glow | Meltable;
+	prop = Red_Glow;
 	high_temperature = 1237;
 	high_temperature_transition = EL_LAVA;
 	this->sim = &sim;
