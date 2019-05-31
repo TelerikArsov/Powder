@@ -42,8 +42,9 @@ bool ElementEditor::draw(int id, Simulation* sim)
 	return open;
 }
 
-void ElementEditor::string_prop(std::string* prop, const char* l, ElementEditorFlags flags)
+bool ElementEditor::string_prop(std::string* prop, const char* l, ElementEditorFlags flags)
 {
+	bool changed = false;
 	flags &= StringType;
 	label = l;
 	process_flags_b(flags);
@@ -53,47 +54,58 @@ void ElementEditor::string_prop(std::string* prop, const char* l, ElementEditorF
 	}
 	else
 	{
-		if ((flags & MultilineText) == MultilineText)
-			ImGui::InputTextMultiline(label, prop);
-		else
-			ImGui::InputText(label, prop);
+		if ((flags & MultilineText) == MultilineText
+		&& ImGui::InputTextMultiline(label, prop))
+			changed = true;
+		else if (ImGui::InputText(label, prop))
+			changed = true;
 	}
 	process_flags_a(flags);
+	return changed;
 }
 
-void ElementEditor::float_prop(float* prop, const char* l, float step, float step_fast, ElementEditorFlags flags)
+bool ElementEditor::float_prop(float* prop, const char* l, float step, float step_fast, ElementEditorFlags flags)
 {
+	bool changed = false;
 	flags &= NumericType;
 	label = l;
 	process_flags_b(flags);
-	if ((flags & DragNumeric) == DragNumeric)
-		ImGui::DragFloat(label, prop, step, step_fast);
-	else
-		ImGui::InputFloat(label, prop, step, step_fast);
+	if ((flags & DragNumeric) == DragNumeric
+	&& ImGui::DragFloat(label, prop, step, step_fast))
+		changed = true;
+	else if (ImGui::InputFloat(label, prop, step, step_fast))
+		changed = true;
 	process_flags_a(flags);
 	draw_plot(*prop, flags, -20, 20);
+	return changed;
 }
 
-void ElementEditor::int_prop(int* prop, const char* l, int step, int step_fast, ElementEditorFlags flags)
+bool ElementEditor::int_prop(int* prop, const char* l, int step, int step_fast, ElementEditorFlags flags)
 {
+	bool changed = false;
 	flags &= NumericType;
 	label = l;
 	process_flags_b(flags);
-	if ((flags & DragNumeric) == DragNumeric)
-		ImGui::DragInt(label, prop, static_cast<float>(step));
-	else
-		ImGui::InputInt(label, prop, step, step_fast);
+	if ((flags & DragNumeric) == DragNumeric
+	&& ImGui::DragInt(label, prop, static_cast<float>(step)))
+		changed = true;
+	else if (ImGui::InputInt(label, prop, step, step_fast))
+		changed = true;
 	process_flags_a(flags);
 	draw_plot(static_cast<float>(*prop), flags);
+	return changed;
 }
 
-void ElementEditor::bool_prop(bool* prop, const char* l, ElementEditorFlags flags)
+bool ElementEditor::bool_prop(bool* prop, const char* l, ElementEditorFlags flags)
 {
+	bool changed = false;
 	flags &= BoolType;
 	label = l;
 	process_flags_b(flags);
-	ImGui::Checkbox(label, prop);
+	if (ImGui::Checkbox(label, prop))
+		changed = true;
 	process_flags_a(flags);
+	return changed;
 }
 
 

@@ -17,6 +17,7 @@ int main()
 	// TODO make the generate script do this
 	sim.add_element(new GOL("WALL", "Wall rule" ,"s1/b1"));
 	sim.add_element(new Acid(sim));
+	sim.add_element(new BHOL(sim));
 	sim.add_element(new Brick(sim));
 	sim.add_element(new Caus(sim));
 	sim.add_element(new Coal(sim));
@@ -28,14 +29,15 @@ int main()
 	sim.add_element(new Gun(sim));
 	sim.add_element(new Ice(sim));
 	sim.add_element(new Lava(sim));
+	sim.add_element(new Metl(sim));
 	sim.add_element(new Nitr(sim));
 	sim.add_element(new Oil(sim));
 	sim.add_element(new Sand(sim));
 	sim.add_element(new Stone(sim));
 	sim.add_element(new Water(sim));
+	sim.add_element(new WHOL(sim));
 	sim.add_element(new Wood(sim));
 	sim.add_element(new Wtrv(sim));
-	sim.add_element(new Metl(sim));
 	sim.add_brush(new CircleBrush());
 	sim.add_brush(new SquareBrush());
 	sim.add_tool(new SpawnTool());
@@ -113,7 +115,7 @@ int main()
 		if (mouse_left_hold)
 		{
 			sim.mouse_left_click();
-			std::cout << sim.mouse_cell_x << " " << sim.mouse_cell_y << std::endl;
+			//std::cout << sim.mouse_cell_x << " " << sim.mouse_cell_y << std::endl;
 		}
 		sf::Time time = clock.restart();
 		elapsed = time.asSeconds();

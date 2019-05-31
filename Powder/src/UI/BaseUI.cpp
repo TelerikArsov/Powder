@@ -69,7 +69,11 @@ void BaseUI::show_simulation_settings(Simulation* sim)
 		{
 			ImGui::Checkbox("Neutownian gravity", &(sim->neut_grav));
 			ImGui::InputFloat("G", &(sim->gravity->G), 0.01f, 1.0f);
-			ImGui::InputFloat("Mass threshold", &(sim->gravity->mass_th), 1.0f, 100.0f);
+			float old_th = sim->gravity->mass_th;
+			if(ImGui::InputFloat("Mass threshold", &(sim->gravity->mass_th), 1.0f, 100.0f))
+			{
+				sim->gravity->set_mass_th(old_th);
+			}
 			if(ImGui::InputInt("Cell size", &(sim->gravity->cell_size), 1, 10))
 			{
 				sim->gravity->resize();

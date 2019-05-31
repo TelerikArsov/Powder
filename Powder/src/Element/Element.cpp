@@ -482,7 +482,12 @@ int Element::update(float dt)
 
 void Element::draw_ui()
 {
-	editor->float_prop(&mass, "mass", 1.0f, 10.0f);
+	float old_mass = mass;
+	if (editor->float_prop(&mass, "mass", 1.0f, 10.0f))
+	{
+		sim->gravity->update_mass(old_mass, -1, -1, x, y);
+		sim->gravity->update_mass(mass, x, y, -1, -1);
+	}
 	editor->float_prop(&speed, "speed", 1.0f, 10.0f, DrawLineGraph);
 	editor->int_prop(&endurance, "endurance", 1, 5);
 	editor->int_prop(&pile_threshold, "piling threshold", 1, 3);
@@ -503,12 +508,12 @@ void Element::render(float cell_height, float cell_width, sf::Vertex* quad)
 	if ((prop & Red_Glow) == Red_Glow)
 	{
 		Element* org = sim->find_by_id(identifier);
-		int high_temp = (org->high_temperature_transition != EL_NONE_ID) ? org->high_temperature : 1300;
+		float high_temp = (org->high_temperature_transition != EL_NONE_ID) ? org->high_temperature : 1300;
 		if (org && temperature > (high_temp - 800.0f))
 		{
 			int r = draw_color.r, g = draw_color.g, b = draw_color.b;
-			float gradv = 3.1415 / (2 * high_temp - (high_temp - 800.0f));
-			int caddress = (temperature > high_temp) ? high_temp - (high_temp - 800.0f) : temperature - (high_temp - 800.0f);
+			float gradv = 3.1415f / (2 * high_temp - (high_temp - 800.0f));
+			float caddress = (temperature > high_temp) ? high_temp - (high_temp - 800.0f) : temperature - (high_temp - 800.0f);
 			r += static_cast<int>(sin(gradv * caddress) * 226);
 			g += static_cast<int>(sin(gradv * caddress * 4.55 + 3.14) * 34);
 			b += static_cast<int>(sin(gradv * caddress * 2.22 + 3.14) * 64);

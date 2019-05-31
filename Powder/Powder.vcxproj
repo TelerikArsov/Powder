@@ -125,6 +125,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Element\Elements\BHOL.cpp" />
     <ClCompile Include="src\Element\Elements\Metl.cpp" />
     <ClCompile Include="src\SimObject.cpp" />
     <ClCompile Include="src\SimTool\Tools\PosP.cpp" />
@@ -172,8 +173,10 @@
     <ClCompile Include="src\Utils\Vector.cpp" />
     <ClCompile Include="src\Element\Elements\Water.cpp" />
     <ClCompile Include="src\Element\Elements\Wtrv.cpp" />
+    <ClCompile Include="src\Element\Elements\WHOL.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Element\Elements\BHOL.h" />
     <ClInclude Include="src\Element\Elements\Metl.h" />
     <ClInclude Include="src\SimObject.h" />
     <ClInclude Include="src\Element\ElementIncludes.h" />
@@ -221,6 +224,7 @@
     <ClInclude Include="src\Simulation.h" />
     <ClInclude Include="src\Element\Elements\Water.h" />
     <ClInclude Include="src\SimTool\Tool.h" />
+    <ClInclude Include="src\Element\Elements\WHOL.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Powder.rc" />

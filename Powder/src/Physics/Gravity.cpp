@@ -2,6 +2,15 @@
 #include "Simulation.h"
 #include <math.h>
 
+void Gravity::clear_field()
+{
+	for (auto& el : grav_grid)
+	{
+		el = Vector(0, 0);
+	}
+}
+
+
 void Gravity::resize()
 {
 	cell_size = std::clamp(cell_size, 1, 32);
@@ -17,7 +26,18 @@ void Gravity::set_baseG()
 {
 	base_grav = Vector(0, 1);
 	base_grav *= base_g;
-	update_grav(false);
+}
+
+void Gravity::set_mass_th(float old_th)
+{
+	active_cells.remove_if([this](int idx) -> bool {
+		return fabs(mass_grid[idx]) < mass_th;
+	});
+	for (size_t i = 0; i < mass_grid.size(); i++)
+		if (fabs(mass_grid[i]) < old_th &&
+			fabs(mass_grid[i]) >= mass_th)
+			active_cells.push_back(i);
+	changed = true;
 }
 
 void Gravity::update_mass(float mass, int new_x, int new_y, int old_x, int old_y)
@@ -33,8 +53,8 @@ void Gravity::update_mass(float mass, int new_x, int new_y, int old_x, int old_y
 	{
 		old_mass = mass_grid[n_id];
 		mass_grid[n_id] += mass;
-		if (old_mass < mass_th &&
-			mass_grid[n_id] >= mass_th)
+		if (fabs(old_mass) < mass_th &&
+			fabs(mass_grid[n_id]) >= mass_th)
 		{
 			active_cells.push_back(n_id);
 			changed = true;
@@ -44,8 +64,8 @@ void Gravity::update_mass(float mass, int new_x, int new_y, int old_x, int old_y
 	{
 		old_mass = mass_grid[o_id];
 		mass_grid[o_id] -= mass;
-		if (old_mass >= mass_th &&
-			mass_grid[o_id] < mass_th)
+		if (fabs(old_mass) >= mass_th &&
+			fabs(mass_grid[o_id]) < mass_th)
 		{
 			active_cells.remove(o_id);
 			changed = true;
@@ -53,44 +73,37 @@ void Gravity::update_mass(float mass, int new_x, int new_y, int old_x, int old_y
 	}
 }
 
-void Gravity::update_grav(bool neut_grav)
+void Gravity::update_grav()
 {
 	if (changed)
 	{
-		for (auto& el : grav_grid)
+		clear_field();
+		// o stands for orignal, n new
+		int oX, oY, nX, nY;
+		for (int el : active_cells)
 		{
-			el = base_grav;
-		}
-		if (neut_grav)
-		{
-			// o stands for orignal, n new
-			int oX, oY, nX, nY;
-			for (int el : active_cells)
+			oX = el % grid_width;
+			oY = el / grid_width;
+			for (int i = -dist_th; i <= dist_th; i++)
 			{
-				oX = el % grid_width;
-				oY = el / grid_width;
-				for (int i = -dist_th; i <= dist_th; i++)
+				for (int j = -dist_th; j <= dist_th; j++)
 				{
-					for (int j = -dist_th; j <= dist_th; j++)
+					int distance_sq = i * i + j * j;
+					if ((i != 0 || j != 0) && distance_sq <= dist_th * dist_th)
 					{
-						int distance_sq = i * i + j * j;
-						if ((i != 0 || j != 0) && distance_sq <= dist_th * dist_th)
-						{
-							nX = oX + j;
-							nY = oY + i;
-							if (nX < 0 || nX >= grid_width || nY < 0 || nY >= grid_height)
-								continue;
-							int other_cell_index = nX + nY * grid_width;
-							float distance_sqf = static_cast<float>(distance_sq);
-							// we multiply by cell_size because  distance is the distance between
-							// the gravavity cells not the simulation cells
-							grav_grid[other_cell_index] += Vector(oX - nX, oY - nY) * (G * mass_grid[el]) /
-								(distance_sqf * sqrtf(distance_sqf) * static_cast<float>(cell_size * cell_size * cell_size));
-						}
+						nX = oX + j;
+						nY = oY + i;
+						if (nX < 0 || nX >= grid_width || nY < 0 || nY >= grid_height)
+							continue;
+						int other_cell_index = nX + nY * grid_width;
+						float distance_sqf = static_cast<float>(distance_sq);
+						// we multiply by cell_size because  distance is the distance between
+						// the gravavity cells not the simulation cells
+						grav_grid[other_cell_index] += Vector(oX - nX, oY - nY) * mass_grid[el] /
+							(distance_sqf * sqrtf(distance_sqf) * static_cast<float>(cell_size * cell_size * cell_size));
 					}
 				}
 			}
-
 		}
 		changed = false;
 	}
@@ -98,7 +111,7 @@ void Gravity::update_grav(bool neut_grav)
 
 Vector Gravity::get_force(int x, int y, float mass)
 {
-	Vector force = grav_grid[x / cell_size + (y / cell_size * grid_width)];
+	Vector force = grav_grid[x / cell_size + (y / cell_size * grid_width)] * G + base_grav;
 	force.y = -force.y;
 	return force * mass;
 }
@@ -120,7 +133,7 @@ Gravity::Gravity(Simulation* sim, float mass_threshold, int distance_threshold, 
 	{
 		for (int j = 0; j < grid_width; j++)
 		{
-			grav_grid.push_back(base_grav);
+			grav_grid.push_back(Vector(0,0));
 		}
 	}
 }

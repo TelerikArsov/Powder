@@ -1,6 +1,7 @@
 #pragma once
 #include "ElementsIds.h"
 #include "Elements\Acid.h"
+#include "Elements\BHOL.h"
 #include "Elements\Brick.h"
 #include "Elements\Caus.h"
 #include "Elements\Coal.h"
@@ -19,5 +20,6 @@
 #include "Elements\Sand.h"
 #include "Elements\Stone.h"
 #include "Elements\Water.h"
+#include "Elements\WHOL.h"
 #include "Elements\Wood.h"
 #include "Elements\Wtrv.h"

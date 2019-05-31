@@ -134,11 +134,7 @@ void Simulation::tick(bool bypass_pause, float dt)
 		});
 	active_elements.splice(active_elements.end(), add_queue);
 	if (neut_grav)
-	{
-		//doesnt make much sense for now, but if we change the base gravity of the simulation
-		//we gotta update only with the new grav value, prob should be a method in grav class
-		gravity->update_grav(neut_grav);
-	}
+		gravity->update_grav();
 	air->update_air();
 	if (air->ambient_heat)
 		air->update_airh();

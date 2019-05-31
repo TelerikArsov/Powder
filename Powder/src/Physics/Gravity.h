@@ -21,10 +21,12 @@ public:
 	std::vector<Vector> grav_grid;
 	std::vector<float> mass_grid;
 	std::list<int> active_cells;
+	void clear_field();
 	void resize();
 	void set_baseG();
+	void set_mass_th(float old_th);
 	void update_mass(float mass, int new_x, int new_y, int old_x, int old_y);
-	void update_grav(bool neut_grav);
+	void update_grav();
 	Vector get_force(int x, int y, float mass);
 	Gravity(Simulation* sim, float mass_threshold, int distance_threshold, int cell_size, float base_g, float g);
 	~Gravity();
