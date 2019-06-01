@@ -23,7 +23,7 @@ public:
 	// Processes the rule string and fills the rules array
 	void process_rules();
 	int update(float dt) override;
-	void draw_ui() override;
+	virtual void draw_ui() override;
 	virtual ~GOL() = 0;
 };
 

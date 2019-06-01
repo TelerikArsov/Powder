@@ -75,6 +75,7 @@ public:
 	bool bool_prop(bool* prop, const char* labell, ElementEditorFlags flags = NoFlags);
 	bool attach(Element* attacheble);
 	bool detach();
+	ElementEditor(Element* attacheble);
 	ElementEditor();
 	~ElementEditor();
 private:

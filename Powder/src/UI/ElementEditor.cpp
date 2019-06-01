@@ -11,9 +11,9 @@ bool ElementEditor::draw(int id, Simulation* sim)
 	{
 		if (s_el != EL_NONE)
 		{
-			ImGui::Text("Selected %s element", s_el->name.c_str()); ImGui::SameLine();
-			ImGui::Text("Description %s ", s_el->description.c_str());
-			ImGui::Text("Velocity (%f, %f) ", s_el->velocity.x, s_el->velocity.y);
+			ImGui::Text("Selected: %s element, ", s_el->name.c_str()); ImGui::SameLine();
+			ImGui::Text("Description: %s,", s_el->description.c_str());
+			ImGui::Text("Velocity (%f, %f), ", s_el->velocity.x, s_el->velocity.y);
 			ImGui::Text("Pos (%d, %d), Real pos(%f, %f)", s_el->x, s_el->y,
 				s_el->pos.x, s_el->pos.y);
 			ImGui::Separator();
@@ -134,6 +134,12 @@ bool ElementEditor::detach()
 	return status;
 }
 
+ElementEditor::ElementEditor(Element* attacheble) :
+	ElementEditor()	
+{
+	attach(attacheble);
+}
+
 ElementEditor::ElementEditor() :
 	prop_count(0),
 	plot_count(0),
@@ -142,7 +148,6 @@ ElementEditor::ElementEditor() :
 	s_el(nullptr)
 {
 }
-
 
 ElementEditor::~ElementEditor()
 {

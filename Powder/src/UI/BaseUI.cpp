@@ -30,7 +30,7 @@ BaseUI::~BaseUI()
 
 void BaseUI::show_simulation_settings(Simulation* sim)
 {
-	ImGui::SetNextWindowPos(ImVec2(562, 11));
+	ImGui::SetNextWindowPos(ImVec2(562, 11), ImGuiCond_FirstUseEver);
 	ImGui::SetNextWindowSize(ImVec2(430, 295), ImGuiCond_FirstUseEver);
 	if (ImGui::Begin("Simulation settings", NULL))
 	{
@@ -46,13 +46,6 @@ void BaseUI::show_simulation_settings(Simulation* sim)
 			{
 				sim->set_cell_count(cell_size[0], cell_size[1]);
 			}
-			/* Still not sure if this should be here
-			int window_size[2] = { sim->window_width, sim->window_height };
-			if (ImGui::InputInt2("Window size (width, height)", window_size))
-			{
-				sim->set_window_size(window_size[0], window_size[1]);
-			}
-			*/
 			ImGui::RadioButton("No grid", &(sim->drav_grid), 0); ImGui::SameLine();
 			ImGui::RadioButton("Draw grav grid", &(sim->drav_grid), 1); ImGui::SameLine();
 			ImGui::RadioButton("Draw air grid", &(sim->drav_grid), 2);
@@ -111,7 +104,7 @@ void BaseUI::show_simulation_overlay(Simulation* sim)
 {
 	const float dist = 10.0f;
 
-	ImGui::SetNextWindowPos(ImVec2(dist, dist), ImGuiCond_Always, ImVec2(0.0f, 0.0f));
+	ImGui::SetNextWindowPos(ImVec2(dist, dist), ImGuiCond_FirstUseEver, ImVec2(0.0f, 0.0f));
 	ImGui::SetNextWindowBgAlpha(0.8f);
 	Element* hovered_el;
 	if (ImGui::Begin("Overlay", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav))
@@ -154,7 +147,7 @@ void BaseUI::show_simulation_overlay(Simulation* sim)
 
 void BaseUI::show_element_menu(Simulation* sim)
 {
-	ImGui::SetNextWindowPos(ImVec2(10, 58));
+	ImGui::SetNextWindowPos(ImVec2(10, 58), ImGuiCond_FirstUseEver);
 	ImGui::SetNextWindowSize(ImVec2(210, 200), ImGuiCond_FirstUseEver);
 	ImGui::SetNextWindowSizeConstraints(ImVec2(-1, 0), ImVec2(-1, FLT_MAX));
 	//ImGui::SetNextWindowContentSize(ImVec2(400, 0.0f));
@@ -169,9 +162,9 @@ void BaseUI::show_element_menu(Simulation* sim)
 		for (auto br : sim->brushes)
 		{
 			int id = br->scrollable_display(i == selected_br);
-			if (id != -1)
+			if (id == 0)
 			{
-				sim->select_brush(id);
+				sim->select_brush(br->identifier);
 				selected_br = i;
 			}
 			i++;
@@ -189,9 +182,16 @@ void BaseUI::show_element_menu(Simulation* sim)
 				int id = el->scrollable_display(i == selected_el);
 				if (id != -1)
 				{
-					sim->select_element(id);
-					selected_el = i;
-					selected_tl = -1;
+					if (id == 0)
+					{
+						sim->select_element(el->identifier);
+						selected_el = i;
+						selected_tl = -1;
+					}
+					else
+					{
+						el_editor_queue.emplace_back(static_cast<Element *>(el));
+					}
 				}
 				i++;
 			}
@@ -204,9 +204,9 @@ void BaseUI::show_element_menu(Simulation* sim)
 				if (tl->identifier != TL_SPWN)
 				{
 					int id = tl->scrollable_display(i == selected_tl);
-					if (id != -1)
+					if (id == 0)
 					{
-						sim->select_tool(id);
+						sim->select_tool(tl->identifier);
 						selected_el = -1;
 						selected_tl = i;
 					}

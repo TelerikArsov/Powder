@@ -493,7 +493,7 @@ void Element::draw_ui()
 	editor->int_prop(&pile_threshold, "piling threshold", 1, 3);
 	editor->float_prop(&temperature, "temperature", 0.1f, 1.0f);
 	editor->float_prop(&thermal_cond, "thermal conductivity", 0.01f, 1.0f);
-	editor->float_prop(&specific_heat_cap, "specific heat capacity", 0.01f, 1.0f, SameLineAfter);
+	editor->float_prop(&specific_heat_cap, "specific heat capacity", 0.01f, 1.0f);
 }
 
 Element::~Element()

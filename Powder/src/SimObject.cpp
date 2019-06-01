@@ -9,13 +9,17 @@ int SimObject::scrollable_display(bool selected)
 	ImGui::PushStyleColor(ImGuiCol_Text, color);
 	if (ImGui::Selectable(name.c_str(), selected))
 	{
-		id = identifier;
+		id = 0;
 	}
 	ImGui::PopStyleColor();
 	if (ImGui::IsItemHovered())
 	{
+		if (ImGui::IsMouseReleased(1))
+		{
+			id = 1;
+		}
 		ImGui::BeginTooltip();
-		ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+		ImGui::PushTextWrapPos(ImGui::GetFontSize() * 15.0f);
 		ImGui::TextUnformatted(description.c_str());
 		ImGui::PopTextWrapPos();
 		ImGui::EndTooltip();
