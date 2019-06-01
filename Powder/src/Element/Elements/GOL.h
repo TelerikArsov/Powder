@@ -12,7 +12,7 @@ public:
 	// S is followed by digits corresponding to the amount of cells
 	// E.G. S1234 means the cell will (S)urvive if surrounded by 1, 2, 3, or 4 alive cells
 	// B is followed by digits corresponding to the amount of cells
-	// E.G. B1234 means the cell will (B)orn if surrounded by 1, 2, 3, or 4 alive cells
+	// E.G. B1234 means the cell will be (B)orn if surrounded by 1, 2, 3, or 4 alive cells
 	// D is followed by one number
 	// E.G. D12 means that when the cell is about to die, 
 	// it instead lingers in a state that is not considered alive or dead for N generations
@@ -23,9 +23,7 @@ public:
 	// Processes the rule string and fills the rules array
 	void process_rules();
 	int update(float dt) override;
-	Element* clone() const override;
-	GOL(std::string name, std::string description, std::string rule_string);
-	GOL(const GOL& rhs);
-	~GOL();
+	void draw_ui() override;
+	virtual ~GOL() = 0;
 };
 

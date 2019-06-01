@@ -21,6 +21,7 @@ Brick::Brick(Simulation& sim)
 	specific_heat_cap = 1.f;
 	endurance = 999;
 	state = ST_SOLID;
+	prop = Red_Glow;
 	high_pressure = 8.8f;
 	high_pressure_transition = EL_STONE;
 	high_temperature = 1223.15f;

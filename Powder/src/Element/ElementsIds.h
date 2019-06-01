@@ -34,7 +34,8 @@ static inline int IDX(int x, int y, int w)
 #define EL_OIL 17
 #define EL_SAND 18
 #define EL_STONE 19
-#define EL_WATER 20
-#define EL_WHOL 21
-#define EL_WOOD 22
-#define EL_WTRV 23
+#define EL_WALL 20
+#define EL_WATER 21
+#define EL_WHOL 22
+#define EL_WOOD 23
+#define EL_WTRV 24

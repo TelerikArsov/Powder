@@ -76,27 +76,13 @@ int GOL::update(float dt)
 	return identifier;
 }
 
-Element * GOL::clone() const
+void GOL::draw_ui()
 {
-	return new GOL(*this);
-}
-//some values are missing as their usage is not yet implemented
-GOL::GOL(std::string name, std::string description, std::string rule_string)
-{
-	identifier = EL_GOL;
-	this->name = name;
-	this->description = description;
-	state = ST_SOLID;
-	this->rule_string = rule_string;
-	process_rules();
+	Element::draw_ui();
+	if (editor->string_prop(&rule_string, "GOL Rule"))
+		process_rules();
 }
 
-GOL::GOL(const GOL& rhs)
-{
-	Element::element_copy(rhs);
-	rule_string = rhs.rule_string;
-	process_rules();
-}
 
 GOL::~GOL()
 {

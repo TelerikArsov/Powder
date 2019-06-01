@@ -15,7 +15,7 @@ int main()
 	ImGui::SFML::Init(window);
 	Simulation sim(160, 90, WINDOW_WIDTH, WINDOW_HEIGHT, 9.8f);
 	// TODO make the generate script do this
-	sim.add_element(new GOL("WALL", "Wall rule" ,"s1/b1"));
+	sim.add_element(new WALL(sim));
 	sim.add_element(new Acid(sim));
 	sim.add_element(new BHOL(sim));
 	sim.add_element(new Brick(sim));

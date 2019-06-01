@@ -19,6 +19,7 @@
 #include "Elements\Oil.h"
 #include "Elements\Sand.h"
 #include "Elements\Stone.h"
+#include "Elements\WALL.h"
 #include "Elements\Water.h"
 #include "Elements\WHOL.h"
 #include "Elements\Wood.h"

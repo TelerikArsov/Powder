@@ -13,6 +13,7 @@ public:
 	float G;
 	float mass_th;
 	float base_g;
+	bool changed;
 	int dist_th;
 	int cell_size;
 	int grid_width;
@@ -30,7 +31,5 @@ public:
 	Vector get_force(int x, int y, float mass);
 	Gravity(Simulation* sim, float mass_threshold, int distance_threshold, int cell_size, float base_g, float g);
 	~Gravity();
-private:
-	bool changed;
 };
 

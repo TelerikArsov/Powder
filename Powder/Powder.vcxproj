@@ -174,6 +174,7 @@
     <ClCompile Include="src\Element\Elements\Water.cpp" />
     <ClCompile Include="src\Element\Elements\Wtrv.cpp" />
     <ClCompile Include="src\Element\Elements\WHOL.cpp" />
+    <ClCompile Include="src\Element\Elements\WALL.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Element\Elements\BHOL.h" />
@@ -225,6 +226,7 @@
     <ClInclude Include="src\Element\Elements\Water.h" />
     <ClInclude Include="src\SimTool\Tool.h" />
     <ClInclude Include="src\Element\Elements\WHOL.h" />
+    <ClInclude Include="src\Element\Elements\WALL.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Powder.rc" />

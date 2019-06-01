@@ -2,6 +2,14 @@
 #include "Simulation.h"
 #include "Utils/Random.h"
 
+int Lava::update(float dt)
+{
+	int id = Element::update(dt);
+	if (previous_id != EL_NONE_ID)
+		id = previous_id;
+	return id;
+}
+
 Element* Lava::clone() const
 {
 	return new Lava(*this);
