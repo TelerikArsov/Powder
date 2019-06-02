@@ -2,7 +2,7 @@
 #include "Simulation.h"
 #include "Utils/Random.h"
 
-Element* Dust::clone() const
+Element* Dust::clone_impl() const
 {
 	return new Dust(*this);
 }

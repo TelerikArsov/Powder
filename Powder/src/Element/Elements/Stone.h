@@ -4,9 +4,9 @@ class Stone :
 	public Element
 {
 public:
-	Element* clone() const override;
 	Stone(Simulation& sim);
 	Stone(const Stone& rhs);
 	~Stone();
+protected:
+	Element * clone_impl() const override;
 };
-

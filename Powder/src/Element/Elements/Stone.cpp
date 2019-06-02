@@ -2,7 +2,7 @@
 #include "Simulation.h"
 #include "Utils/Random.h"
 
-Element* Stone::clone() const
+Element* Stone::clone_impl() const
 {
 	return new Stone(*this);
 }

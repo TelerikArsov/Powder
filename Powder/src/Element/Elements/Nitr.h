@@ -4,9 +4,9 @@ class Nitr :
 	public Element
 {
 public:
-	Element * clone() const override;
 	Nitr(Simulation& sim);
 	Nitr(const Nitr& rhs);
 	~Nitr();
+protected:
+	Element * clone_impl() const override;
 };
-

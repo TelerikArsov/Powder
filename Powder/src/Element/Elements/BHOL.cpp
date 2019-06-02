@@ -2,7 +2,7 @@
 #include "Simulation.h"
 #include "Utils/Random.h"
 
-Element* BHOL::clone() const
+Element* BHOL::clone_impl() const
 {
 	return new BHOL(*this);
 }
@@ -14,7 +14,7 @@ BHOL::BHOL(Simulation& sim)
 	description = "Mass always equal to the mass threshold of the gravity.Needs newtonian gravity to work";
 	colors = { sf::Color(44, 44, 44) };
 	color = colors[0];
-	mass = sim.gravity->mass_th;
+	mass = sim.gravity.mass_th;
 	restitution = 0.f;
 	temperature = 295.15f;
 	thermal_cond = 1.f;

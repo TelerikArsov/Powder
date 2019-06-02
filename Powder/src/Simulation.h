@@ -25,9 +25,9 @@ public:
 	float heat_coef = 1.f; 
 	// power of 10, not sure how to make it only a power of 10 
 	float scale = 1.f;
-	Gravity* gravity;
-	Air* air;
-	BaseUI* baseUI;
+	Gravity gravity;
+	Air air;
+	BaseUI baseUI;
 	bool neut_grav = false;
 	// Set in the ui, used to know which grid to draw
 	// either none = 0, grav = 1, air = 2
@@ -38,9 +38,9 @@ public:
 	bool check_id(Vector cordinates, int id) const;
 	bool check_id(float x, float y, int id) const;
 	bool check_id(int x, int y, int id) const;
-	Element* get_from_grid(Vector cordinates) const;
-	Element* get_from_grid(float x, float y) const;
-	Element* get_from_grid(int x, int y) const;
+	std::shared_ptr<Element> get_from_grid(Vector cordinates) const;
+	std::shared_ptr<Element> get_from_grid(float x, float y) const;
+	std::shared_ptr<Element> get_from_grid(int x, int y) const;
 	int get_from_gol(Vector cordinates) const;
 	int get_from_gol(float x, float y) const;
 	int get_from_gol(int x, int y) const;
@@ -49,9 +49,9 @@ public:
 	// Uses the gol_grid
 	int get_gol_neigh_count(int x, int y) const;
 	void set_gol_at(int x, int y, int val);
-	Element* find_by_id(int id);
-	Brush* find_brush_by_id(int id);
-	Tool* find_tool_by_id(int id);
+	std::shared_ptr<Element> find_by_id(int id);
+	std::shared_ptr<Brush> find_brush_by_id(int id);
+	std::shared_ptr<Tool> find_tool_by_id(int id);
 	// Updates the gol grid.
 	// Loops over all the active elements and calls their update method.
 	// If the update method returns true, then the elements is deleted.
@@ -67,10 +67,10 @@ public:
 	// int id = the identifier of the element to be created
 	// bool add_to_active = whether the elements needs to be added to the active list
 	// int x, y = the position of the element in the grid
-	Element* create_element(int id, bool from_mouse, bool add_to_active, int x, int y);
-	Element* create_element(int id, bool from_mouse, bool add_to_active, int idx);
-	void transition_element(Element* el, int id);
-	void destroy_element(Element* destroyed, bool destroy_from_active = true);
+	std::shared_ptr<Element> create_element(int id, bool from_mouse, bool add_to_active, int x, int y);
+	std::shared_ptr<Element> create_element(int id, bool from_mouse, bool add_to_active, int idx);
+	void transition_element(const std::shared_ptr<Element> el, int id);
+	void destroy_element(const std::shared_ptr<Element> destroyed, bool destroy_from_active = true);
 	void destroy_element(int x, int y, bool destroy_from_active = true);
 	void swap_elements(int x1, int y1, int x2, int y2);
 	// Checks if the possition at x and y
@@ -87,9 +87,9 @@ public:
 	// Based on the currently used spawn area type the creation method is called
 	// Spanw area types include circle, square, triangle NOTE: currently only cirlce is implemented 
 	void resize_brush(float d);
-	bool add_element(Element*);
-	bool add_brush(Brush *);
-	bool add_tool(Tool *);
+	bool add_element(std::shared_ptr<Element>);
+	bool add_brush(std::shared_ptr<Brush>);
+	bool add_tool(std::shared_ptr<Tool>);
 	void select_brush(int brushId);
 	void select_element(int elementId);
 	void select_tool(int toolId);
@@ -109,26 +109,25 @@ private:
 	int m_window_height, m_window_width;
 	// The identifier of the current selected element
 	int selected_element;
-	Brush* selected_brush;
-	Tool* selected_tool;
+	std::weak_ptr<Brush> selected_brush;
+	std::weak_ptr<Tool> selected_tool;
 	friend class BaseUI;
 	int mouse_x = 0, mouse_y = 0;
-	std::vector<Element*> elements_grid;
+	std::vector<std::shared_ptr<Element>> elements_grid;
 	// Used for GoL simulation
 	// 1 is alive 0 is dead, anything else varies
 	// of the specific GoL element
 	std::vector<int> gol_grid; 
 	// All the available elements that can be spawned
-	std::list<SimObject*> available_elements;
-	std::list<SimObject*> brushes;
-	std::list<SimObject*> tools;
+	std::vector<std::shared_ptr<SimObject>> available_elements;
+	std::vector<std::shared_ptr<SimObject>> brushes;
+	std::vector<std::shared_ptr<SimObject>> tools;
 	// All currently active elements inside the element grid
-	std::list<Element*> active_elements;
+	std::vector<std::shared_ptr<Element>> active_elements;
 	// Elements that need to be added to the active list
-	std::list<Element*> add_queue;
-	bool add_simObject(SimObject* object, std::list<SimObject*>& container);
-	SimObject* find_simObject_byId(int id, std::list<SimObject*>& list);
+	std::vector<std::shared_ptr<Element>> add_queue;
+	bool add_simObject(std::shared_ptr<SimObject> object, std::vector<std::shared_ptr<SimObject>>& container);
+	std::shared_ptr<SimObject> find_simObject_byId(int id, std::vector<std::shared_ptr<SimObject>>& list);
 	void mouse_calibrate();
-	void delete_simObjects(std::list<SimObject*> container);
 	sf::VertexArray draw_grid(std::vector<Vector> velocities, int cell_size, int  height, int width);
 };

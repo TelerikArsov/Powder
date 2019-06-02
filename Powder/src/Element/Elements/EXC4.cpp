@@ -2,7 +2,7 @@
 #include "Simulation.h"
 #include "Utils/Random.h"
 
-Element* EXC4::clone() const
+Element* EXC4::clone_impl() const
 {
 	return new EXC4(*this);
 }

@@ -2,7 +2,7 @@
 #include "Simulation.h"
 #include "Utils/Random.h"
 
-Element* Metl::clone() const
+Element* Metl::clone_impl() const
 {
 	return new Metl(*this);
 }

@@ -4,9 +4,9 @@ class Water :
 	public Element
 {
 public:
-	Element* clone() const override;
 	Water(Simulation& sim);
 	Water(const Water& rhs);
 	~Water();
+protected:
+	Element * clone_impl() const override;
 };
-

@@ -2,7 +2,7 @@
 #include "Simulation.h"
 #include "Utils/Random.h"
 
-Element* Gun::clone() const
+Element* Gun::clone_impl() const
 {
 	return new Gun(*this);
 }

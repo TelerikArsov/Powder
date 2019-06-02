@@ -69,10 +69,10 @@ class ElementEditor
 public:
 	Element* s_el;
     bool draw(int id, Simulation* sim);
-	bool string_prop(std::string* prop, const char* label, ElementEditorFlags flags = NoFlags);
-	bool float_prop(float* prop, const char* label, float step, float step_fast, ElementEditorFlags flags = NoFlags);
-	bool int_prop(int* prop, const char* label, int step, int step_fast, ElementEditorFlags flags = NoFlags);
-	bool bool_prop(bool* prop, const char* labell, ElementEditorFlags flags = NoFlags);
+	bool string_prop(std::string& prop, const char* label, ElementEditorFlags flags = NoFlags);
+	bool float_prop(float& prop, const char* label, float step, float step_fast, ElementEditorFlags flags = NoFlags);
+	bool int_prop(int& prop, const char* label, int step, int step_fast, ElementEditorFlags flags = NoFlags);
+	bool bool_prop(bool& prop, const char* labell, ElementEditorFlags flags = NoFlags);
 	bool attach(Element* attacheble);
 	bool detach();
 	ElementEditor(Element* attacheble);

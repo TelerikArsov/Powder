@@ -4,8 +4,9 @@ class WHOL :
 	public Element
 {
 public:
-	Element * clone() const override;
 	WHOL(Simulation& sim);
 	WHOL(const WHOL& rhs);
 	~WHOL();
+protected:
+	Element * clone_impl() const override;
 };

@@ -2,7 +2,7 @@
 #include "Simulation.h"
 #include "Utils/Random.h"
 
-Element* WALL::clone() const
+Element* WALL::clone_impl() const
 {
 	return new WALL(*this);
 }

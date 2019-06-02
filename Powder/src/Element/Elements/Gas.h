@@ -4,9 +4,9 @@ class Gas :
 	public Element
 {
 public:
-	Element * clone() const override;
 	Gas(Simulation& sim);
 	Gas(const Gas& rhs);
 	~Gas();
+protected:
+	Element * clone_impl() const override;
 };
-

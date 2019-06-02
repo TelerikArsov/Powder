@@ -4,9 +4,10 @@ class Acid :
 	public Element
 {
 public:
-	Element * clone() const override;
 	Acid(Simulation& sim);
 	Acid(const Acid& rhs);
 	~Acid();
+protected:
+	Element* clone_impl() const override;
 };
 

@@ -2,7 +2,7 @@
 #include "Utils\Random.h"
 #include "Simulation.h"
 
-Element* Gas::clone() const
+Element* Gas::clone_impl() const
 {
 	return new Gas(*this);
 }

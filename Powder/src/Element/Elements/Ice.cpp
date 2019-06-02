@@ -2,7 +2,7 @@
 #include "Simulation.h"
 #include "Utils/Random.h"
 
-Element* Ice::clone() const
+Element* Ice::clone_impl() const
 {
 	return new Ice(*this);
 }

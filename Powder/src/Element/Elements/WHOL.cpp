@@ -2,7 +2,7 @@
 #include "Simulation.h"
 #include "Utils/Random.h"
 
-Element* WHOL::clone() const
+Element* WHOL::clone_impl() const
 {
 	return new WHOL(*this);
 }
@@ -14,7 +14,7 @@ WHOL::WHOL(Simulation& sim)
 	description = "Mass always equal to the negative of the mass threshold of the gravity. Needs newtonian gravity to work";
 	colors = { sf::Color::White };
 	color = colors[0];
-	mass = -sim.gravity->mass_th;
+	mass = -sim.gravity.mass_th;
 	restitution = 0.f;
 	temperature = 295.15f;
 	thermal_cond = 1.f;

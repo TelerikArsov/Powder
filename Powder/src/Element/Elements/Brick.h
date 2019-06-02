@@ -4,8 +4,9 @@ class Brick :
 	public Element
 {
 public:
-	Element * clone() const override;
 	Brick(Simulation& sim);
 	Brick(const Brick& rhs);
 	~Brick();
+protected:
+	Element * clone_impl() const override;
 };

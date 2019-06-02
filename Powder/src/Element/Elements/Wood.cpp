@@ -2,7 +2,7 @@
 #include "Simulation.h"
 #include "Utils/Random.h"
 
-Element* Wood::clone() const
+Element* Wood::clone_impl() const
 {
 	return new Wood(*this);
 }

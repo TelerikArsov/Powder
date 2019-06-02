@@ -2,7 +2,7 @@
 #include "Utils\Random.h"
 #include "Simulation.h"
 
-Element* Fire::clone() const
+Element* Fire::clone_impl() const
 {
 	return new Fire(*this);
 }

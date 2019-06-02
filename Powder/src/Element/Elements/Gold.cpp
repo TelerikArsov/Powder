@@ -2,7 +2,7 @@
 #include "Simulation.h"
 #include "Utils/Random.h"
 
-Element* Gold::clone() const
+Element* Gold::clone_impl() const
 {
 	return new Gold(*this);
 }

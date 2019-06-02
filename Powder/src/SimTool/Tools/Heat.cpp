@@ -3,8 +3,8 @@
 
 void HeatTool::do_action(int x, int y, int element_id, Simulation* sim, float strength)
 {
-	Element* el = sim->get_from_grid(x, y);
-	if(el)
+	std::shared_ptr<Element> el = sim->get_from_grid(x, y);
+	if(el != EL_NONE)
 		el->add_heat(strength * 10000);
 }
 

@@ -2,7 +2,7 @@
 #include "Simulation.h"
 #include "Utils/Random.h"
 
-Element* Coal::clone() const
+Element* Coal::clone_impl() const
 {
 	return new Coal(*this);
 }

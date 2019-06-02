@@ -4,15 +4,18 @@
 
 void BaseUI::draw(Simulation* sim)
 {
-	if (show_em) show_element_menu(sim);
-	if (show_so) show_simulation_overlay(sim);
-	show_simulation_settings(sim);
-	int id = -1;
-	el_editor_queue.remove_if([sim, &id](ElementEditor &ed) -> bool
+	if (sim)
 	{
-		id++;
-		return !ed.draw(id, sim);
-	});
+		if (show_em) show_element_menu(sim);
+		if (show_so) show_simulation_overlay(sim);
+		show_simulation_settings(sim);
+		int id = -1;
+		el_editor_queue.remove_if([sim, &id](ElementEditor &ed) -> bool
+		{
+			id++;
+			return !ed.draw(id, sim);
+		});
+	}
 }
 
 BaseUI::BaseUI() :
@@ -63,37 +66,37 @@ void BaseUI::show_simulation_settings(Simulation* sim)
 			if (ImGui::Checkbox("Neutownian gravity", &(sim->neut_grav)))
 			{
 				if (sim->neut_grav == false)
-					sim->gravity->clear_field();
+					sim->gravity.clear_field();
 				else
-					sim->gravity->changed = true;
+					sim->gravity.changed = true;
 			}
-			ImGui::InputFloat("G", &(sim->gravity->G), 0.01f, 1.0f);
-			float old_th = sim->gravity->mass_th;
-			if(ImGui::InputFloat("Mass threshold", &(sim->gravity->mass_th), 1.0f, 100.0f))
+			ImGui::InputFloat("G", &(sim->gravity.G), 0.01f, 1.0f);
+			float old_th = sim->gravity.mass_th;
+			if(ImGui::InputFloat("Mass threshold", &(sim->gravity.mass_th), 1.0f, 100.0f))
 			{
-				sim->gravity->set_mass_th(old_th);
+				sim->gravity.set_mass_th(old_th);
 			}
-			if(ImGui::InputInt("Cell size", &(sim->gravity->cell_size), 1, 10))
+			if(ImGui::InputInt("Cell size", &(sim->gravity.cell_size), 1, 10))
 			{
-				sim->gravity->resize();
+				sim->gravity.resize();
 			}
-			if (ImGui::InputFloat("Base gravity", &(sim->gravity->base_g), 0.01f, 0.1f))
+			if (ImGui::InputFloat("Base gravity", &(sim->gravity.base_g), 0.01f, 0.1f))
 			{
-				sim->gravity->set_baseG();
+				sim->gravity.set_baseG();
 			}
 		}
 		if (ImGui::CollapsingHeader("Air"))
 		{
-			ImGui::Combo("Air mode", &(sim->air->air_mode), "No update\0Pressure off\0Velocity off\0Off\0On\0\0");
-			ImGui::Checkbox("Ambient heat", &(sim->air->ambient_heat));
-			ImGui::InputFloat("Ambient air temperature", &(sim->air->amb_air_temp), 0.1f, 1.0f, "%.2f");
-			ImGui::InputFloat("Ambient air special heat coef", &(sim->air->air_shc), 0.001f, 0.01f);
-			ImGui::InputFloat("Ambient air thermal conductivity heat coef", &(sim->air->air_tc), 0.001f, 0.01f);
-			ImGui::InputFloat("Pressure time step", &(sim->air->air_tstepp), 0.01f, 0.1f);
-			ImGui::InputFloat("Velocity time step", &(sim->air->air_tstepv), 0.01f, 0.1f);
-			ImGui::InputFloat("Air advection coef", &(sim->air->air_vadv), 0.01f, 0.1f);
-			ImGui::InputFloat("Velocity loss", &(sim->air->air_vloss), 0.001f, 0.1f);
-			ImGui::InputFloat("Pressure loss", &(sim->air->air_ploss), 0.001f, 0.1f);
+			ImGui::Combo("Air mode", &(sim->air.air_mode), "No update\0Pressure off\0Velocity off\0Off\0On\0\0");
+			ImGui::Checkbox("Ambient heat", &(sim->air.ambient_heat));
+			ImGui::InputFloat("Ambient air temperature", &(sim->air.amb_air_temp), 0.1f, 1.0f, "%.2f");
+			ImGui::InputFloat("Ambient air special heat coef", &(sim->air.air_shc), 0.001f, 0.01f);
+			ImGui::InputFloat("Ambient air thermal conductivity heat coef", &(sim->air.air_tc), 0.001f, 0.01f);
+			ImGui::InputFloat("Pressure time step", &(sim->air.air_tstepp), 0.01f, 0.1f);
+			ImGui::InputFloat("Velocity time step", &(sim->air.air_tstepv), 0.01f, 0.1f);
+			ImGui::InputFloat("Air advection coef", &(sim->air.air_vadv), 0.01f, 0.1f);
+			ImGui::InputFloat("Velocity loss", &(sim->air.air_vloss), 0.001f, 0.1f);
+			ImGui::InputFloat("Pressure loss", &(sim->air.air_ploss), 0.001f, 0.1f);
 		}
 		ImGui::PopItemWidth();
 	}
@@ -109,7 +112,7 @@ void BaseUI::show_simulation_overlay(Simulation* sim)
 	Element* hovered_el;
 	if (ImGui::Begin("Overlay", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav))
 	{
-		hovered_el = sim->get_from_grid(sim->mouse_cell_x, sim->mouse_cell_y);
+		hovered_el = &*(sim->get_from_grid(sim->mouse_cell_x, sim->mouse_cell_y));
 		ImGui::Text("Mouse Position: (%d, %d), ", sim->mouse_cell_x,
 			sim->mouse_cell_y); ImGui::SameLine();
 		ImGui::Text("%s, ", sim->paused ? "Paused" : "Running"); ImGui::SameLine();
@@ -123,17 +126,17 @@ void BaseUI::show_simulation_overlay(Simulation* sim)
 		{
 			temperature = hovered_el->temperature;
 			name = hovered_el->name.c_str();
-			pressure = sim->air->get_pressure(hovered_el->x, hovered_el->y);
-			air_velocity = sim->air->get_force(hovered_el->x, hovered_el->y);
+			pressure = sim->air.get_pressure(hovered_el->x, hovered_el->y);
+			air_velocity = sim->air.get_force(hovered_el->x, hovered_el->y);
 		}
 		else 
 		{
-			temperature = sim->air->get_temperature(sim->mouse_cell_x, 
+			temperature = sim->air.get_temperature(sim->mouse_cell_x, 
 				sim->mouse_cell_y);
 			name = "None";
-			pressure = sim->air->get_pressure(sim->mouse_cell_x,
+			pressure = sim->air.get_pressure(sim->mouse_cell_x,
 				sim->mouse_cell_y);
-			air_velocity = sim->air->get_force(sim->mouse_cell_x,
+			air_velocity = sim->air.get_force(sim->mouse_cell_x,
 				sim->mouse_cell_y);
 		}
 		ImGui::Text("%s ", name); ImGui::SameLine();
@@ -190,7 +193,7 @@ void BaseUI::show_element_menu(Simulation* sim)
 					}
 					else
 					{
-						el_editor_queue.emplace_back(static_cast<Element *>(el));
+						el_editor_queue.emplace_back(static_cast<Element *>(&*el));
 					}
 				}
 				i++;

@@ -73,7 +73,7 @@ class Element :
 	public SimObject
 {
 public:
-	Simulation* sim; // pointer to the Simulation the element currently is 
+	Simulation* sim = nullptr; // pointer to the Simulation the element currently is 
 	ElementEditor* editor = nullptr;
 	int x = 0; // Current position in the grid of elements
 	int y = 0; //
@@ -97,21 +97,22 @@ public:
 	int previous_id = EL_NONE_ID;
 	int state = 0; // 0 - gas 1 - liquid 2 - powder 3 - solid  
 	ElementProperties prop = NoProperties;
+	void element_copy(const Element& rhs);
 	// Moves the element across a line (the start of the line is the 
 	// x and y of the element itself and the end is xDestination and yDestination)
 	// this function uses a modified version of bresenhams line algorithm
 	// return true if there is no collision 
-	void element_copy(const Element& rhs);
 	void move(Vector dest);
 	void update_velocity(float dt);
-	void set_pos(int x, int y, bool true_pos);
-	void apply_collision_impulse(Element* collided_elem, float dt);
+	void set_pos(int x, int y, bool true_pos = false);
+	void apply_collision_impulse(float dt);
 	void add_velocity(Vector nvelocity);
 	void add_heat(float heat);
 	virtual int update(float dt);
 	virtual void render(float cell_height, float cell_width, sf::Vertex* quad);
 	virtual void draw_ui();
-	virtual Element* clone() const = 0;
+	virtual void collision_response();
+	std::unique_ptr<Element> clone() const;
 	virtual ~Element();
 protected:
 	int low_pressure_transition = EL_NONE_ID;		// To which element the current element
@@ -137,15 +138,16 @@ protected:
 	// 0 - block; the element is blocked from moving further
 	// 1 - pass; both elements occupy the same space
 	// 2 - swap; the elements switch places
-	virtual int eval_col(Element* coll);
+	virtual int eval_col(Element* el);
 	void calc_loads();
 	bool collision = false;
 	void burn();
 	bool ignite();
-	bool extinguish(Element* coll_el);
-	bool corrode(Element* coll_el);
+	bool extinguish(Element* el);
+	bool corrode(Element* el);
 	void liquid_move();
 	void powder_pile();
+	virtual Element* clone_impl() const = 0;
 private:
 	void move_helper(int xO, int yO, int d, int xStep, int yStep, int de, int dr, bool ytype);
 	void do_move(int diff_x, int diff_y);

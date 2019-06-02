@@ -4,9 +4,9 @@ class Ice :
 	public Element
 {
 public:
-	Element * clone() const override;
 	Ice(Simulation& sim);
 	Ice(const Ice& rhs);
 	~Ice();
+protected:
+	Element * clone_impl() const override;
 };
-

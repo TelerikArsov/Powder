@@ -4,7 +4,7 @@
 void PosPTool::do_action(int x, int y, int element_id, Simulation* sim, float strength)
 {
 	if (sim->bounds_check(x, y))
-		sim->air->add_pressure(x, y, strength * 0.1f);
+		sim->air.add_pressure(x, y, strength * 0.1f);
 }
 
 PosPTool::PosPTool()

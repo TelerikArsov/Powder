@@ -2,7 +2,7 @@
 #include "Simulation.h"
 #include "Utils/Random.h"
 
-Element* Water::clone() const
+Element* Water::clone_impl() const
 {
 	return new Water(*this);
 }

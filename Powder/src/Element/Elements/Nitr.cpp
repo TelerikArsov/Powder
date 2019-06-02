@@ -2,7 +2,7 @@
 #include "Simulation.h"
 #include "Utils/Random.h"
 
-Element* Nitr::clone() const
+Element* Nitr::clone_impl() const
 {
 	return new Nitr(*this);
 }

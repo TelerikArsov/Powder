@@ -39,19 +39,19 @@ bool Simulation::check_id(int x, int y, int id) const
 	return res;
 }
 
-Element* Simulation::get_from_grid(Vector cordinates) const
+std::shared_ptr<Element> Simulation::get_from_grid(Vector cordinates) const
 {
 	return get_from_grid(cordinates.x, cordinates.y);
 }
 
-Element* Simulation::get_from_grid(float x, float y) const
+std::shared_ptr<Element> Simulation::get_from_grid(float x, float y) const
 { 
 	return get_from_grid(static_cast<int>(floor(x)), static_cast<int>(floor(y)));
 }
 
-Element* Simulation::get_from_grid(int x, int y) const
+std::shared_ptr<Element> Simulation::get_from_grid(int x, int y) const
 {
-	Element* res = nullptr;
+	std::shared_ptr<Element> res = nullptr;
 	if (bounds_check(x, y))
 		res = elements_grid[IDX(x, y, cells_x_count)];
 	return res;
@@ -81,24 +81,24 @@ void Simulation::set_gol_at(int x, int y, int val)
 		gol_grid[IDX(x, y, cells_x_count)] = val;
 }
 
-Element* Simulation::find_by_id(int id)
+std::shared_ptr<Element> Simulation::find_by_id(int id)
 {
-	Element* match = nullptr;
-	match = static_cast<Element *>(find_simObject_byId(id, available_elements));
+	std::shared_ptr<Element> match = nullptr;
+	match = std::dynamic_pointer_cast<Element>(find_simObject_byId(id, available_elements));
 	return match;
 }
 
-Brush* Simulation::find_brush_by_id(int id)
+std::shared_ptr<Brush> Simulation::find_brush_by_id(int id)
 {
-	Brush* match = nullptr;
-	match = static_cast<Brush *>(find_simObject_byId(id, brushes));
+	std::shared_ptr<Brush> match = nullptr;
+	match = std::dynamic_pointer_cast<Brush>(find_simObject_byId(id, brushes));
 	return match;
 }
 
-Tool* Simulation::find_tool_by_id(int id)
+std::shared_ptr<Tool> Simulation::find_tool_by_id(int id)
 {
-	Tool* match = nullptr;
-	match = static_cast<Tool *>(find_simObject_byId(id, tools));
+	std::shared_ptr<Tool> match = nullptr;
+	match = std::dynamic_pointer_cast<Tool>(find_simObject_byId(id, tools));
 	return match;
 }
 
@@ -115,7 +115,9 @@ void Simulation::tick(bool bypass_pause, float dt)
 		}
 	}
 
-	active_elements.remove_if([this, dt](Element* el) -> bool
+	active_elements.erase(
+		std::remove_if(active_elements.begin(), active_elements.end(), 
+		[this, dt](std::shared_ptr<Element> const& el) -> bool
 		{
 			bool destroyed = el == EL_NONE;
 			if (!destroyed)
@@ -131,18 +133,24 @@ void Simulation::tick(bool bypass_pause, float dt)
 				}
 			}
 			return destroyed;
-		});
-	active_elements.splice(active_elements.end(), add_queue);
+		}), 
+		active_elements.end()
+	);
+	for (auto& add_el : add_queue)
+	{
+		active_elements.push_back(add_el);
+	}
+	add_queue.clear();
 	if (neut_grav)
-		gravity->update_grav();
-	air->update_air();
-	if (air->ambient_heat)
-		air->update_airh();
+		gravity.update_grav();
+	air.update_air();
+	if (air.ambient_heat)
+		air.update_airh();
 }
 
 void Simulation::render(sf::RenderWindow* window)
 {
-	baseUI->draw(this);
+	baseUI.draw(this);
 	sf::VertexArray cells_vertices(sf::Quads, active_elements.size() * 4);
 	if (active_elements.size() > 0)
 	{
@@ -160,29 +168,32 @@ void Simulation::render(sf::RenderWindow* window)
 	if (drav_grid)
 	{
 		if(drav_grid == 1)
-			window->draw(draw_grid(gravity->grav_grid, gravity->cell_size, gravity->grid_height, gravity->grid_width));
+			window->draw(draw_grid(gravity.grav_grid, gravity.cell_size, gravity.grid_height, gravity.grid_width));
 		if(drav_grid == 2)
-			window->draw(draw_grid(air->velocity, air->cell_size, air->grid_height, air->grid_width));
+			window->draw(draw_grid(air.velocity, air.cell_size, air.grid_height, air.grid_width));
 
 	}
 	sf::Vertex quad[4];
 	// Only the outline is rendered
-	for (auto &off : selected_brush->get_outline()) 
+	if (auto sp_sb = selected_brush.lock())
 	{
-		int x = (mouse_cell_x + off.first);
-		int y = (mouse_cell_y + off.second);
-		quad[0].position = sf::Vector2f(x * cell_width, y * cell_height);				// this whole section should be in
-		quad[1].position = sf::Vector2f((x + 1) * cell_width, y * cell_height);			// some kind of method (draw_rect: color, x, y, cell_sizes)
-		quad[2].position = sf::Vector2f((x + 1) * cell_width, (y + 1) * cell_height);	// same thing is used in the element draw
-		quad[3].position = sf::Vector2f(x * cell_width, (y + 1) * cell_height);
+		for (auto &off : sp_sb->get_outline()) 
+		{
+			int x = (mouse_cell_x + off.first);
+			int y = (mouse_cell_y + off.second);
+			quad[0].position = sf::Vector2f(x * cell_width, y * cell_height);				// this whole section should be in
+			quad[1].position = sf::Vector2f((x + 1) * cell_width, y * cell_height);			// some kind of method (draw_rect: color, x, y, cell_sizes)
+			quad[2].position = sf::Vector2f((x + 1) * cell_width, (y + 1) * cell_height);	// same thing is used in the element draw
+			quad[3].position = sf::Vector2f(x * cell_width, (y + 1) * cell_height);
 
-		quad[0].color = sf::Color(192, 192, 192); // hard coded should be part of the brush class
-		quad[1].color = sf::Color(192, 192, 192);
-		quad[2].color = sf::Color(192, 192, 192);
-		quad[3].color = sf::Color(192, 192, 192);
-		for(int i = 0; i < 4; i++)
-			cells_vertices.append(quad[i]);
-	} 
+			quad[0].color = sf::Color(192, 192, 192); // hard coded should be part of the brush class
+			quad[1].color = sf::Color(192, 192, 192);
+			quad[2].color = sf::Color(192, 192, 192);
+			quad[3].color = sf::Color(192, 192, 192);
+			for(int i = 0; i < 4; i++)
+				cells_vertices.append(quad[i]);
+		} 
+	}
 	window->draw(cells_vertices);
 }
 
@@ -213,25 +224,25 @@ bool Simulation::bounds_check(int corr_x, int corr_y) const
 	return (corr_x >= 0 && corr_x < cells_x_count) && (corr_y >= 0 && corr_y < cells_y_count);
 }
 
-Element* Simulation::create_element(int id, bool fm, bool ata, int idx)
+std::shared_ptr<Element> Simulation::create_element(int id, bool fm, bool ata, int idx)
 {
 	return create_element(id, fm, ata, idx % cells_x_count, idx / cells_x_count);
 }
 
-Element* Simulation::create_element(int id, bool fm, bool ata, int x, int y)
+std::shared_ptr<Element> Simulation::create_element(int id, bool fm, bool ata, int x, int y)
 {
 	// If the element at the position is None_Element (id == 0)
 	if (bounds_check(x, y) && check_if_empty(x, y))
 	{
 		int idx = IDX(x, y, cells_x_count);
-		Element* new_element;
-		Element* tmp;
+		std::shared_ptr<Element> new_element;
+		std::shared_ptr<Element> tmp;
 		id = fm ? selected_element : id;
 		tmp = find_by_id(id);
 		if (tmp)
-			new_element = tmp->clone();
+			new_element = std::move(tmp->clone());
 		else
-			return false;
+			return EL_NONE;
 		new_element->set_pos(x, y, true);
 		new_element->sim = this;
 
@@ -242,25 +253,25 @@ Element* Simulation::create_element(int id, bool fm, bool ata, int x, int y)
 
 		elements_grid[idx] = new_element;
 		elements_count++;
-		gravity->update_mass(new_element->mass, x, y, -1, -1);
+		gravity.update_mass(new_element->mass, x, y, -1, -1);
 		return new_element;
 	}
 	return EL_NONE;
 }
 // for now it will only set the previous id and temperature
 // of the new element
-void Simulation::transition_element(Element* el, int id)
+void Simulation::transition_element(const std::shared_ptr<Element> el, int id)
 {
 	int x = el->x, y = el->y;
 	float temp = el->temperature;
 	int old_id = el->identifier;
 	destroy_element(x, y, false);
-	Element* tmp = create_element(id, false, false, x, y);
+	std::shared_ptr<Element> tmp = create_element(id, false, false, x, y);
 	tmp->temperature = temp;
 	tmp->previous_id = old_id;
 }
 
-void Simulation::destroy_element(Element* destroyed, bool dfa)
+void Simulation::destroy_element(const std::shared_ptr<Element> destroyed, bool dfa)
 {
 	destroy_element(destroyed->x, destroyed->y, dfa);
 }
@@ -272,20 +283,20 @@ void Simulation::destroy_element(int x, int y, bool dfa)
 		int idx = IDX(x, y, cells_x_count);
 		if (dfa)
 		{
-			active_elements.remove_if(
-				[x, y](Element* el) -> bool
-				{ 
-					return x == el->x && y == el->y;
-				});
+			for (auto& el : active_elements)
+				if (el != EL_NONE && el->x == x && el->y == y)
+				{
+					el = EL_NONE;
+					break;
+				}
 		}
-		gravity->update_mass(elements_grid[idx]->mass, -1, -1, x, y);
-		delete elements_grid[idx];
+		gravity.update_mass(elements_grid[idx]->mass, -1, -1, x, y);
 		elements_grid[idx] = EL_NONE;
 		elements_count--;
 	}
 }
 
-bool Simulation::add_element(Element* tba)
+bool Simulation::add_element(std::shared_ptr<Element> tba)
 {
 	// should think what to do about gol elements
 	// prob. should inherit the main gol class and be other types of elements
@@ -296,12 +307,12 @@ bool Simulation::add_element(Element* tba)
 	return false;
 }
 
-bool Simulation::add_brush(Brush* tba)
+bool Simulation::add_brush(std::shared_ptr<Brush> tba)
 {
 	return add_simObject(tba, brushes);
 }
 
-bool Simulation::add_tool(Tool * tba)
+bool Simulation::add_tool(std::shared_ptr<Tool> tba)
 {
 	return add_simObject(tba, tools);
 }
@@ -344,10 +355,8 @@ void Simulation::set_cell_count(int x_count, int y_count)
 		cells_y_count = y_count;
 		gol_grid.resize(x_count * y_count);
 		elements_grid.assign(x_count * y_count, EL_NONE);
-		if(air)
-			air->resize();
-		if(gravity)
-			gravity->resize();
+		air.resize();
+		gravity.resize();
 		cell_width = window_width / static_cast<float>(x_count);
 		cell_height = window_height / static_cast<float>(y_count);
 		mouse_calibrate();
@@ -361,7 +370,7 @@ void Simulation::set_window_size(int window_w, int window_h)
 	mouse_calibrate();
 }
 
-bool Simulation::add_simObject(SimObject* object, std::list<SimObject*>& container)
+bool Simulation::add_simObject(std::shared_ptr<SimObject> object, std::vector<std::shared_ptr<SimObject>>& container)
 {
 	for (auto ob : container)
 	{
@@ -374,10 +383,10 @@ bool Simulation::add_simObject(SimObject* object, std::list<SimObject*>& contain
 	return true;
 }
 
-SimObject * Simulation::find_simObject_byId(int id, std::list<SimObject*>& list)
+std::shared_ptr<SimObject> Simulation::find_simObject_byId(int id, std::vector<std::shared_ptr<SimObject>>& vector)
 {
-	SimObject* match = nullptr;
-	for (auto ob : list)
+	std::shared_ptr<SimObject> match = nullptr;
+	for (auto& ob : vector)
 	{
 		if (ob->identifier == id)
 		{
@@ -396,31 +405,27 @@ void Simulation::mouse_calibrate()
 		m_cell_height = m_window_height / static_cast<float>(cells_y_count);
 	}
 }
-void Simulation::delete_simObjects(std::list<SimObject*> container)
-{
-	for (auto el : container)
-	{
-		delete el;
-	}
-}
 void Simulation::swap_elements(int x1, int y1, int x2, int y2)
 {
 	//Prob will add more stuff then just this but for now...
 	int idx1 = IDX(x1, y1, cells_x_count), idx2 = IDX(x2, y2, cells_x_count);
-	Element* tmp = elements_grid[idx2];
-	elements_grid[idx2] = elements_grid[idx1];
-	elements_grid[idx1] = tmp;
-	elements_grid[idx2]->set_pos(x2, y2, false);
-	elements_grid[idx1]->set_pos(x1, y1, false);
+	elements_grid[idx2].swap(elements_grid[idx1]);
+	if(elements_grid[idx2] != EL_NONE)
+		elements_grid[idx2]->set_pos(x2, y2, false);
+	if(elements_grid[idx1] != EL_NONE)
+		elements_grid[idx1]->set_pos(x1, y1, false);
 }
 
 
 void Simulation::mouse_left_click()
 {
-	for (auto &off : selected_brush->get_area())
+	if (auto ss_b = selected_brush.lock())
 	{
-		if(selected_tool)
-			selected_tool->do_action(mouse_cell_x + off.first, mouse_cell_y + off.second, selected_element, this, 1);
+		for (auto& off : ss_b->get_area())
+		{
+			if(auto sp_st = selected_tool.lock())
+				sp_st->do_action(mouse_cell_x + off.first, mouse_cell_y + off.second, selected_element, this, 1);
+		}
 	}
 }
 
@@ -439,7 +444,7 @@ void Simulation::set_mouse_coordinates(int x, int y)
 
 void Simulation::resize_brush(float d)
 {
-	selected_brush->change_size(lrint(d));
+	selected_brush.lock()->change_size(lrint(d));
 }
 
 Simulation::Simulation(int x_count, int y_count, int window_w, int window_h, float base_g) :
@@ -453,26 +458,18 @@ Simulation::Simulation(int x_count, int y_count, int window_w, int window_h, flo
 	window_height(window_h),
 	window_width(window_w),
 	m_window_height(window_h),
-	m_window_width(window_w)
+	m_window_width(window_w),
+	air(this, 4, 295.15f, 4),
+	gravity(this, 10000, 25, 8, base_g, 1E-3f),
+	baseUI()
 { 
 	mouse_calibrate();
 	selected_element = EL_NONE_ID;
-	selected_tool = nullptr;
-	selected_brush = nullptr;
-	air = new Air(this, 4, 295.15f, 4);
-	gravity = new Gravity(this, 10000, 25, 8, base_g, 1E-3f);
-	baseUI = new BaseUI();
 }
 
 Simulation::~Simulation()
 {
 	clear_field();
-	delete_simObjects(available_elements);
-	delete_simObjects(tools);
-	delete_simObjects(brushes);
-	delete gravity;
-	delete air;
-	delete baseUI;
 }
 
 sf::VertexArray Simulation::draw_grid(std::vector<Vector> velocities, int cell_size, int height, int width)

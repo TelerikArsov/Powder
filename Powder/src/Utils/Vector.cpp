@@ -9,14 +9,22 @@ float Vector::Magnitude() const
 }
 
 
-Vector Vector::PerpendicularCW()
+Vector& Vector::PerpendicularCW()
 {
-	return Vector(y, -x);
+	float tmp = x;
+	x = y;
+	y = -tmp;
+	return *this;
 }
 
 Vector Vector::Normalize(const Vector& u)
 {
 	return Vector(u.x, u.y).Normalize();
+}
+
+Vector Vector::PerpendicularCW(const Vector & u)
+{
+	return Vector(u.y, -u.x);
 }
 
 Vector& Vector::Normalize()

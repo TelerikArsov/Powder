@@ -2,7 +2,7 @@
 #include "Utils\Random.h"
 #include "Simulation.h"
 
-Element* Wtrv::clone() const
+Element* Wtrv::clone_impl() const
 {
 	return new Wtrv(*this);
 }

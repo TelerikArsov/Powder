@@ -6,8 +6,9 @@ public:
 	float x;     
 	float y;      
 	float Magnitude() const;
-	Vector PerpendicularCW();
 	static Vector Normalize(const Vector& u);
+	static Vector PerpendicularCW(const Vector& u);
+	Vector& PerpendicularCW();
 	Vector& Normalize();     
 	Vector& Reverse();
 	Vector& ReverseY();

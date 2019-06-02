@@ -4,9 +4,9 @@ class Gold :
 	public Element
 {
 public:
-	Element * clone() const override;
 	Gold(Simulation& sim);
 	Gold(const Gold& rhs);
 	~Gold();
+protected:
+	Element * clone_impl() const override;
 };
-

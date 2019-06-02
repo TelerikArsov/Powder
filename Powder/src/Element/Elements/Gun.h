@@ -4,9 +4,9 @@ class Gun :
 	public Element
 {
 public:
-	Element * clone() const override;
 	Gun(Simulation& sim);
 	Gun(const Gun& rhs);
 	~Gun();
+protected:
+	Element * clone_impl() const override;
 };
-

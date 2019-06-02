@@ -2,7 +2,7 @@
 #include "Simulation.h"
 #include "Utils/Random.h"
 
-Element* Oil::clone() const
+Element* Oil::clone_impl() const
 {
 	return new Oil(*this);
 }

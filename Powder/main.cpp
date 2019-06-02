@@ -15,37 +15,37 @@ int main()
 	ImGui::SFML::Init(window);
 	Simulation sim(160, 90, WINDOW_WIDTH, WINDOW_HEIGHT, 9.8f);
 	// TODO make the generate script do this
-	sim.add_element(new WALL(sim));
-	sim.add_element(new Acid(sim));
-	sim.add_element(new BHOL(sim));
-	sim.add_element(new Brick(sim));
-	sim.add_element(new Caus(sim));
-	sim.add_element(new Coal(sim));
-	sim.add_element(new Dust(sim));
-	sim.add_element(new EXC4(sim));
-	sim.add_element(new Fire(sim));
-	sim.add_element(new Gas(sim));
-	sim.add_element(new Gold(sim));
-	sim.add_element(new Gun(sim));
-	sim.add_element(new Ice(sim));
-	sim.add_element(new Lava(sim));
-	sim.add_element(new Metl(sim));
-	sim.add_element(new Nitr(sim));
-	sim.add_element(new Oil(sim));
-	sim.add_element(new Sand(sim));
-	sim.add_element(new Stone(sim));
-	sim.add_element(new Water(sim));
-	sim.add_element(new WHOL(sim));
-	sim.add_element(new Wood(sim));
-	sim.add_element(new Wtrv(sim));
-	sim.add_brush(new CircleBrush());
-	sim.add_brush(new SquareBrush());
-	sim.add_tool(new SpawnTool());
-	sim.add_tool(new ClearTool());
-	sim.add_tool(new HeatTool());
-	sim.add_tool(new CoolTool());
-	sim.add_tool(new NegPTool());
-	sim.add_tool(new PosPTool());
+	sim.add_element(std::make_shared<WALL>(sim));
+	sim.add_element(std::make_shared<Acid>(sim));
+	sim.add_element(std::make_shared<BHOL>(sim));
+	sim.add_element(std::make_shared<Brick>(sim));
+	sim.add_element(std::make_shared<Caus>(sim));
+	sim.add_element(std::make_shared<Coal>(sim));
+	sim.add_element(std::make_shared<Dust>(sim));
+	sim.add_element(std::make_shared<EXC4>(sim));
+	sim.add_element(std::make_shared<Fire>(sim));
+	sim.add_element(std::make_shared<Gas>(sim));
+	sim.add_element(std::make_shared<Gold>(sim));
+	sim.add_element(std::make_shared<Gun>(sim));
+	sim.add_element(std::make_shared<Ice>(sim));
+	sim.add_element(std::make_shared<Lava>(sim));
+	sim.add_element(std::make_shared<Metl>(sim));
+	sim.add_element(std::make_shared<Nitr>(sim));
+	sim.add_element(std::make_shared<Oil>(sim));
+	sim.add_element(std::make_shared<Sand>(sim));
+	sim.add_element(std::make_shared<Stone>(sim));
+	sim.add_element(std::make_shared<Water>(sim));
+	sim.add_element(std::make_shared<WHOL>(sim));
+	sim.add_element(std::make_shared<Wood>(sim));
+	sim.add_element(std::make_shared<Wtrv>(sim));
+	sim.add_brush(std::make_shared<CircleBrush>());
+	sim.add_brush(std::make_shared<SquareBrush>());
+	sim.add_tool(std::make_shared<SpawnTool>());
+	sim.add_tool(std::make_shared<ClearTool>());
+	sim.add_tool(std::make_shared<HeatTool>());
+	sim.add_tool(std::make_shared<CoolTool>());
+	sim.add_tool(std::make_shared<NegPTool>());
+	sim.add_tool(std::make_shared<PosPTool>());
 	sim.select_brush(0);
 	sim.select_element(EL_SAND);
 
@@ -80,7 +80,7 @@ int main()
 
 				if (event.mouseButton.button == sf::Mouse::Left)
 				{
-						mouse_left_hold = true;
+					mouse_left_hold = true;
 				}
 			}
 			if (event.type == sf::Event::MouseButtonReleased)
@@ -89,15 +89,11 @@ int main()
 
 				if (event.mouseButton.button == sf::Mouse::Left)
 				{
-						mouse_left_hold = false;
+					mouse_left_hold = false;
 				}
 			}
 			if (event.type == sf::Event::KeyPressed)
 			{
-				if (event.key.code == sf::Keyboard::Space)
-				{
-					sim.air->add_pressure(sim.mouse_cell_x, sim.mouse_cell_y, -25);
-				}
 				if (event.key.code == sf::Keyboard::Escape)
 				{
 					sim.toggle_pause();

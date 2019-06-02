@@ -2,7 +2,7 @@
 #include "Simulation.h"
 #include "Utils/Random.h"
 
-Element* Acid::clone() const
+Element* Acid::clone_impl() const
 {
 	return new Acid(*this);
 }

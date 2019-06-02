@@ -2,7 +2,7 @@
 #include "Simulation.h"
 #include "Utils/Random.h"
 
-Element* Brick::clone() const
+Element* Brick::clone_impl() const
 {
 	return new Brick(*this);
 }

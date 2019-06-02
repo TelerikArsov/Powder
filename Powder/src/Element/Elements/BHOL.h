@@ -4,8 +4,9 @@ class BHOL :
 	public Element
 {
 public:
-	Element * clone() const override;
 	BHOL(Simulation& sim);
 	BHOL(const BHOL& rhs);
 	~BHOL();
+protected:
+	Element * clone_impl() const override;
 };

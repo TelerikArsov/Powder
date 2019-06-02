@@ -4,9 +4,9 @@ class WALL :
 	public GOL
 {
 public:
-	Element * clone() const override;
 	WALL(Simulation& sim);
 	WALL(const WALL& rhs);
 	~WALL();
+protected:
+	Element * clone_impl() const override;
 };
-

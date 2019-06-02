@@ -4,9 +4,10 @@ class Caus :
 	public Element
 {
 public:
-	Element * clone() const override;
 	Caus(Simulation& sim);
 	Caus(const Caus& rhs);
 	~Caus();
+protected:
+	Element * clone_impl() const override;
 };
 

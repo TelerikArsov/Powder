@@ -79,7 +79,7 @@ int GOL::update(float dt)
 void GOL::draw_ui()
 {
 	Element::draw_ui();
-	if (editor->string_prop(&rule_string, "GOL Rule"))
+	if (editor->string_prop(rule_string, "GOL Rule"))
 		process_rules();
 }
 

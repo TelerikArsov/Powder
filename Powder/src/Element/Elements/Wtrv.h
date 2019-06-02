@@ -4,9 +4,9 @@ class Wtrv :
 	public Element
 {
 public:
-	Element * clone() const override;
 	Wtrv(Simulation& sim);
 	Wtrv(const Wtrv& rhs);
 	~Wtrv();
+protected:
+	Element * clone_impl() const override;
 };
-

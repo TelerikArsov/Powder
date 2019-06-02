@@ -2,7 +2,7 @@
 #include "Simulation.h"
 #include "Utils/Random.h"
 
-Element* Sand::clone() const
+Element* Sand::clone_impl() const
 {
 	return new Sand(*this);
 }

@@ -4,9 +4,9 @@ class Dust :
 	public Element
 {
 public:
-	Element * clone() const override;
 	Dust(Simulation& sim);
 	Dust(const Dust& rhs);
 	~Dust();
+protected:
+	Element * clone_impl() const override;
 };
-

@@ -10,7 +10,7 @@ int Lava::update(float dt)
 	return id;
 }
 
-Element* Lava::clone() const
+Element* Lava::clone_impl() const
 {
 	return new Lava(*this);
 }

@@ -4,9 +4,9 @@ class Wood :
 	public Element
 {
 public:
-	Element * clone() const override;
 	Wood(Simulation& sim);
 	Wood(const Wood& rhs);
 	~Wood();
+protected:
+	Element * clone_impl() const override;
 };
-

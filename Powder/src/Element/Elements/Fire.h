@@ -4,9 +4,9 @@ class Fire :
 	public Element
 {
 public:
-	Element * clone() const override;
 	Fire(Simulation& sim);
 	Fire(const Fire& rhs);
 	~Fire();
+protected:
+	Element * clone_impl() const override;
 };
-

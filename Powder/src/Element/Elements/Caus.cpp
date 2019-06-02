@@ -2,7 +2,7 @@
 #include "Utils\Random.h"
 #include "Simulation.h"
 
-Element* Caus::clone() const
+Element* Caus::clone_impl() const
 {
 	return new Caus(*this);
 }
