@@ -5,7 +5,8 @@
 int Lava::update(float dt)
 {
 	int id = Element::update(dt);
-	if (previous_id != EL_NONE_ID)
+	if (previous_id != EL_NONE_ID 
+		&& id != identifier)
 		id = previous_id;
 	return id;
 }

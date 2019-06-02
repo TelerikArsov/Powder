@@ -7,7 +7,8 @@ void Air::update_air()
 	float dp = 0.0;
 	Vector t = Vector();
 	const float adv_dist_mult = 0.7f;
-
+	float stepX, stepY;
+	int stepLimit, step;
 	//airMode 0 is no air/pressure update
 	if (air_mode != 0)
 	{
@@ -17,7 +18,7 @@ void Air::update_air()
 			int idx = i * grid_width;
 			pv[idx] *= 0.8f;
 			pv[idx + 1] *= 0.8f;
-			//pv[i][2] = pv[i][2] * 0.8f;
+			pv[idx + 2] = pv[idx + 2] * 0.8f;
 			pv[idx + grid_width - 2] *= 0.8f;
 			pv[idx + grid_width - 1] *= 0.8f;
 
@@ -31,7 +32,7 @@ void Air::update_air()
 		{
 			pv[i] *= 0.8f;
 			pv[grid_width + i] *= 0.8f;
-			//pv[2][i] = pv[2][i] * 0.8f;
+			pv[2 * grid_width + i] = pv[2 * grid_width + i] * 0.8f;
 			pv[(grid_height - 2) * grid_width + i] *= 0.8f;
 			pv[(grid_height - 1) * grid_width + i] *= 0.8f;
 
@@ -54,7 +55,8 @@ void Air::update_air()
 			}
 		}
 		float dx = 0.0, dy = 0.0;
-		for (int y = 0; y < grid_height - 1; y++) //velocity adjustments from pressure
+		//velocity adjustments from pressure
+		for (int y = 0; y < grid_height - 1; y++) 
 		{
 			for (int x = 0; x < grid_width - 1; x++)
 			{
@@ -95,6 +97,37 @@ void Air::update_air()
 					}
 				}
 				t = Vector(x, y) - d * adv_dist_mult;
+				if ((d.x * adv_dist_mult > 1.0f || d.y * adv_dist_mult > 1.0f) 
+					&& (t.x >= 2 && t.x < grid_width - 2 && t.y >= 2 && t.y < grid_height - 2))
+				{
+					// Trying to take velocity from far away, check whether there is an intervening wall. Step from current position to desired source location, looking for walls, with either the x or y step size being 1 cell
+					if (std::abs(d.x)>std::abs(d.y))
+					{
+						stepX = (d.x < 0.0f) ? 1 : -1;
+						stepY = -d.y / fabsf(d.x);
+						stepLimit = static_cast<int>(fabsf(d.x * adv_dist_mult));
+					}
+					else
+					{
+						stepY = (d.y < 0.0f) ? 1 : -1;
+						stepX = -d.x / fabsf(d.y);
+						stepLimit = (int)(fabsf(d.y * adv_dist_mult));
+					}
+					t.x = x;
+					t.y = y;
+					for (step = 0; step < stepLimit; ++step)
+					{
+						t.x += stepX;
+						t.y += stepY;
+						// CODE FOR WALLS IS OMMITED
+					}
+					if (step == stepLimit)
+					{
+						// No wall found
+						t.x = x - d.x * adv_dist_mult;
+						t.y = y - d.y * adv_dist_mult;
+					}
+				}
 				int i = static_cast<int>(t.x);
 				int j = static_cast<int>(t.y);
 				t -= Vector(i, j);
