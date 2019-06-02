@@ -27,6 +27,11 @@ Vector Vector::PerpendicularCW(const Vector & u)
 	return Vector(u.y, -u.x);
 }
 
+Vector Vector::ReverseY(const Vector & u)
+{
+	return Vector(u.x, -u.y);
+}
+
 Vector& Vector::Normalize()
 {
 	float m = Magnitude();

@@ -4,6 +4,7 @@ class WHOL :
 	public Element
 {
 public:
+	int update(float dt) override;
 	WHOL(Simulation& sim);
 	WHOL(const WHOL& rhs);
 	~WHOL();

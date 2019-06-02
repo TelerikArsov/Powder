@@ -7,6 +7,26 @@ Element* BHOL::clone_impl() const
 	return new BHOL(*this);
 }
 
+int BHOL::update(float dt)
+{
+	if (mass < sim->gravity.mass_th)
+	{
+		sim->gravity.update_mass(mass, -1, -1, x, y);
+		mass = sim->gravity.mass_th;
+		sim->gravity.update_mass(mass, x, y, -1, -1);
+	}
+	return identifier;
+}
+
+void BHOL::collision_response()
+{
+	if (collided_elem != EL_NONE)
+	{
+		collided_elem->prop |= Destroyed;
+		mass += collided_elem->mass;
+	}
+}
+
 BHOL::BHOL(Simulation& sim)
 {
 	identifier = EL_BHOL;

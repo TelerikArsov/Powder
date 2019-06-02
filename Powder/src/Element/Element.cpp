@@ -176,8 +176,13 @@ void Element::calc_loads()
 	if (sim)
 	{
 		forces.Zero();
-		forces += sim->gravity.get_force(x, y, mass) *
-			(state == ST_GAS ? gas_gravity : 1);
+		if (state == ST_GAS)
+		{
+			Vector base_grav = Vector::ReverseY(sim->gravity.base_grav);
+			forces += sim->gravity.get_force(x, y, mass) - base_grav + base_grav * gas_gravity;
+		}
+		else
+			forces += sim->gravity.get_force(x, y, mass);
 	}
 }
 
@@ -377,7 +382,10 @@ int Element::update(float dt)
 			{
 				collision_response();
 				if (collided_elem != EL_NONE)
+				{
+					collided_elem->collided_elem = this;
 					collided_elem->collision_response();
+				}
 				apply_collision_impulse(dt);
 				if (state == ST_POWDER)
 				{
@@ -534,7 +542,11 @@ void Element::render(float cell_height, float cell_width, sf::Vertex* quad)
 			std::shared_ptr<Element> org = sim->find_by_id(identifier);
 			if (org != EL_NONE)
 			{
-				float high_temp = (org->high_temperature_transition != EL_NONE_ID) ? org->high_temperature : 1300;
+				float high_temp = 1100;
+				if (org->high_temperature_transition != EL_NONE_ID)
+					high_temp = org->high_temperature;
+				else if ((org->prop & Meltable) == Meltable)
+					high_temp = org->melting_temperature;
 				if (org && temperature > (high_temp - 800.0f))
 				{
 					int r = draw_color.r, g = draw_color.g, b = draw_color.b;

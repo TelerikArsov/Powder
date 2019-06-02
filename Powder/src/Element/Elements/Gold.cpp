@@ -21,7 +21,8 @@ Gold::Gold(Simulation& sim)
 	specific_heat_cap = 0.13f;
 	endurance = 1000;
 	state = ST_SOLID;
-	prop = Corrosive_Res | Meltable;
+	melting_temperature = 1337.15f;
+	prop = Corrosive_Res | Meltable | Red_Glow;
 	this->sim = &sim;
 }
 

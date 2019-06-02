@@ -7,6 +7,17 @@ Element* WHOL::clone_impl() const
 	return new WHOL(*this);
 }
 
+int WHOL::update(float dt)
+{
+	if (mass < sim->gravity.mass_th)
+	{
+		sim->gravity.update_mass(mass, -1, -1, x, y);
+		mass = -sim->gravity.mass_th;
+		sim->gravity.update_mass(mass, x, y, -1, -1);
+	}
+	return identifier;
+}
+
 WHOL::WHOL(Simulation& sim)
 {
 	identifier = EL_WHOL;
