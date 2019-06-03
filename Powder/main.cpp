@@ -72,6 +72,8 @@ int main()
 			}
 			if (event.type == sf::Event::MouseWheelScrolled)
 			{
+				if (io.WantCaptureMouse) break;
+
 				sim.resize_brush(event.mouseWheelScroll.delta);
 			}
 			if (event.type == sf::Event::MouseButtonPressed)

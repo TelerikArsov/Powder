@@ -23,3 +23,6 @@ Release
 ipch
 *sdf
 /Powder/lib/SFML
+
+# Imgui init files
+*.ini

@@ -10,11 +10,15 @@ void BaseUI::draw(Simulation* sim)
 		if (show_so) show_simulation_overlay(sim);
 		show_simulation_settings(sim);
 		int id = -1;
-		el_editor_queue.remove_if([sim, &id](ElementEditor &ed) -> bool
-		{
-			id++;
-			return !ed.draw(id, sim);
-		});
+		el_editor_queue.erase(
+			std::remove_if(el_editor_queue.begin(), el_editor_queue.end(),
+			[sim, &id](ElementEditor &ed) -> bool
+			{
+				id++;
+				return !ed.draw(id, sim);
+			}),
+			el_editor_queue.end()
+		);
 	}
 }
 
