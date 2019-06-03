@@ -9,16 +9,18 @@ bool ElementEditor::draw(int id, Simulation* sim)
 	if (sim)
 	{
 		std::string title = "Element editor##" + std::to_string(id);
+		ImGui::SetNextWindowSize(ImVec2(355, 365), ImGuiCond_FirstUseEver);
 		if (ImGui::Begin(title.c_str(), &open, ImGuiWindowFlags_NoSavedSettings))
 		{
 			if (s_el != EL_NONE)
 			{
-				ImGui::Text("Selected: %s element, ", s_el->name.c_str()); ImGui::SameLine();
-				ImGui::Text("Description: %s,", s_el->description.c_str());
+				ImGui::Text("Selected: %s element.", s_el->name.c_str());
+				ImGui::TextWrapped("Description: %s.", s_el->description.c_str());
 				ImGui::Text("Velocity (%f, %f), ", s_el->velocity.x, s_el->velocity.y);
 				ImGui::Text("Pos (%d, %d), Real pos(%f, %f)", s_el->x, s_el->y,
 					s_el->pos.x, s_el->pos.y);
 				ImGui::Separator();
+				ImGui::PushItemWidth(ImGui::GetFontSize() * -12);
 				s_el->draw_ui();
 			}
 			else
