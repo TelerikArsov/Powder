@@ -300,6 +300,7 @@ Air::Air(Simulation* sim, int air_mode, float ambient_air_temp, int cell_size) :
 	air_mode(air_mode),
 	amb_air_temp(ambient_air_temp),
 	cell_size(cell_size),
+	ambient_heat(false),
 	grid_width(static_cast<int>(std::ceil(static_cast<float>(sim->cells_x_count) / cell_size))),
 	grid_height(static_cast<int>(std::ceil(static_cast<float>(sim->cells_y_count) / cell_size)))
 {

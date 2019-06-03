@@ -133,7 +133,7 @@ protected:
 	int pile_threshold = 1;
 	// damage threshold
 	Vector ground_coll;
-	Element* collided_elem;
+	Element* collided_elem = EL_NONE;
 	std::vector<sf::Color> colors;	// All the possible colors
 	// 0 - block; the element is blocked from moving further
 	// 1 - pass; both elements occupy the same space
